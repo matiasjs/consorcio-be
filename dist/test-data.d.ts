@@ -1,0 +1,16 @@
+import { Administration } from '../src/entities/administration.entity';
+import { Building } from '../src/entities/building.entity';
+import { Ticket } from '../src/entities/ticket.entity';
+import { Unit } from '../src/entities/unit.entity';
+import { User } from '../src/entities/user.entity';
+import { Vendor } from '../src/entities/vendor.entity';
+export declare const testAdministration: Partial<Administration>;
+export declare const testSuperAdmin: Partial<User>;
+export declare const testAdminOwner: Partial<User>;
+export declare const testStaff: Partial<User>;
+export declare const testOwner: Partial<User>;
+export declare const testTenant: Partial<User>;
+export declare const testBuilding: Partial<Building>;
+export declare const testUnit: Partial<Unit>;
+export declare const testVendor: Partial<Vendor>;
+export declare const testTicket: Partial<Ticket>;
