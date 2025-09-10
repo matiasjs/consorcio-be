@@ -11,13 +11,23 @@ import { getDatabaseConfig } from './config/database.config';
 import jwtConfig from './config/jwt.config';
 import redisConfig from './config/redis.config';
 import { AdministrationsModule } from './modules/administrations/administrations.module';
+import { AssetsModule } from './modules/assets/assets.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { BuildingsModule } from './modules/buildings/buildings.module';
+import { DocumentsModule } from './modules/documents/documents.module';
+import { InspectionsModule } from './modules/inspections/inspections.module';
+import { InvoicesModule } from './modules/invoices/invoices.module';
+import { MaterialsModule } from './modules/materials/materials.module';
+import { MeetingsModule } from './modules/meetings/meetings.module';
 import { MessagesModule } from './modules/messages/messages.module';
+import { PaymentsModule } from './modules/payments/payments.module';
+import { PlansModule } from './modules/plans/plans.module';
+import { ResolutionsModule } from './modules/resolutions/resolutions.module';
 import { TicketsModule } from './modules/tickets/tickets.module';
 import { UnitsModule } from './modules/units/units.module';
 import { UsersModule } from './modules/users/users.module';
 import { VendorsModule } from './modules/vendors/vendors.module';
+import { WorkOrdersModule } from './modules/workorders/workorders.module';
 
 @Module({
   imports: [
@@ -56,6 +66,16 @@ import { VendorsModule } from './modules/vendors/vendors.module';
     BuildingsModule,
     UnitsModule,
     VendorsModule,
+    InspectionsModule,
+    WorkOrdersModule,
+    MaterialsModule,
+    InvoicesModule,
+    PaymentsModule,
+    AssetsModule,
+    MeetingsModule,
+    DocumentsModule,
+    ResolutionsModule,
+    PlansModule,
   ],
   controllers: [AppController],
   providers: [

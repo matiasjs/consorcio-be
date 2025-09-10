@@ -23,13 +23,23 @@ const database_config_1 = require("./config/database.config");
 const jwt_config_1 = __importDefault(require("./config/jwt.config"));
 const redis_config_1 = __importDefault(require("./config/redis.config"));
 const administrations_module_1 = require("./modules/administrations/administrations.module");
+const assets_module_1 = require("./modules/assets/assets.module");
 const auth_module_1 = require("./modules/auth/auth.module");
 const buildings_module_1 = require("./modules/buildings/buildings.module");
+const documents_module_1 = require("./modules/documents/documents.module");
+const inspections_module_1 = require("./modules/inspections/inspections.module");
+const invoices_module_1 = require("./modules/invoices/invoices.module");
+const materials_module_1 = require("./modules/materials/materials.module");
+const meetings_module_1 = require("./modules/meetings/meetings.module");
 const messages_module_1 = require("./modules/messages/messages.module");
+const payments_module_1 = require("./modules/payments/payments.module");
+const plans_module_1 = require("./modules/plans/plans.module");
+const resolutions_module_1 = require("./modules/resolutions/resolutions.module");
 const tickets_module_1 = require("./modules/tickets/tickets.module");
 const units_module_1 = require("./modules/units/units.module");
 const users_module_1 = require("./modules/users/users.module");
 const vendors_module_1 = require("./modules/vendors/vendors.module");
+const workorders_module_1 = require("./modules/workorders/workorders.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -64,6 +74,16 @@ exports.AppModule = AppModule = __decorate([
             buildings_module_1.BuildingsModule,
             units_module_1.UnitsModule,
             vendors_module_1.VendorsModule,
+            inspections_module_1.InspectionsModule,
+            workorders_module_1.WorkOrdersModule,
+            materials_module_1.MaterialsModule,
+            invoices_module_1.InvoicesModule,
+            payments_module_1.PaymentsModule,
+            assets_module_1.AssetsModule,
+            meetings_module_1.MeetingsModule,
+            documents_module_1.DocumentsModule,
+            resolutions_module_1.ResolutionsModule,
+            plans_module_1.PlansModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [
