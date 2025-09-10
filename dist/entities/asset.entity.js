@@ -13,8 +13,8 @@ exports.Asset = exports.AssetStatus = exports.AssetType = void 0;
 const typeorm_1 = require("typeorm");
 const base_entity_1 = require("./base.entity");
 const building_entity_1 = require("./building.entity");
-const vendor_entity_1 = require("./vendor.entity");
 const maintenance_plan_entity_1 = require("./maintenance-plan.entity");
+const vendor_entity_1 = require("./vendor.entity");
 var AssetType;
 (function (AssetType) {
     AssetType["ELEVATOR"] = "ELEVATOR";
@@ -42,6 +42,7 @@ var AssetStatus;
     AssetStatus["RETIRED"] = "RETIRED";
 })(AssetStatus || (exports.AssetStatus = AssetStatus = {}));
 let Asset = class Asset extends base_entity_1.BaseEntity {
+    adminId;
     buildingId;
     name;
     type;
@@ -70,6 +71,10 @@ let Asset = class Asset extends base_entity_1.BaseEntity {
     maintenancePlans;
 };
 exports.Asset = Asset;
+__decorate([
+    (0, typeorm_1.Column)({ type: 'uuid' }),
+    __metadata("design:type", String)
+], Asset.prototype, "adminId", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'uuid' }),
     __metadata("design:type", String)
@@ -185,6 +190,7 @@ __decorate([
 ], Asset.prototype, "maintenancePlans", void 0);
 exports.Asset = Asset = __decorate([
     (0, typeorm_1.Entity)('assets'),
+    (0, typeorm_1.Index)(['adminId']),
     (0, typeorm_1.Index)(['buildingId']),
     (0, typeorm_1.Index)(['type']),
     (0, typeorm_1.Index)(['status']),

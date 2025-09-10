@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { VendorInvoice } from './vendor-invoice.entity';
 
@@ -24,11 +24,15 @@ export enum PaymentStatus {
 }
 
 @Entity('payments')
+@Index(['adminId'])
 @Index(['vendorInvoiceId'])
 @Index(['status'])
 @Index(['scheduledFor'])
 @Index(['paidAt'])
 export class Payment extends BaseEntity {
+  @Column({ type: 'uuid' })
+  adminId: string;
+
   @Column({ type: 'uuid' })
   vendorInvoiceId: string;
 
@@ -43,6 +47,9 @@ export class Payment extends BaseEntity {
 
   @Column({ type: 'timestamp', nullable: true })
   paidAt?: Date;
+
+  @Column({ type: 'date', nullable: true })
+  paymentDate?: Date;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   amount: number;

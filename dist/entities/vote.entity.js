@@ -31,6 +31,7 @@ let Vote = class Vote extends base_entity_1.BaseEntity {
     resolutionId;
     unitId;
     voterUserId;
+    userId;
     choice;
     weight;
     type;
@@ -69,6 +70,10 @@ __decorate([
     (0, typeorm_1.Column)({ type: 'uuid', nullable: true }),
     __metadata("design:type", String)
 ], Vote.prototype, "voterUserId", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'uuid' }),
+    __metadata("design:type", String)
+], Vote.prototype, "userId", void 0);
 __decorate([
     (0, typeorm_1.Column)({
         type: 'enum',

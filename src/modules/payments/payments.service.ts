@@ -21,7 +21,7 @@ export class PaymentsService {
     };
 
     const payment = this.paymentRepository.create(paymentData);
-    return await this.paymentRepository.save(payment);
+    return await this.paymentRepository.save(payment) as any;
   }
 
   async findAll(user: RequestUser, paginationDto: PaginationDto): Promise<{
@@ -83,7 +83,7 @@ export class PaymentsService {
     }
 
     Object.assign(payment, updateData);
-    return await this.paymentRepository.save(payment);
+    return await this.paymentRepository.save(payment) as any;
   }
 
   async remove(id: string, user: RequestUser): Promise<void> {

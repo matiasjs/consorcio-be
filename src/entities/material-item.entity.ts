@@ -1,4 +1,4 @@
-import { Entity, Column, OneToMany, Index } from 'typeorm';
+import { Column, Entity, Index, OneToMany } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { WorkOrderMaterial } from './work-order-material.entity';
 
@@ -32,10 +32,14 @@ export enum MaterialCategory {
 }
 
 @Entity('material_items')
+@Index(['adminId'])
 @Index(['name'])
 @Index(['sku'])
 @Index(['category'])
 export class MaterialItem extends BaseEntity {
+  @Column({ type: 'uuid' })
+  adminId: string;
+
   @Column({ type: 'varchar', length: 255 })
   name: string;
 

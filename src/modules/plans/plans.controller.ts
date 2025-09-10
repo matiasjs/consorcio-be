@@ -11,7 +11,7 @@ import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagg
 import { CurrentUser, Roles } from '../../common/decorators';
 import { UserRole } from '../../common/enums';
 import { JwtAuthGuard, RolesGuard, TenantGuard } from '../../common/guards';
-import { RequestUser } from '../../common/interfaces';
+import type { RequestUser } from '../../common/interfaces';
 import { CreateMaintenanceTaskDto } from './dto';
 import { PlansService } from './plans.service';
 

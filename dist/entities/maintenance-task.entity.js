@@ -34,6 +34,7 @@ let MaintenanceTask = class MaintenanceTask extends base_entity_1.BaseEntity {
     title;
     description;
     scheduledFor;
+    scheduledDate;
     status;
     performedByType;
     performedByUserId;
@@ -78,6 +79,10 @@ __decorate([
     (0, typeorm_1.Column)({ type: 'timestamp' }),
     __metadata("design:type", Date)
 ], MaintenanceTask.prototype, "scheduledFor", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'date' }),
+    __metadata("design:type", Date)
+], MaintenanceTask.prototype, "scheduledDate", void 0);
 __decorate([
     (0, typeorm_1.Column)({
         type: 'enum',

@@ -16,6 +16,7 @@ export declare class Vote extends BaseEntity {
     resolutionId: string;
     unitId: string;
     voterUserId?: string;
+    userId: string;
     choice: VoteChoice;
     weight: number;
     type: VoteType;

@@ -1,11 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Meeting } from '../../entities/meeting.entity';
-import { Resolution } from '../../entities/resolution.entity';
-import { CreateMeetingDto, UpdateMeetingDto, CreateResolutionDto } from './dto';
 import { PaginationDto } from '../../common/dto';
 import { RequestUser } from '../../common/interfaces';
+import { Meeting } from '../../entities/meeting.entity';
+import { Resolution } from '../../entities/resolution.entity';
+import { CreateMeetingDto, CreateResolutionDto, UpdateMeetingDto } from './dto';
 
 @Injectable()
 export class MeetingsService {
@@ -14,17 +14,18 @@ export class MeetingsService {
     private readonly meetingRepository: Repository<Meeting>,
     @InjectRepository(Resolution)
     private readonly resolutionRepository: Repository<Resolution>,
-  ) {}
+  ) { }
 
   async create(createMeetingDto: CreateMeetingDto, user: RequestUser): Promise<Meeting> {
     const meetingData: any = {
       ...createMeetingDto,
       adminId: user.adminId,
+      scheduledAt: new Date(createMeetingDto.scheduledDate),
       scheduledDate: new Date(createMeetingDto.scheduledDate),
     };
 
     const meeting = this.meetingRepository.create(meetingData);
-    return await this.meetingRepository.save(meeting);
+    return await this.meetingRepository.save(meeting) as any;
   }
 
   async findAll(user: RequestUser, paginationDto: PaginationDto): Promise<{
@@ -80,7 +81,7 @@ export class MeetingsService {
     }
 
     Object.assign(meeting, updateData);
-    return await this.meetingRepository.save(meeting);
+    return await this.meetingRepository.save(meeting) as any;
   }
 
   async remove(id: string, user: RequestUser): Promise<void> {
@@ -100,12 +101,12 @@ export class MeetingsService {
 
   async createResolution(meetingId: string, createResolutionDto: CreateResolutionDto, user: RequestUser): Promise<Resolution> {
     const meeting = await this.findOne(meetingId, user);
-    
+
     const resolution = this.resolutionRepository.create({
       ...createResolutionDto,
       meetingId,
     });
 
-    return await this.resolutionRepository.save(resolution);
+    return await this.resolutionRepository.save(resolution) as any;
   }
 }

@@ -1,8 +1,8 @@
-import { Entity, Column, ManyToOne, JoinColumn, OneToMany, Index } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { BaseEntity } from './base.entity';
-import { WorkOrder } from './work-order.entity';
-import { Vendor } from './vendor.entity';
 import { Payment } from './payment.entity';
+import { Vendor } from './vendor.entity';
+import { WorkOrder } from './work-order.entity';
 
 export enum InvoiceStatus {
   DRAFT = 'DRAFT',
@@ -17,6 +17,7 @@ export enum InvoiceStatus {
 }
 
 @Entity('vendor_invoices')
+@Index(['adminId'])
 @Index(['workOrderId'])
 @Index(['vendorId'])
 @Index(['number'])
@@ -24,6 +25,9 @@ export enum InvoiceStatus {
 @Index(['issueDate'])
 @Index(['dueDate'])
 export class VendorInvoice extends BaseEntity {
+  @Column({ type: 'uuid' })
+  adminId: string;
+
   @Column({ type: 'uuid' })
   workOrderId: string;
 

@@ -12,9 +12,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.VendorInvoice = exports.InvoiceStatus = void 0;
 const typeorm_1 = require("typeorm");
 const base_entity_1 = require("./base.entity");
-const work_order_entity_1 = require("./work-order.entity");
-const vendor_entity_1 = require("./vendor.entity");
 const payment_entity_1 = require("./payment.entity");
+const vendor_entity_1 = require("./vendor.entity");
+const work_order_entity_1 = require("./work-order.entity");
 var InvoiceStatus;
 (function (InvoiceStatus) {
     InvoiceStatus["DRAFT"] = "DRAFT";
@@ -28,6 +28,7 @@ var InvoiceStatus;
     InvoiceStatus["CANCELLED"] = "CANCELLED";
 })(InvoiceStatus || (exports.InvoiceStatus = InvoiceStatus = {}));
 let VendorInvoice = class VendorInvoice extends base_entity_1.BaseEntity {
+    adminId;
     workOrderId;
     vendorId;
     number;
@@ -58,6 +59,10 @@ let VendorInvoice = class VendorInvoice extends base_entity_1.BaseEntity {
     payments;
 };
 exports.VendorInvoice = VendorInvoice;
+__decorate([
+    (0, typeorm_1.Column)({ type: 'uuid' }),
+    __metadata("design:type", String)
+], VendorInvoice.prototype, "adminId", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'uuid' }),
     __metadata("design:type", String)
@@ -178,6 +183,7 @@ __decorate([
 ], VendorInvoice.prototype, "payments", void 0);
 exports.VendorInvoice = VendorInvoice = __decorate([
     (0, typeorm_1.Entity)('vendor_invoices'),
+    (0, typeorm_1.Index)(['adminId']),
     (0, typeorm_1.Index)(['workOrderId']),
     (0, typeorm_1.Index)(['vendorId']),
     (0, typeorm_1.Index)(['number']),

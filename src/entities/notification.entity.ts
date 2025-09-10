@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { User } from './user.entity';
 
@@ -47,6 +47,7 @@ export enum NotificationPriority {
 
 @Entity('notifications')
 @Index(['userId'])
+@Index(['adminId'])
 @Index(['channel'])
 @Index(['status'])
 @Index(['type'])
@@ -54,7 +55,34 @@ export enum NotificationPriority {
 @Index(['scheduledFor'])
 export class Notification extends BaseEntity {
   @Column({ type: 'uuid' })
-  userId: string;
+  adminId: string;
+
+  @Column({ type: 'uuid', nullable: true })
+  userId?: string;
+
+  @Column({ type: 'uuid', nullable: true })
+  targetUserId?: string;
+
+  @Column({ type: 'uuid', nullable: true })
+  targetBuildingId?: string;
+
+  @Column({ type: 'uuid', nullable: true })
+  sentByUserId?: string;
+
+  @Column({ type: 'uuid', nullable: true })
+  relatedEntityId?: string;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  relatedEntityType?: string;
+
+  @Column({ type: 'boolean', default: false })
+  isRead: boolean;
+
+  @Column({ type: 'boolean', default: false })
+  isHighPriority: boolean;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  message?: string;
 
   @Column({ type: 'varchar', length: 255 })
   title: string;

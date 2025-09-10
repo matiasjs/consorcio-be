@@ -1,6 +1,6 @@
-import { Entity, Column, ManyToOne, JoinColumn, OneToMany, Index } from 'typeorm';
-import { BaseEntity } from './base.entity';
+import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { Administration } from './administration.entity';
+import { BaseEntity } from './base.entity';
 import { Building } from './building.entity';
 import { Resolution } from './resolution.entity';
 
@@ -41,6 +41,9 @@ export class Meeting extends BaseEntity {
 
   @Column({ type: 'timestamp' })
   scheduledAt: Date;
+
+  @Column({ type: 'date' })
+  scheduledDate: Date;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   location?: string;

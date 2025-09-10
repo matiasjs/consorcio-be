@@ -28,6 +28,7 @@ export declare enum MaterialCategory {
     OTHER = "OTHER"
 }
 export declare class MaterialItem extends BaseEntity {
+    adminId: string;
     name: string;
     sku?: string;
     unit: MaterialUnit;

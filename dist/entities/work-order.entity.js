@@ -12,13 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.WorkOrder = exports.WorkOrderStatus = void 0;
 const typeorm_1 = require("typeorm");
 const base_entity_1 = require("./base.entity");
-const ticket_entity_1 = require("./ticket.entity");
-const vendor_entity_1 = require("./vendor.entity");
-const user_entity_1 = require("./user.entity");
 const quote_entity_1 = require("./quote.entity");
 const schedule_slot_entity_1 = require("./schedule-slot.entity");
-const work_order_material_entity_1 = require("./work-order-material.entity");
+const ticket_entity_1 = require("./ticket.entity");
+const user_entity_1 = require("./user.entity");
 const vendor_invoice_entity_1 = require("./vendor-invoice.entity");
+const vendor_entity_1 = require("./vendor.entity");
+const work_order_material_entity_1 = require("./work-order-material.entity");
 var WorkOrderStatus;
 (function (WorkOrderStatus) {
     WorkOrderStatus["DRAFT"] = "DRAFT";
@@ -33,6 +33,7 @@ var WorkOrderStatus;
     WorkOrderStatus["ON_HOLD"] = "ON_HOLD";
 })(WorkOrderStatus || (exports.WorkOrderStatus = WorkOrderStatus = {}));
 let WorkOrder = class WorkOrder extends base_entity_1.BaseEntity {
+    adminId;
     ticketId;
     vendorId;
     assignedByUserId;
@@ -62,6 +63,10 @@ let WorkOrder = class WorkOrder extends base_entity_1.BaseEntity {
     invoices;
 };
 exports.WorkOrder = WorkOrder;
+__decorate([
+    (0, typeorm_1.Column)({ type: 'uuid' }),
+    __metadata("design:type", String)
+], WorkOrder.prototype, "adminId", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'uuid' }),
     __metadata("design:type", String)
@@ -179,6 +184,7 @@ __decorate([
 ], WorkOrder.prototype, "invoices", void 0);
 exports.WorkOrder = WorkOrder = __decorate([
     (0, typeorm_1.Entity)('work_orders'),
+    (0, typeorm_1.Index)(['adminId']),
     (0, typeorm_1.Index)(['ticketId']),
     (0, typeorm_1.Index)(['vendorId']),
     (0, typeorm_1.Index)(['assignedByUserId']),

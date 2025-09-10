@@ -1,26 +1,26 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Document } from '../../entities/document.entity';
-import { CreateDocumentDto, UpdateDocumentDto } from './dto';
 import { PaginationDto } from '../../common/dto';
 import { RequestUser } from '../../common/interfaces';
+import { Document } from '../../entities/document.entity';
+import { CreateDocumentDto, UpdateDocumentDto } from './dto';
 
 @Injectable()
 export class DocumentsService {
   constructor(
     @InjectRepository(Document)
     private readonly documentRepository: Repository<Document>,
-  ) {}
+  ) { }
 
   async create(createDocumentDto: CreateDocumentDto, user: RequestUser): Promise<Document> {
     const document = this.documentRepository.create({
       ...createDocumentDto,
       adminId: user.adminId,
-      uploadedById: user.id,
-    });
+      uploadedByUserId: user.id,
+    } as any);
 
-    return await this.documentRepository.save(document);
+    return await this.documentRepository.save(document) as any;
   }
 
   async findAll(user: RequestUser, paginationDto: PaginationDto): Promise<{
@@ -72,7 +72,7 @@ export class DocumentsService {
     const document = await this.findOne(id, user);
 
     Object.assign(document, updateDocumentDto);
-    return await this.documentRepository.save(document);
+    return await this.documentRepository.save(document) as any;
   }
 
   async remove(id: string, user: RequestUser): Promise<void> {
@@ -82,7 +82,7 @@ export class DocumentsService {
 
   async findByType(type: string, user: RequestUser): Promise<Document[]> {
     return await this.documentRepository.find({
-      where: { 
+      where: {
         adminId: user.adminId,
         type: type as any,
       },
@@ -93,7 +93,7 @@ export class DocumentsService {
 
   async findByCategory(category: string, user: RequestUser): Promise<Document[]> {
     return await this.documentRepository.find({
-      where: { 
+      where: {
         adminId: user.adminId,
         category,
       },
@@ -104,7 +104,7 @@ export class DocumentsService {
 
   async findByBuilding(buildingId: string, user: RequestUser): Promise<Document[]> {
     return await this.documentRepository.find({
-      where: { 
+      where: {
         adminId: user.adminId,
         buildingId,
       },

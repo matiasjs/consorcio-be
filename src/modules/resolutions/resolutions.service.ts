@@ -53,7 +53,7 @@ export class ResolutionsService {
       resolutionId,
     });
 
-    return await this.voteRepository.save(vote);
+    return await this.voteRepository.save(vote) as any;
   }
 
   async getVoteResults(resolutionId: string, user: RequestUser): Promise<any> {

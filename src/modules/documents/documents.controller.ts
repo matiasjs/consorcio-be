@@ -15,7 +15,7 @@ import { CurrentUser, Roles } from '../../common/decorators';
 import { PaginationDto } from '../../common/dto';
 import { UserRole } from '../../common/enums';
 import { JwtAuthGuard, RolesGuard, TenantGuard } from '../../common/guards';
-import { RequestUser } from '../../common/interfaces';
+import type { RequestUser } from '../../common/interfaces';
 import { DocumentsService } from './documents.service';
 import { CreateDocumentDto, UpdateDocumentDto } from './dto';
 

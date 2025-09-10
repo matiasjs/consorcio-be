@@ -1,12 +1,12 @@
-import { Entity, Column, ManyToOne, JoinColumn, OneToMany, Index } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { BaseEntity } from './base.entity';
-import { Ticket } from './ticket.entity';
-import { Vendor } from './vendor.entity';
-import { User } from './user.entity';
 import { Quote } from './quote.entity';
 import { ScheduleSlot } from './schedule-slot.entity';
-import { WorkOrderMaterial } from './work-order-material.entity';
+import { Ticket } from './ticket.entity';
+import { User } from './user.entity';
 import { VendorInvoice } from './vendor-invoice.entity';
+import { Vendor } from './vendor.entity';
+import { WorkOrderMaterial } from './work-order-material.entity';
 
 export enum WorkOrderStatus {
   DRAFT = 'DRAFT',
@@ -22,12 +22,16 @@ export enum WorkOrderStatus {
 }
 
 @Entity('work_orders')
+@Index(['adminId'])
 @Index(['ticketId'])
 @Index(['vendorId'])
 @Index(['assignedByUserId'])
 @Index(['status'])
 @Index(['scheduledAt'])
 export class WorkOrder extends BaseEntity {
+  @Column({ type: 'uuid' })
+  adminId: string;
+
   @Column({ type: 'uuid' })
   ticketId: string;
 

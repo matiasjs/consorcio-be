@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Ticket } from './ticket.entity';
 import { User } from './user.entity';
@@ -21,11 +21,15 @@ export enum InspectionRecommendation {
 }
 
 @Entity('inspections')
+@Index(['adminId'])
 @Index(['ticketId'])
 @Index(['inspectorUserId'])
 @Index(['scheduledAt'])
 @Index(['status'])
 export class Inspection extends BaseEntity {
+  @Column({ type: 'uuid' })
+  adminId: string;
+
   @Column({ type: 'uuid' })
   ticketId: string;
 

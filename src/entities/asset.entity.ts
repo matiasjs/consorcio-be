@@ -1,8 +1,8 @@
-import { Entity, Column, ManyToOne, JoinColumn, OneToMany, Index } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Building } from './building.entity';
-import { Vendor } from './vendor.entity';
 import { MaintenancePlan } from './maintenance-plan.entity';
+import { Vendor } from './vendor.entity';
 
 export enum AssetType {
   ELEVATOR = 'ELEVATOR',
@@ -31,11 +31,15 @@ export enum AssetStatus {
 }
 
 @Entity('assets')
+@Index(['adminId'])
 @Index(['buildingId'])
 @Index(['type'])
 @Index(['status'])
 @Index(['vendorId'])
 export class Asset extends BaseEntity {
+  @Column({ type: 'uuid' })
+  adminId: string;
+
   @Column({ type: 'uuid' })
   buildingId: string;
 

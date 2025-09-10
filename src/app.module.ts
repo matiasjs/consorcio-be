@@ -12,6 +12,7 @@ import jwtConfig from './config/jwt.config';
 import redisConfig from './config/redis.config';
 import { AdministrationsModule } from './modules/administrations/administrations.module';
 import { AssetsModule } from './modules/assets/assets.module';
+import { AuditLogsModule } from './modules/audit-logs/audit-logs.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { BuildingsModule } from './modules/buildings/buildings.module';
 import { DocumentsModule } from './modules/documents/documents.module';
@@ -20,11 +21,14 @@ import { InvoicesModule } from './modules/invoices/invoices.module';
 import { MaterialsModule } from './modules/materials/materials.module';
 import { MeetingsModule } from './modules/meetings/meetings.module';
 import { MessagesModule } from './modules/messages/messages.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { PlansModule } from './modules/plans/plans.module';
 import { ResolutionsModule } from './modules/resolutions/resolutions.module';
+import { SubscriptionsModule } from './modules/subscriptions/subscriptions.module';
 import { TicketsModule } from './modules/tickets/tickets.module';
 import { UnitsModule } from './modules/units/units.module';
+import { UsageMetricsModule } from './modules/usage-metrics/usage-metrics.module';
 import { UsersModule } from './modules/users/users.module';
 import { VendorsModule } from './modules/vendors/vendors.module';
 import { WorkOrdersModule } from './modules/workorders/workorders.module';
@@ -76,6 +80,10 @@ import { WorkOrdersModule } from './modules/workorders/workorders.module';
     DocumentsModule,
     ResolutionsModule,
     PlansModule,
+    NotificationsModule,
+    SubscriptionsModule,
+    UsageMetricsModule,
+    AuditLogsModule,
   ],
   controllers: [AppController],
   providers: [

@@ -11,8 +11,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Document = exports.DocumentStatus = exports.DocumentType = void 0;
 const typeorm_1 = require("typeorm");
-const base_entity_1 = require("./base.entity");
 const administration_entity_1 = require("./administration.entity");
+const base_entity_1 = require("./base.entity");
 const building_entity_1 = require("./building.entity");
 const unit_entity_1 = require("./unit.entity");
 const user_entity_1 = require("./user.entity");
@@ -50,6 +50,7 @@ let Document = class Document extends base_entity_1.BaseEntity {
     type;
     title;
     description;
+    category;
     fileUrl;
     filename;
     mimeType;
@@ -110,6 +111,10 @@ __decorate([
     (0, typeorm_1.Column)({ type: 'text', nullable: true }),
     __metadata("design:type", String)
 ], Document.prototype, "description", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 100, nullable: true }),
+    __metadata("design:type", String)
+], Document.prototype, "category", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 500 }),
     __metadata("design:type", String)

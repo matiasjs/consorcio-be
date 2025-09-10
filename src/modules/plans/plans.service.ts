@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { RequestUser } from '../../common/interfaces';
 import { MaintenancePlan } from '../../entities/maintenance-plan.entity';
 import { MaintenanceTask } from '../../entities/maintenance-task.entity';
 import { CreateMaintenanceTaskDto } from './dto';
-import { RequestUser } from '../../common/interfaces';
 
 @Injectable()
 export class PlansService {
@@ -13,7 +13,7 @@ export class PlansService {
     private readonly planRepository: Repository<MaintenancePlan>,
     @InjectRepository(MaintenanceTask)
     private readonly taskRepository: Repository<MaintenanceTask>,
-  ) {}
+  ) { }
 
   async findPlan(id: string, user: RequestUser): Promise<MaintenancePlan> {
     const plan = await this.planRepository.findOne({
@@ -35,7 +35,7 @@ export class PlansService {
 
   async getTasks(planId: string, user: RequestUser): Promise<MaintenanceTask[]> {
     const plan = await this.findPlan(planId, user);
-    
+
     return await this.taskRepository.find({
       where: { planId },
       order: { scheduledDate: 'ASC' },
@@ -44,13 +44,14 @@ export class PlansService {
 
   async createTask(planId: string, createTaskDto: CreateMaintenanceTaskDto, user: RequestUser): Promise<MaintenanceTask> {
     const plan = await this.findPlan(planId, user);
-    
+
     const task = this.taskRepository.create({
       ...createTaskDto,
       planId,
+      scheduledFor: new Date(createTaskDto.scheduledDate),
       scheduledDate: new Date(createTaskDto.scheduledDate),
-    });
+    } as any);
 
-    return await this.taskRepository.save(task);
+    return await this.taskRepository.save(task) as any;
   }
 }

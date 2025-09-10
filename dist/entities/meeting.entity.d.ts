@@ -1,5 +1,5 @@
-import { BaseEntity } from './base.entity';
 import { Administration } from './administration.entity';
+import { BaseEntity } from './base.entity';
 import { Building } from './building.entity';
 import { Resolution } from './resolution.entity';
 export declare enum MeetingStatus {
@@ -22,6 +22,7 @@ export declare class Meeting extends BaseEntity {
     title: string;
     description?: string;
     scheduledAt: Date;
+    scheduledDate: Date;
     location?: string;
     agenda?: Array<{
         order: number;

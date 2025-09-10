@@ -20,10 +20,12 @@ export declare enum PaymentStatus {
     REFUNDED = "REFUNDED"
 }
 export declare class Payment extends BaseEntity {
+    adminId: string;
     vendorInvoiceId: string;
     method: PaymentMethod;
     scheduledFor?: Date;
     paidAt?: Date;
+    paymentDate?: Date;
     amount: number;
     currency: string;
     status: PaymentStatus;

@@ -42,7 +42,7 @@ export class WorkOrdersService {
     }
 
     const workOrder = this.workOrderRepository.create(workOrderData);
-    return await this.workOrderRepository.save(workOrder);
+    return await this.workOrderRepository.save(workOrder) as any;
   }
 
   async findAll(user: RequestUser, paginationDto: PaginationDto): Promise<{
@@ -107,7 +107,7 @@ export class WorkOrdersService {
     }
 
     Object.assign(workOrder, updateData);
-    return await this.workOrderRepository.save(workOrder);
+    return await this.workOrderRepository.save(workOrder) as any;
   }
 
   async remove(id: string, user: RequestUser): Promise<void> {
@@ -134,7 +134,7 @@ export class WorkOrdersService {
       validUntil: new Date(createQuoteDto.validUntil),
     });
 
-    return await this.quoteRepository.save(quote);
+    return await this.quoteRepository.save(quote) as any;
   }
 
   // Schedule management
@@ -144,11 +144,13 @@ export class WorkOrdersService {
     const schedule = this.scheduleRepository.create({
       ...createScheduleDto,
       workOrderId,
+      start: new Date(createScheduleDto.startDate),
+      end: new Date(createScheduleDto.endDate),
       startDate: new Date(createScheduleDto.startDate),
       endDate: new Date(createScheduleDto.endDate),
     });
 
-    return await this.scheduleRepository.save(schedule);
+    return await this.scheduleRepository.save(schedule) as any;
   }
 
   // Material management
@@ -169,6 +171,6 @@ export class WorkOrdersService {
       workOrderId,
     });
 
-    return await this.workOrderMaterialRepository.save(material);
+    return await this.workOrderMaterialRepository.save(material) as any;
   }
 }

@@ -17,6 +17,7 @@ export declare enum InspectionRecommendation {
     FURTHER_INSPECTION = "FURTHER_INSPECTION"
 }
 export declare class Inspection extends BaseEntity {
+    adminId: string;
     ticketId: string;
     inspectorUserId: string;
     scheduledAt: Date;

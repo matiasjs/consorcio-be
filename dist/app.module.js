@@ -24,6 +24,7 @@ const jwt_config_1 = __importDefault(require("./config/jwt.config"));
 const redis_config_1 = __importDefault(require("./config/redis.config"));
 const administrations_module_1 = require("./modules/administrations/administrations.module");
 const assets_module_1 = require("./modules/assets/assets.module");
+const audit_logs_module_1 = require("./modules/audit-logs/audit-logs.module");
 const auth_module_1 = require("./modules/auth/auth.module");
 const buildings_module_1 = require("./modules/buildings/buildings.module");
 const documents_module_1 = require("./modules/documents/documents.module");
@@ -32,11 +33,14 @@ const invoices_module_1 = require("./modules/invoices/invoices.module");
 const materials_module_1 = require("./modules/materials/materials.module");
 const meetings_module_1 = require("./modules/meetings/meetings.module");
 const messages_module_1 = require("./modules/messages/messages.module");
+const notifications_module_1 = require("./modules/notifications/notifications.module");
 const payments_module_1 = require("./modules/payments/payments.module");
 const plans_module_1 = require("./modules/plans/plans.module");
 const resolutions_module_1 = require("./modules/resolutions/resolutions.module");
+const subscriptions_module_1 = require("./modules/subscriptions/subscriptions.module");
 const tickets_module_1 = require("./modules/tickets/tickets.module");
 const units_module_1 = require("./modules/units/units.module");
+const usage_metrics_module_1 = require("./modules/usage-metrics/usage-metrics.module");
 const users_module_1 = require("./modules/users/users.module");
 const vendors_module_1 = require("./modules/vendors/vendors.module");
 const workorders_module_1 = require("./modules/workorders/workorders.module");
@@ -84,6 +88,10 @@ exports.AppModule = AppModule = __decorate([
             documents_module_1.DocumentsModule,
             resolutions_module_1.ResolutionsModule,
             plans_module_1.PlansModule,
+            notifications_module_1.NotificationsModule,
+            subscriptions_module_1.SubscriptionsModule,
+            usage_metrics_module_1.UsageMetricsModule,
+            audit_logs_module_1.AuditLogsModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [

@@ -20,7 +20,7 @@ export class InspectionsService {
       scheduledAt: new Date(createInspectionDto.scheduledAt),
     });
 
-    return await this.inspectionRepository.save(inspection);
+    return await this.inspectionRepository.save(inspection) as any;
   }
 
   async findAll(user: RequestUser, paginationDto: PaginationDto): Promise<{
@@ -82,7 +82,7 @@ export class InspectionsService {
     }
 
     Object.assign(inspection, updateData);
-    return await this.inspectionRepository.save(inspection);
+    return await this.inspectionRepository.save(inspection) as any;
   }
 
   async remove(id: string, user: RequestUser): Promise<void> {

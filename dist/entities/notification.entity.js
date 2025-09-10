@@ -57,7 +57,16 @@ var NotificationPriority;
     NotificationPriority["EMERGENCY"] = "EMERGENCY";
 })(NotificationPriority || (exports.NotificationPriority = NotificationPriority = {}));
 let Notification = class Notification extends base_entity_1.BaseEntity {
+    adminId;
     userId;
+    targetUserId;
+    targetBuildingId;
+    sentByUserId;
+    relatedEntityId;
+    relatedEntityType;
+    isRead;
+    isHighPriority;
+    message;
     title;
     body;
     channel;
@@ -92,7 +101,43 @@ exports.Notification = Notification;
 __decorate([
     (0, typeorm_1.Column)({ type: 'uuid' }),
     __metadata("design:type", String)
+], Notification.prototype, "adminId", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'uuid', nullable: true }),
+    __metadata("design:type", String)
 ], Notification.prototype, "userId", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'uuid', nullable: true }),
+    __metadata("design:type", String)
+], Notification.prototype, "targetUserId", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'uuid', nullable: true }),
+    __metadata("design:type", String)
+], Notification.prototype, "targetBuildingId", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'uuid', nullable: true }),
+    __metadata("design:type", String)
+], Notification.prototype, "sentByUserId", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'uuid', nullable: true }),
+    __metadata("design:type", String)
+], Notification.prototype, "relatedEntityId", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 255, nullable: true }),
+    __metadata("design:type", String)
+], Notification.prototype, "relatedEntityType", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'boolean', default: false }),
+    __metadata("design:type", Boolean)
+], Notification.prototype, "isRead", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'boolean', default: false }),
+    __metadata("design:type", Boolean)
+], Notification.prototype, "isHighPriority", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 255, nullable: true }),
+    __metadata("design:type", String)
+], Notification.prototype, "message", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 255 }),
     __metadata("design:type", String)
@@ -227,6 +272,7 @@ __decorate([
 exports.Notification = Notification = __decorate([
     (0, typeorm_1.Entity)('notifications'),
     (0, typeorm_1.Index)(['userId']),
+    (0, typeorm_1.Index)(['adminId']),
     (0, typeorm_1.Index)(['channel']),
     (0, typeorm_1.Index)(['status']),
     (0, typeorm_1.Index)(['type']),

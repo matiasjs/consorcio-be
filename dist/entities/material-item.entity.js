@@ -43,6 +43,7 @@ var MaterialCategory;
     MaterialCategory["OTHER"] = "OTHER";
 })(MaterialCategory || (exports.MaterialCategory = MaterialCategory = {}));
 let MaterialItem = class MaterialItem extends base_entity_1.BaseEntity {
+    adminId;
     name;
     sku;
     unit;
@@ -64,6 +65,10 @@ let MaterialItem = class MaterialItem extends base_entity_1.BaseEntity {
     workOrderMaterials;
 };
 exports.MaterialItem = MaterialItem;
+__decorate([
+    (0, typeorm_1.Column)({ type: 'uuid' }),
+    __metadata("design:type", String)
+], MaterialItem.prototype, "adminId", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 255 }),
     __metadata("design:type", String)
@@ -149,6 +154,7 @@ __decorate([
 ], MaterialItem.prototype, "workOrderMaterials", void 0);
 exports.MaterialItem = MaterialItem = __decorate([
     (0, typeorm_1.Entity)('material_items'),
+    (0, typeorm_1.Index)(['adminId']),
     (0, typeorm_1.Index)(['name']),
     (0, typeorm_1.Index)(['sku']),
     (0, typeorm_1.Index)(['category'])

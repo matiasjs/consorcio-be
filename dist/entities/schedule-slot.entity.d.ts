@@ -17,6 +17,8 @@ export declare class ScheduleSlot extends BaseEntity {
     proposedBy: ProposedBy;
     start: Date;
     end: Date;
+    startDate: Date;
+    endDate: Date;
     status: ScheduleSlotStatus;
     notes?: string;
     rejectionReason?: string;

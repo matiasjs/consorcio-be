@@ -1,7 +1,7 @@
 import { BaseEntity } from './base.entity';
 import { Building } from './building.entity';
-import { Vendor } from './vendor.entity';
 import { MaintenancePlan } from './maintenance-plan.entity';
+import { Vendor } from './vendor.entity';
 export declare enum AssetType {
     ELEVATOR = "ELEVATOR",
     HVAC = "HVAC",
@@ -27,6 +27,7 @@ export declare enum AssetStatus {
     RETIRED = "RETIRED"
 }
 export declare class Asset extends BaseEntity {
+    adminId: string;
     buildingId: string;
     name: string;
     type: AssetType;

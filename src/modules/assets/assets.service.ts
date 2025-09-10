@@ -1,11 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Asset } from '../../entities/asset.entity';
-import { MaintenancePlan } from '../../entities/maintenance-plan.entity';
-import { CreateAssetDto, UpdateAssetDto, CreateMaintenancePlanDto } from './dto';
 import { PaginationDto } from '../../common/dto';
 import { RequestUser } from '../../common/interfaces';
+import { Asset } from '../../entities/asset.entity';
+import { MaintenancePlan } from '../../entities/maintenance-plan.entity';
+import { CreateAssetDto, CreateMaintenancePlanDto, UpdateAssetDto } from './dto';
 
 @Injectable()
 export class AssetsService {
@@ -14,7 +14,7 @@ export class AssetsService {
     private readonly assetRepository: Repository<Asset>,
     @InjectRepository(MaintenancePlan)
     private readonly maintenancePlanRepository: Repository<MaintenancePlan>,
-  ) {}
+  ) { }
 
   async create(createAssetDto: CreateAssetDto, user: RequestUser): Promise<Asset> {
     const assetData: any = {
@@ -30,7 +30,7 @@ export class AssetsService {
     }
 
     const asset = this.assetRepository.create(assetData);
-    return await this.assetRepository.save(asset);
+    return await this.assetRepository.save(asset) as any;
   }
 
   async findAll(user: RequestUser, paginationDto: PaginationDto): Promise<{
@@ -89,7 +89,7 @@ export class AssetsService {
     }
 
     Object.assign(asset, updateData);
-    return await this.assetRepository.save(asset);
+    return await this.assetRepository.save(asset) as any;
   }
 
   async remove(id: string, user: RequestUser): Promise<void> {
@@ -108,12 +108,12 @@ export class AssetsService {
 
   async createMaintenancePlan(assetId: string, createPlanDto: CreateMaintenancePlanDto, user: RequestUser): Promise<MaintenancePlan> {
     const asset = await this.findOne(assetId, user);
-    
+
     const plan = this.maintenancePlanRepository.create({
       ...createPlanDto,
       assetId,
-    });
+    } as any);
 
-    return await this.maintenancePlanRepository.save(plan);
+    return await this.maintenancePlanRepository.save(plan) as any;
   }
 }

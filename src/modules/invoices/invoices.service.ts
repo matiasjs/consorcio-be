@@ -22,7 +22,7 @@ export class InvoicesService {
     };
 
     const invoice = this.invoiceRepository.create(invoiceData);
-    return await this.invoiceRepository.save(invoice);
+    return await this.invoiceRepository.save(invoice) as any;
   }
 
   async findAll(user: RequestUser, paginationDto: PaginationDto): Promise<{
@@ -87,7 +87,7 @@ export class InvoicesService {
     }
 
     Object.assign(invoice, updateData);
-    return await this.invoiceRepository.save(invoice);
+    return await this.invoiceRepository.save(invoice) as any;
   }
 
   async remove(id: string, user: RequestUser): Promise<void> {

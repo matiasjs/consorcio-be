@@ -8,5 +8,7 @@ export declare enum UserRole {
     VENDOR = "VENDOR",
     OWNER = "OWNER",
     TENANT = "TENANT",
-    READONLY = "READONLY"
+    READONLY = "READONLY",
+    MAINTENANCE = "MAINTENANCE",
+    ACCOUNTANT = "ACCOUNTANT"
 }

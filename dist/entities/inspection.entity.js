@@ -32,6 +32,7 @@ var InspectionRecommendation;
     InspectionRecommendation["FURTHER_INSPECTION"] = "FURTHER_INSPECTION";
 })(InspectionRecommendation || (exports.InspectionRecommendation = InspectionRecommendation = {}));
 let Inspection = class Inspection extends base_entity_1.BaseEntity {
+    adminId;
     ticketId;
     inspectorUserId;
     scheduledAt;
@@ -52,6 +53,10 @@ let Inspection = class Inspection extends base_entity_1.BaseEntity {
     inspector;
 };
 exports.Inspection = Inspection;
+__decorate([
+    (0, typeorm_1.Column)({ type: 'uuid' }),
+    __metadata("design:type", String)
+], Inspection.prototype, "adminId", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'uuid' }),
     __metadata("design:type", String)
@@ -136,6 +141,7 @@ __decorate([
 ], Inspection.prototype, "inspector", void 0);
 exports.Inspection = Inspection = __decorate([
     (0, typeorm_1.Entity)('inspections'),
+    (0, typeorm_1.Index)(['adminId']),
     (0, typeorm_1.Index)(['ticketId']),
     (0, typeorm_1.Index)(['inspectorUserId']),
     (0, typeorm_1.Index)(['scheduledAt']),

@@ -40,7 +40,16 @@ export declare enum NotificationPriority {
     EMERGENCY = "EMERGENCY"
 }
 export declare class Notification extends BaseEntity {
-    userId: string;
+    adminId: string;
+    userId?: string;
+    targetUserId?: string;
+    targetBuildingId?: string;
+    sentByUserId?: string;
+    relatedEntityId?: string;
+    relatedEntityType?: string;
+    isRead: boolean;
+    isHighPriority: boolean;
+    message?: string;
     title: string;
     body: string;
     channel: NotificationChannel;

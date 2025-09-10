@@ -32,6 +32,8 @@ let ScheduleSlot = class ScheduleSlot extends base_entity_1.BaseEntity {
     proposedBy;
     start;
     end;
+    startDate;
+    endDate;
     status;
     notes;
     rejectionReason;
@@ -63,6 +65,14 @@ __decorate([
     (0, typeorm_1.Column)({ type: 'timestamp' }),
     __metadata("design:type", Date)
 ], ScheduleSlot.prototype, "end", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'date' }),
+    __metadata("design:type", Date)
+], ScheduleSlot.prototype, "startDate", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'date' }),
+    __metadata("design:type", Date)
+], ScheduleSlot.prototype, "endDate", void 0);
 __decorate([
     (0, typeorm_1.Column)({
         type: 'enum',

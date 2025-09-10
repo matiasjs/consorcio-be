@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { MaintenancePlan } from './maintenance-plan.entity';
 import { User } from './user.entity';
@@ -36,6 +36,9 @@ export class MaintenanceTask extends BaseEntity {
 
   @Column({ type: 'timestamp' })
   scheduledFor: Date;
+
+  @Column({ type: 'date' })
+  scheduledDate: Date;
 
   @Column({
     type: 'enum',

@@ -1,5 +1,5 @@
-import { BaseEntity } from './base.entity';
 import { Administration } from './administration.entity';
+import { BaseEntity } from './base.entity';
 import { Building } from './building.entity';
 import { Unit } from './unit.entity';
 import { User } from './user.entity';
@@ -35,6 +35,7 @@ export declare class Document extends BaseEntity {
     type: DocumentType;
     title: string;
     description?: string;
+    category?: string;
     fileUrl: string;
     filename: string;
     mimeType: string;

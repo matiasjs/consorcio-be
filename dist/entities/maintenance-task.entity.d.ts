@@ -19,6 +19,7 @@ export declare class MaintenanceTask extends BaseEntity {
     title: string;
     description?: string;
     scheduledFor: Date;
+    scheduledDate: Date;
     status: TaskStatus;
     performedByType?: PerformedByType;
     performedByUserId?: string;

@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Resolution } from './resolution.entity';
 import { Unit } from './unit.entity';
@@ -31,6 +31,9 @@ export class Vote extends BaseEntity {
 
   @Column({ type: 'uuid', nullable: true })
   voterUserId?: string; // Who cast the vote (could be proxy)
+
+  @Column({ type: 'uuid' })
+  userId: string; // User who owns the vote
 
   @Column({
     type: 'enum',

@@ -13,5 +13,7 @@ var UserRole;
     UserRole["OWNER"] = "OWNER";
     UserRole["TENANT"] = "TENANT";
     UserRole["READONLY"] = "READONLY";
+    UserRole["MAINTENANCE"] = "MAINTENANCE";
+    UserRole["ACCOUNTANT"] = "ACCOUNTANT";
 })(UserRole || (exports.UserRole = UserRole = {}));
 //# sourceMappingURL=user-role.enum.js.map

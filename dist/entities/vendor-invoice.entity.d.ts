@@ -1,7 +1,7 @@
 import { BaseEntity } from './base.entity';
-import { WorkOrder } from './work-order.entity';
-import { Vendor } from './vendor.entity';
 import { Payment } from './payment.entity';
+import { Vendor } from './vendor.entity';
+import { WorkOrder } from './work-order.entity';
 export declare enum InvoiceStatus {
     DRAFT = "DRAFT",
     SUBMITTED = "SUBMITTED",
@@ -14,6 +14,7 @@ export declare enum InvoiceStatus {
     CANCELLED = "CANCELLED"
 }
 export declare class VendorInvoice extends BaseEntity {
+    adminId: string;
     workOrderId: string;
     vendorId: string;
     number: string;

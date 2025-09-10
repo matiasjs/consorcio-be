@@ -1,6 +1,6 @@
-import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
-import { BaseEntity } from './base.entity';
+import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { Administration } from './administration.entity';
+import { BaseEntity } from './base.entity';
 import { Building } from './building.entity';
 import { Unit } from './unit.entity';
 import { User } from './user.entity';
@@ -60,6 +60,9 @@ export class Document extends BaseEntity {
 
   @Column({ type: 'text', nullable: true })
   description?: string;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  category?: string;
 
   @Column({ type: 'varchar', length: 500 })
   fileUrl: string;

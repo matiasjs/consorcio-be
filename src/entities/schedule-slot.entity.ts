@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { WorkOrder } from './work-order.entity';
 
@@ -35,6 +35,12 @@ export class ScheduleSlot extends BaseEntity {
 
   @Column({ type: 'timestamp' })
   end: Date;
+
+  @Column({ type: 'date' })
+  startDate: Date;
+
+  @Column({ type: 'date' })
+  endDate: Date;
 
   @Column({
     type: 'enum',

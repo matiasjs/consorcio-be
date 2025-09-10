@@ -35,10 +35,12 @@ var PaymentStatus;
     PaymentStatus["REFUNDED"] = "REFUNDED";
 })(PaymentStatus || (exports.PaymentStatus = PaymentStatus = {}));
 let Payment = class Payment extends base_entity_1.BaseEntity {
+    adminId;
     vendorInvoiceId;
     method;
     scheduledFor;
     paidAt;
+    paymentDate;
     amount;
     currency;
     status;
@@ -62,6 +64,10 @@ exports.Payment = Payment;
 __decorate([
     (0, typeorm_1.Column)({ type: 'uuid' }),
     __metadata("design:type", String)
+], Payment.prototype, "adminId", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'uuid' }),
+    __metadata("design:type", String)
 ], Payment.prototype, "vendorInvoiceId", void 0);
 __decorate([
     (0, typeorm_1.Column)({
@@ -78,6 +84,10 @@ __decorate([
     (0, typeorm_1.Column)({ type: 'timestamp', nullable: true }),
     __metadata("design:type", Date)
 ], Payment.prototype, "paidAt", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'date', nullable: true }),
+    __metadata("design:type", Date)
+], Payment.prototype, "paymentDate", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'decimal', precision: 10, scale: 2 }),
     __metadata("design:type", Number)
@@ -157,6 +167,7 @@ __decorate([
 ], Payment.prototype, "vendorInvoice", void 0);
 exports.Payment = Payment = __decorate([
     (0, typeorm_1.Entity)('payments'),
+    (0, typeorm_1.Index)(['adminId']),
     (0, typeorm_1.Index)(['vendorInvoiceId']),
     (0, typeorm_1.Index)(['status']),
     (0, typeorm_1.Index)(['scheduledFor']),

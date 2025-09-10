@@ -1,25 +1,25 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { MaterialItem } from '../../entities/material-item.entity';
-import { CreateMaterialDto, UpdateMaterialDto } from './dto';
 import { PaginationDto } from '../../common/dto';
 import { RequestUser } from '../../common/interfaces';
+import { MaterialItem } from '../../entities/material-item.entity';
+import { CreateMaterialDto, UpdateMaterialDto } from './dto';
 
 @Injectable()
 export class MaterialsService {
   constructor(
     @InjectRepository(MaterialItem)
     private readonly materialRepository: Repository<MaterialItem>,
-  ) {}
+  ) { }
 
   async create(createMaterialDto: CreateMaterialDto, user: RequestUser): Promise<MaterialItem> {
     const material = this.materialRepository.create({
       ...createMaterialDto,
       adminId: user.adminId,
-    });
+    } as any);
 
-    return await this.materialRepository.save(material);
+    return await this.materialRepository.save(material) as any;
   }
 
   async findAll(user: RequestUser, paginationDto: PaginationDto): Promise<{
@@ -73,7 +73,7 @@ export class MaterialsService {
     const material = await this.findOne(id, user);
 
     Object.assign(material, updateMaterialDto);
-    return await this.materialRepository.save(material);
+    return await this.materialRepository.save(material) as any;
   }
 
   async remove(id: string, user: RequestUser): Promise<void> {
@@ -83,9 +83,9 @@ export class MaterialsService {
 
   async findByCategory(category: string, user: RequestUser): Promise<MaterialItem[]> {
     return await this.materialRepository.find({
-      where: { 
+      where: {
         adminId: user.adminId,
-        category,
+        category: category as any,
       },
       order: { name: 'ASC' },
     });

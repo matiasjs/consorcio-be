@@ -11,8 +11,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Meeting = exports.MeetingType = exports.MeetingStatus = void 0;
 const typeorm_1 = require("typeorm");
-const base_entity_1 = require("./base.entity");
 const administration_entity_1 = require("./administration.entity");
+const base_entity_1 = require("./base.entity");
 const building_entity_1 = require("./building.entity");
 const resolution_entity_1 = require("./resolution.entity");
 var MeetingStatus;
@@ -37,6 +37,7 @@ let Meeting = class Meeting extends base_entity_1.BaseEntity {
     title;
     description;
     scheduledAt;
+    scheduledDate;
     location;
     agenda;
     documents;
@@ -82,6 +83,10 @@ __decorate([
     (0, typeorm_1.Column)({ type: 'timestamp' }),
     __metadata("design:type", Date)
 ], Meeting.prototype, "scheduledAt", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'date' }),
+    __metadata("design:type", Date)
+], Meeting.prototype, "scheduledDate", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 255, nullable: true }),
     __metadata("design:type", String)

@@ -1,11 +1,11 @@
 import { BaseEntity } from './base.entity';
-import { Ticket } from './ticket.entity';
-import { Vendor } from './vendor.entity';
-import { User } from './user.entity';
 import { Quote } from './quote.entity';
 import { ScheduleSlot } from './schedule-slot.entity';
-import { WorkOrderMaterial } from './work-order-material.entity';
+import { Ticket } from './ticket.entity';
+import { User } from './user.entity';
 import { VendorInvoice } from './vendor-invoice.entity';
+import { Vendor } from './vendor.entity';
+import { WorkOrderMaterial } from './work-order-material.entity';
 export declare enum WorkOrderStatus {
     DRAFT = "DRAFT",
     PENDING_QUOTE = "PENDING_QUOTE",
@@ -19,6 +19,7 @@ export declare enum WorkOrderStatus {
     ON_HOLD = "ON_HOLD"
 }
 export declare class WorkOrder extends BaseEntity {
+    adminId: string;
     ticketId: string;
     vendorId: string;
     assignedByUserId: string;
