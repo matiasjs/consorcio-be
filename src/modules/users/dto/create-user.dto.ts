@@ -1,15 +1,15 @@
-import { IsEmail, IsString, IsArray, IsEnum, IsOptional, MinLength } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { UserRole } from '../../../common/enums/user-role.enum';
+import { IsArray, IsEmail, IsOptional, IsString, IsUUID, MinLength } from 'class-validator';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'john.doe@example.com' })
   @IsEmail()
   email: string;
 
-  @ApiProperty({ example: '+5491123456789' })
+  @ApiProperty({ example: '+5491123456789', required: false })
+  @IsOptional()
   @IsString()
-  phone: string;
+  phone?: string;
 
   @ApiProperty({ example: 'securePassword123' })
   @IsString()
@@ -20,14 +20,16 @@ export class CreateUserDto {
   @IsString()
   fullName: string;
 
-  @ApiProperty({ 
-    example: [UserRole.OWNER], 
-    enum: UserRole, 
-    isArray: true 
+  @ApiProperty({
+    example: ['role-uuid-1', 'role-uuid-2'],
+    description: 'Array of role IDs to assign to the user',
+    isArray: true,
+    required: false
   })
+  @IsOptional()
   @IsArray()
-  @IsEnum(UserRole, { each: true })
-  roles: UserRole[];
+  @IsUUID('4', { each: true })
+  roleIds?: string[];
 
   @ApiProperty({ example: 'active', required: false })
   @IsOptional()

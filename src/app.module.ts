@@ -5,7 +5,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { JwtAuthGuard, RolesGuard, TenantGuard } from './common/guards';
+import { JwtAuthGuard, PermissionsGuard, TenantGuard } from './common/guards';
 import appConfig from './config/app.config';
 import { getDatabaseConfig } from './config/database.config';
 import jwtConfig from './config/jwt.config';
@@ -94,7 +94,7 @@ import { WorkOrdersModule } from './modules/workorders/workorders.module';
     },
     {
       provide: APP_GUARD,
-      useClass: RolesGuard,
+      useClass: PermissionsGuard,
     },
     {
       provide: APP_GUARD,

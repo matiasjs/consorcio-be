@@ -16,7 +16,7 @@ Sistema completo de gestión para administraciones de consorcios que incluye:
 - **🎫 Sistema de tickets/reclamos**
 - **🔧 Gestión de proveedores y mantenimiento**
 - **📱 API REST con documentación Swagger**
-- **🔐 Autenticación JWT con roles**
+- **🔐 Sistema RBAC con permisos granulares**
 - **📊 Sistema de mensajería interno**
 
 ## 🚀 Tecnologías
@@ -31,21 +31,58 @@ Sistema completo de gestión para administraciones de consorcios que incluye:
 
 ## 📊 Estado del Proyecto
 
-### ✅ Implementado (39 endpoints)
-- **Autenticación** (3 endpoints)
-- **Administraciones** (5 endpoints)
-- **Usuarios** (5 endpoints)
-- **Edificios** (5 endpoints)
-- **Unidades** (7 endpoints)
-- **Proveedores** (9 endpoints)
-- **Tickets** (7 endpoints)
-- **Mensajes** (4 endpoints)
+### ✅ **COMPLETADO - 109/109 endpoints (100%)**
 
-### 📋 Pendiente (70 endpoints)
-- Inspecciones, WorkOrders, Materiales
-- Facturas, Pagos, Assets
-- Reuniones, Documentos, Notificaciones
-- Métricas y Auditoría
+**Core Modules:**
+- **Autenticación + RBAC** (12 endpoints): Login, refresh, me, roles, permissions, user-roles
+- **Administraciones** (5 endpoints): CRUD completo
+- **Usuarios** (5 endpoints): CRUD completo
+- **Edificios** (5 endpoints): CRUD completo
+- **Unidades** (7 endpoints): CRUD + occupancy
+- **Proveedores** (9 endpoints): CRUD + availability
+- **Tickets** (7 endpoints): CRUD + stats + inspector
+- **Mensajes** (4 endpoints): Sistema de mensajería
+
+**Business Modules:**
+- **Inspecciones** (5 endpoints): Gestión completa
+- **WorkOrders** (10 endpoints): Cotizaciones + programación
+- **Materiales** (5 endpoints): Inventario
+- **Facturas** (5 endpoints): Gestión de facturas
+- **Pagos** (5 endpoints): Procesamiento de pagos
+- **Assets** (7 endpoints): Gestión de activos
+- **Reuniones** (7 endpoints): Reuniones + resoluciones
+- **Documentos** (5 endpoints): Gestión documental
+
+**System Modules:**
+- **Notificaciones** (9 endpoints): Sistema completo
+- **Suscripciones** (7 endpoints): Gestión de planes
+- **Métricas** (8 endpoints): Estadísticas de uso
+- **Auditoría** (10 endpoints): Logs del sistema
+
+## 🔐 Sistema RBAC
+
+### Roles Predefinidos
+- **admin**: Acceso completo al sistema
+- **secretaria**: Gestión operativa (edificios, unidades, tickets, proveedores)
+- **owner**: Lectura de facturación y órdenes de trabajo propias
+- **tenant**: Lectura de facturación y órdenes de trabajo propias
+- **provider**: Gestión de órdenes de trabajo asignadas
+
+### Permisos Granulares
+- `allUsers`, `readUsers` - Gestión de usuarios
+- `manageBuildings`, `manageUnits`, `managePeople` - Gestión inmobiliaria
+- `readBilling`, `manageBilling` - Sistema financiero
+- `createWorkOrder`, `updateWorkOrder`, `readWorkOrder`, `closeWorkOrder` - Órdenes de trabajo
+- `manageVendors`, `manageDocuments`, `manageNotifications` - Gestión operativa
+- `readAuditLogs` - Auditoría del sistema
+
+### Usuarios de Prueba
+```
+admin@local / Admin123! (admin)
+secretaria@demo.com / Admin123! (secretaria)
+owner@demo.com / Admin123! (owner)
+tenant@demo.com / Admin123! (tenant)
+```
 
 ## 🛠️ Instalación y Desarrollo
 
@@ -79,7 +116,20 @@ cp .env.example .env
 docker-compose up -d postgres redis
 ```
 
-5. **Ejecutar la aplicación**
+5. **Configurar base de datos**
+```bash
+# Reset completo (desarrollo)
+npm run db:drop
+npm run db:create
+npm run db:migrate
+npm run db:seed
+
+# Solo migraciones (producción)
+npm run migration:run
+npm run db:seed
+```
+
+6. **Ejecutar la aplicación**
 ```bash
 # Desarrollo
 npm run start:dev

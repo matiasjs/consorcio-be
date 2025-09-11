@@ -1,10 +1,9 @@
-import { UserRole } from '../enums';
-
 export interface JwtPayload {
   sub: string; // user id
   email: string;
   adminId: string;
-  roles: UserRole[];
+  roles: string[];
+  permissions: string[];
   iat?: number;
   exp?: number;
 }
