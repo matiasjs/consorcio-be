@@ -1,5 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsUUID, IsOptional, IsEnum, IsNumber, IsDateString } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsUUID,
+  IsOptional,
+  IsEnum,
+  IsNumber,
+  IsDateString,
+} from 'class-validator';
 
 export enum AssetStatus {
   ACTIVE = 'ACTIVE',
@@ -24,27 +32,45 @@ export class CreateAssetDto {
   @IsString()
   category: string;
 
-  @ApiProperty({ description: 'Asset location', example: 'Building A - Floor 1' })
+  @ApiProperty({
+    description: 'Asset location',
+    example: 'Building A - Floor 1',
+  })
   @IsNotEmpty()
   @IsString()
   location: string;
 
-  @ApiProperty({ description: 'Building ID', example: '123e4567-e89b-12d3-a456-426614174000' })
+  @ApiProperty({
+    description: 'Building ID',
+    example: '123e4567-e89b-12d3-a456-426614174000',
+  })
   @IsNotEmpty()
   @IsUUID()
   buildingId: string;
 
-  @ApiProperty({ description: 'Asset status', enum: AssetStatus, example: AssetStatus.ACTIVE })
+  @ApiProperty({
+    description: 'Asset status',
+    enum: AssetStatus,
+    example: AssetStatus.ACTIVE,
+  })
   @IsOptional()
   @IsEnum(AssetStatus)
   status?: AssetStatus;
 
-  @ApiProperty({ description: 'Purchase date', example: '2020-01-15T00:00:00Z', required: false })
+  @ApiProperty({
+    description: 'Purchase date',
+    example: '2020-01-15T00:00:00Z',
+    required: false,
+  })
   @IsOptional()
   @IsDateString()
   purchaseDate?: string;
 
-  @ApiProperty({ description: 'Purchase cost', example: 50000.00, required: false })
+  @ApiProperty({
+    description: 'Purchase cost',
+    example: 50000.0,
+    required: false,
+  })
   @IsOptional()
   @IsNumber({ maxDecimalPlaces: 2 })
   purchaseCost?: number;
@@ -54,17 +80,29 @@ export class CreateAssetDto {
   @IsDateString()
   warrantyExpiryDate?: string;
 
-  @ApiProperty({ description: 'Manufacturer', example: 'OTIS', required: false })
+  @ApiProperty({
+    description: 'Manufacturer',
+    example: 'OTIS',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   manufacturer?: string;
 
-  @ApiProperty({ description: 'Model number', example: 'GEN2-MR', required: false })
+  @ApiProperty({
+    description: 'Model number',
+    example: 'GEN2-MR',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   model?: string;
 
-  @ApiProperty({ description: 'Serial number', example: 'SN123456789', required: false })
+  @ApiProperty({
+    description: 'Serial number',
+    example: 'SN123456789',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   serialNumber?: string;

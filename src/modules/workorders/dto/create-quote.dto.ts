@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsUUID, IsOptional, IsNumber, IsDateString } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsUUID,
+  IsOptional,
+  IsNumber,
+  IsDateString,
+} from 'class-validator';
 
 export class CreateQuoteDto {
   @ApiProperty({
@@ -12,7 +19,7 @@ export class CreateQuoteDto {
 
   @ApiProperty({
     description: 'Quote amount',
-    example: 1500.00,
+    example: 1500.0,
   })
   @IsNotEmpty()
   @IsNumber({ maxDecimalPlaces: 2 })

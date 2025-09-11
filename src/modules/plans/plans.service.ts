@@ -13,7 +13,7 @@ export class PlansService {
     private readonly planRepository: Repository<MaintenancePlan>,
     @InjectRepository(MaintenanceTask)
     private readonly taskRepository: Repository<MaintenanceTask>,
-  ) { }
+  ) {}
 
   async findPlan(id: string, user: RequestUser): Promise<MaintenancePlan> {
     const plan = await this.planRepository.findOne({
@@ -33,7 +33,10 @@ export class PlansService {
     return plan;
   }
 
-  async getTasks(planId: string, user: RequestUser): Promise<MaintenanceTask[]> {
+  async getTasks(
+    planId: string,
+    user: RequestUser,
+  ): Promise<MaintenanceTask[]> {
     const plan = await this.findPlan(planId, user);
 
     return await this.taskRepository.find({
@@ -42,7 +45,11 @@ export class PlansService {
     });
   }
 
-  async createTask(planId: string, createTaskDto: CreateMaintenanceTaskDto, user: RequestUser): Promise<MaintenanceTask> {
+  async createTask(
+    planId: string,
+    createTaskDto: CreateMaintenanceTaskDto,
+    user: RequestUser,
+  ): Promise<MaintenanceTask> {
     const plan = await this.findPlan(planId, user);
 
     const task = this.taskRepository.create({
@@ -52,6 +59,6 @@ export class PlansService {
       scheduledDate: new Date(createTaskDto.scheduledDate),
     } as any);
 
-    return await this.taskRepository.save(task) as any;
+    return (await this.taskRepository.save(task)) as any;
   }
 }

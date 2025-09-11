@@ -19,7 +19,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CurrentUser, Permissions } from '../../common/decorators';
-import { JwtAuthGuard, PermissionsGuard, TenantGuard } from '../../common/guards';
+import {
+  JwtAuthGuard,
+  PermissionsGuard,
+  TenantGuard,
+} from '../../common/guards';
 import type { RequestUser } from '../../common/interfaces';
 import { TicketStatus } from '../../entities/ticket.entity';
 import { AssignInspectorDto, CreateTicketDto, UpdateTicketDto } from './dto';
@@ -30,7 +34,7 @@ import { TicketsService } from './tickets.service';
 @UseGuards(JwtAuthGuard, PermissionsGuard, TenantGuard)
 @Controller({ path: 'tickets', version: '1' })
 export class TicketsController {
-  constructor(private readonly ticketsService: TicketsService) { }
+  constructor(private readonly ticketsService: TicketsService) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new ticket' })
@@ -72,7 +76,10 @@ export class TicketsController {
 
   @Get('stats')
   @ApiOperation({ summary: 'Get ticket statistics by status' })
-  @ApiResponse({ status: 200, description: 'Statistics retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Statistics retrieved successfully',
+  })
   @Permissions('readWorkOrder')
   getStats(@CurrentUser() user: RequestUser) {
     return this.ticketsService.getTicketsByStatus(user.adminId);
@@ -125,6 +132,10 @@ export class TicketsController {
     @Body() assignInspectorDto: AssignInspectorDto,
     @CurrentUser() user: RequestUser,
   ) {
-    return this.ticketsService.assignInspector(id, assignInspectorDto, user.adminId);
+    return this.ticketsService.assignInspector(
+      id,
+      assignInspectorDto,
+      user.adminId,
+    );
   }
 }

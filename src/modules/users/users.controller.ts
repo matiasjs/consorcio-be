@@ -16,7 +16,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CurrentUser, Permissions } from '../../common/decorators';
-import { JwtAuthGuard, PermissionsGuard, TenantGuard } from '../../common/guards';
+import {
+  JwtAuthGuard,
+  PermissionsGuard,
+  TenantGuard,
+} from '../../common/guards';
 import type { RequestUser } from '../../common/interfaces';
 import { CreateUserDto, UpdateUserDto } from './dto';
 import { UsersService } from './users.service';
@@ -26,7 +30,7 @@ import { UsersService } from './users.service';
 @UseGuards(JwtAuthGuard, TenantGuard, PermissionsGuard)
 @Controller({ path: 'users', version: '1' })
 export class UsersController {
-  constructor(private readonly usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService) {}
 
   @Post()
   @Permissions('allUsers')

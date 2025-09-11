@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Administration } from '../../entities/administration.entity';
@@ -12,14 +16,18 @@ export class AdministrationsService {
     private administrationRepository: Repository<Administration>,
   ) {}
 
-  async create(createAdministrationDto: CreateAdministrationDto): Promise<Administration> {
+  async create(
+    createAdministrationDto: CreateAdministrationDto,
+  ): Promise<Administration> {
     // Check if CUIT already exists
     const existingByCuit = await this.administrationRepository.findOne({
       where: { cuit: createAdministrationDto.cuit },
     });
 
     if (existingByCuit) {
-      throw new ConflictException('Administration with this CUIT already exists');
+      throw new ConflictException(
+        'Administration with this CUIT already exists',
+      );
     }
 
     // Check if email already exists
@@ -28,18 +36,25 @@ export class AdministrationsService {
     });
 
     if (existingByEmail) {
-      throw new ConflictException('Administration with this email already exists');
+      throw new ConflictException(
+        'Administration with this email already exists',
+      );
     }
 
-    const administration = this.administrationRepository.create(createAdministrationDto);
+    const administration = this.administrationRepository.create(
+      createAdministrationDto,
+    );
     return this.administrationRepository.save(administration);
   }
 
-  async findAll(paginationDto: PaginationDto): Promise<PaginatedResponseDto<Administration>> {
+  async findAll(
+    paginationDto: PaginationDto,
+  ): Promise<PaginatedResponseDto<Administration>> {
     const { page = 1, limit = 20, sort } = paginationDto;
     const skip = (page - 1) * limit;
 
-    const queryBuilder = this.administrationRepository.createQueryBuilder('administration');
+    const queryBuilder =
+      this.administrationRepository.createQueryBuilder('administration');
 
     // Apply sorting
     if (sort) {
@@ -48,7 +63,7 @@ export class AdministrationsService {
         const isDescending = field.startsWith('-');
         const fieldName = isDescending ? field.substring(1) : field;
         const direction = isDescending ? 'DESC' : 'ASC';
-        
+
         if (index === 0) {
           queryBuilder.orderBy(`administration.${fieldName}`, direction);
         } else {
@@ -92,17 +107,25 @@ export class AdministrationsService {
     return administration;
   }
 
-  async update(id: string, updateAdministrationDto: UpdateAdministrationDto): Promise<Administration> {
+  async update(
+    id: string,
+    updateAdministrationDto: UpdateAdministrationDto,
+  ): Promise<Administration> {
     const administration = await this.findOne(id);
 
     // Check if email already exists (if being updated)
-    if (updateAdministrationDto.email && updateAdministrationDto.email !== administration.email) {
+    if (
+      updateAdministrationDto.email &&
+      updateAdministrationDto.email !== administration.email
+    ) {
       const existingByEmail = await this.administrationRepository.findOne({
         where: { email: updateAdministrationDto.email },
       });
 
       if (existingByEmail) {
-        throw new ConflictException('Administration with this email already exists');
+        throw new ConflictException(
+          'Administration with this email already exists',
+        );
       }
     }
 

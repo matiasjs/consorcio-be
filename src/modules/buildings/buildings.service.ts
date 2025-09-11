@@ -11,7 +11,10 @@ export class BuildingsService {
     private readonly buildingRepository: Repository<Building>,
   ) {}
 
-  async create(createBuildingDto: CreateBuildingDto, adminId: string): Promise<Building> {
+  async create(
+    createBuildingDto: CreateBuildingDto,
+    adminId: string,
+  ): Promise<Building> {
     const building = this.buildingRepository.create({
       ...createBuildingDto,
       adminId,
@@ -40,7 +43,11 @@ export class BuildingsService {
     return building;
   }
 
-  async update(id: string, updateBuildingDto: UpdateBuildingDto, adminId: string): Promise<Building> {
+  async update(
+    id: string,
+    updateBuildingDto: UpdateBuildingDto,
+    adminId: string,
+  ): Promise<Building> {
     const building = await this.findOne(id, adminId);
     Object.assign(building, updateBuildingDto);
     return this.buildingRepository.save(building);

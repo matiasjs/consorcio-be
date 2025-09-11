@@ -1,5 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsUUID, IsOptional, IsEnum, IsNumber, IsDateString } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsUUID,
+  IsOptional,
+  IsEnum,
+  IsNumber,
+  IsDateString,
+} from 'class-validator';
 
 export enum WorkOrderStatus {
   PENDING = 'PENDING',
@@ -70,7 +78,7 @@ export class CreateWorkOrderDto {
 
   @ApiProperty({
     description: 'Estimated cost of the work',
-    example: 1500.00,
+    example: 1500.0,
     required: false,
   })
   @IsOptional()
@@ -79,7 +87,7 @@ export class CreateWorkOrderDto {
 
   @ApiProperty({
     description: 'Actual cost of the work',
-    example: 1650.00,
+    example: 1650.0,
     required: false,
   })
   @IsOptional()

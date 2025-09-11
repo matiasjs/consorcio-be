@@ -7,7 +7,12 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CurrentUser, Permissions } from '../../../common/decorators';
 import { JwtAuthGuard, PermissionsGuard } from '../../../common/guards';
 import type { RequestUser } from '../../../common/interfaces';
@@ -19,7 +24,7 @@ import { UserRolesService } from '../services/user-roles.service';
 @Controller({ path: 'auth/users', version: '1' })
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 export class UserRolesController {
-  constructor(private readonly userRolesService: UserRolesService) { }
+  constructor(private readonly userRolesService: UserRolesService) {}
 
   @Post(':id/roles')
   @Permissions('allUsers')
@@ -37,7 +42,10 @@ export class UserRolesController {
   @Get(':id/roles')
   @Permissions('readUsers')
   @ApiOperation({ summary: 'Get user with roles and permissions' })
-  @ApiResponse({ status: 200, description: 'User roles retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'User roles retrieved successfully',
+  })
   @ApiResponse({ status: 404, description: 'User not found' })
   getUserRoles(
     @Param('id', ParseUUIDPipe) id: string,

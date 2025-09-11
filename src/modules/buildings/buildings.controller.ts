@@ -16,7 +16,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CurrentUser, Permissions } from '../../common/decorators';
-import { JwtAuthGuard, PermissionsGuard, TenantGuard } from '../../common/guards';
+import {
+  JwtAuthGuard,
+  PermissionsGuard,
+  TenantGuard,
+} from '../../common/guards';
 import type { RequestUser } from '../../common/interfaces';
 import { BuildingsService } from './buildings.service';
 import { CreateBuildingDto, UpdateBuildingDto } from './dto';
@@ -26,7 +30,7 @@ import { CreateBuildingDto, UpdateBuildingDto } from './dto';
 @UseGuards(JwtAuthGuard, TenantGuard, PermissionsGuard)
 @Controller({ path: 'buildings', version: '1' })
 export class BuildingsController {
-  constructor(private readonly buildingsService: BuildingsService) { }
+  constructor(private readonly buildingsService: BuildingsService) {}
 
   @Post()
   @Permissions('manageBuildings')
@@ -67,7 +71,11 @@ export class BuildingsController {
     @Body() updateBuildingDto: UpdateBuildingDto,
     @CurrentUser() currentUser: RequestUser,
   ) {
-    return this.buildingsService.update(id, updateBuildingDto, currentUser.adminId);
+    return this.buildingsService.update(
+      id,
+      updateBuildingDto,
+      currentUser.adminId,
+    );
   }
 
   @Delete(':id')

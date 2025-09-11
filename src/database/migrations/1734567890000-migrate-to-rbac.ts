@@ -80,20 +80,40 @@ export class MigrateToRBAC1734567890000 implements MigrationInterface {
     `);
 
     // Add indexes
-    await queryRunner.query(`CREATE INDEX "IDX_permissions_code" ON "permissions" ("code")`);
-    await queryRunner.query(`CREATE INDEX "IDX_roles_name" ON "roles" ("name")`);
-    await queryRunner.query(`CREATE INDEX "IDX_user_roles_userId" ON "user_roles" ("userId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_user_roles_roleId" ON "user_roles" ("roleId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_role_permissions_roleId" ON "role_permissions" ("roleId")`);
-    await queryRunner.query(`CREATE INDEX "IDX_role_permissions_permissionId" ON "role_permissions" ("permissionId")`);
+    await queryRunner.query(
+      `CREATE INDEX "IDX_permissions_code" ON "permissions" ("code")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_roles_name" ON "roles" ("name")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_user_roles_userId" ON "user_roles" ("userId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_user_roles_roleId" ON "user_roles" ("roleId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_role_permissions_roleId" ON "role_permissions" ("roleId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "IDX_role_permissions_permissionId" ON "role_permissions" ("permissionId")`,
+    );
 
     // Add profile fields to users table (moved from profile entities)
     await queryRunner.query(`ALTER TABLE "users" ADD "notes" text`);
-    await queryRunner.query(`ALTER TABLE "users" ADD "documentType" character varying(50)`);
-    await queryRunner.query(`ALTER TABLE "users" ADD "documentNumber" character varying(50)`);
+    await queryRunner.query(
+      `ALTER TABLE "users" ADD "documentType" character varying(50)`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "users" ADD "documentNumber" character varying(50)`,
+    );
     await queryRunner.query(`ALTER TABLE "users" ADD "birthDate" date`);
-    await queryRunner.query(`ALTER TABLE "users" ADD "emergencyContact" character varying(255)`);
-    await queryRunner.query(`ALTER TABLE "users" ADD "emergencyPhone" character varying(50)`);
+    await queryRunner.query(
+      `ALTER TABLE "users" ADD "emergencyContact" character varying(255)`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "users" ADD "emergencyPhone" character varying(50)`,
+    );
 
     // Remove roles column from users table (replaced by user_roles table)
     await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "roles"`);
@@ -175,7 +195,9 @@ export class MigrateToRBAC1734567890000 implements MigrationInterface {
     await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "documentType"`);
     await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "documentNumber"`);
     await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "birthDate"`);
-    await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "emergencyContact"`);
+    await queryRunner.query(
+      `ALTER TABLE "users" DROP COLUMN "emergencyContact"`,
+    );
     await queryRunner.query(`ALTER TABLE "users" DROP COLUMN "emergencyPhone"`);
 
     // Drop RBAC tables

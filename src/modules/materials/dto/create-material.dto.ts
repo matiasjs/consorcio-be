@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsOptional, IsNumber, IsPositive } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsOptional,
+  IsNumber,
+  IsPositive,
+} from 'class-validator';
 
 export class CreateMaterialDto {
   @ApiProperty({
@@ -37,7 +43,7 @@ export class CreateMaterialDto {
 
   @ApiProperty({
     description: 'Unit cost of the material',
-    example: 25.50,
+    example: 25.5,
   })
   @IsNotEmpty()
   @IsNumber({ maxDecimalPlaces: 2 })

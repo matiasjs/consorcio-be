@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsEnum, IsNumber, IsOptional } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsEnum,
+  IsNumber,
+  IsOptional,
+} from 'class-validator';
 
 export enum MaintenanceFrequency {
   DAILY = 'DAILY',
@@ -11,7 +17,10 @@ export enum MaintenanceFrequency {
 }
 
 export class CreateMaintenancePlanDto {
-  @ApiProperty({ description: 'Plan name', example: 'Elevator Monthly Inspection' })
+  @ApiProperty({
+    description: 'Plan name',
+    example: 'Elevator Monthly Inspection',
+  })
   @IsNotEmpty()
   @IsString()
   name: string;
@@ -21,7 +30,10 @@ export class CreateMaintenancePlanDto {
   @IsString()
   description?: string;
 
-  @ApiProperty({ description: 'Maintenance frequency', enum: MaintenanceFrequency })
+  @ApiProperty({
+    description: 'Maintenance frequency',
+    enum: MaintenanceFrequency,
+  })
   @IsNotEmpty()
   @IsEnum(MaintenanceFrequency)
   frequency: MaintenanceFrequency;

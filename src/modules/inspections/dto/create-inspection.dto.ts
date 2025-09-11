@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsUUID, IsOptional, IsEnum, IsDateString } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsUUID,
+  IsOptional,
+  IsEnum,
+  IsDateString,
+} from 'class-validator';
 
 export enum InspectionStatus {
   SCHEDULED = 'SCHEDULED',

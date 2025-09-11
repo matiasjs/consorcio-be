@@ -1,5 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsUUID, IsOptional, IsEnum, IsNumber, IsDateString, IsPositive } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsUUID,
+  IsOptional,
+  IsEnum,
+  IsNumber,
+  IsDateString,
+  IsPositive,
+} from 'class-validator';
 
 export enum InvoiceStatus {
   DRAFT = 'DRAFT',
@@ -62,7 +71,7 @@ export class CreateInvoiceDto {
 
   @ApiProperty({
     description: 'Total amount of the invoice',
-    example: 1500.00,
+    example: 1500.0,
   })
   @IsNotEmpty()
   @IsNumber({ maxDecimalPlaces: 2 })
@@ -79,7 +88,7 @@ export class CreateInvoiceDto {
 
   @ApiProperty({
     description: 'Tax amount',
-    example: 315.00,
+    example: 315.0,
     required: false,
   })
   @IsOptional()

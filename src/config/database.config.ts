@@ -38,7 +38,10 @@ export const getDatabaseConfig = (
     migrations: [join(__dirname, '..', 'migrations', '*{.ts,.js}')],
     synchronize: configService.get<boolean>('DATABASE_SYNCHRONIZE', true),
     logging: configService.get<boolean>('DATABASE_LOGGING', true),
-    ssl: configService.get<string>('NODE_ENV') === 'production' ? { rejectUnauthorized: false } : false,
+    ssl:
+      configService.get<string>('NODE_ENV') === 'production'
+        ? { rejectUnauthorized: false }
+        : false,
     extra: {
       connectionLimit: 10,
       acquireTimeout: 60000,
@@ -79,7 +82,10 @@ const getDataSourceOptions = (): DataSourceOptions => {
     migrations: [join(__dirname, '..', 'migrations', '*{.ts,.js}')],
     synchronize: false,
     logging: process.env.DATABASE_LOGGING === 'true',
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+    ssl:
+      process.env.NODE_ENV === 'production'
+        ? { rejectUnauthorized: false }
+        : false,
     extra: {
       connectionLimit: 10,
       acquireTimeout: 60000,

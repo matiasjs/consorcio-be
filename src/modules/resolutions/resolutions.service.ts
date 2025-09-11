@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Resolution } from '../../entities/resolution.entity';
@@ -33,19 +37,25 @@ export class ResolutionsService {
     return resolution;
   }
 
-  async createVote(resolutionId: string, createVoteDto: CreateVoteDto, user: RequestUser): Promise<Vote> {
+  async createVote(
+    resolutionId: string,
+    createVoteDto: CreateVoteDto,
+    user: RequestUser,
+  ): Promise<Vote> {
     const resolution = await this.findOne(resolutionId, user);
 
     // Check if user already voted
     const existingVote = await this.voteRepository.findOne({
-      where: { 
+      where: {
         resolutionId,
         userId: createVoteDto.userId,
       },
     });
 
     if (existingVote) {
-      throw new BadRequestException('User has already voted on this resolution');
+      throw new BadRequestException(
+        'User has already voted on this resolution',
+      );
     }
 
     const vote = this.voteRepository.create({
@@ -53,7 +63,7 @@ export class ResolutionsService {
       resolutionId,
     });
 
-    return await this.voteRepository.save(vote) as any;
+    return (await this.voteRepository.save(vote)) as any;
   }
 
   async getVoteResults(resolutionId: string, user: RequestUser): Promise<any> {

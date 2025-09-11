@@ -16,14 +16,13 @@ export class AuthService {
     private userRepository: Repository<User>,
     private jwtService: JwtService,
     private configService: ConfigService,
-  ) { }
+  ) {}
 
   async validateUser(email: string, password: string): Promise<User | null> {
     const user = await this.userRepository.findOne({
       where: { email },
       relations: ['administration', 'roles', 'roles.permissions'],
     });
-
 
     if (!user) {
       return null;
@@ -57,10 +56,11 @@ export class AuthService {
 
   private async generateAuthResponse(user: User): Promise<AuthResponseDto> {
     // Extract roles and permissions
-    const roles = user.roles?.map(role => role.name) || [];
-    const permissions = user.roles?.flatMap(role =>
-      role.permissions?.map(permission => permission.code) || []
-    ) || [];
+    const roles = user.roles?.map((role) => role.name) || [];
+    const permissions =
+      user.roles?.flatMap(
+        (role) => role.permissions?.map((permission) => permission.code) || [],
+      ) || [];
 
     // Remove duplicates
     const uniquePermissions = [...new Set(permissions)];
@@ -110,7 +110,9 @@ export class AuthService {
     };
   }
 
-  async refreshToken(refreshTokenDto: RefreshTokenDto): Promise<AuthResponseDto> {
+  async refreshToken(
+    refreshTokenDto: RefreshTokenDto,
+  ): Promise<AuthResponseDto> {
     try {
       const payload = await this.jwtService.verifyAsync<JwtRefreshPayload>(
         refreshTokenDto.refreshToken,

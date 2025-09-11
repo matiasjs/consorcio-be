@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { Role, Permission } from '../../../entities';
@@ -20,7 +24,9 @@ export class RolesService {
     });
 
     if (existingRole) {
-      throw new ConflictException(`Role with name "${createRoleDto.name}" already exists`);
+      throw new ConflictException(
+        `Role with name "${createRoleDto.name}" already exists`,
+      );
     }
 
     const role = this.roleRepository.create({
@@ -28,11 +34,20 @@ export class RolesService {
       adminId,
     });
 
-    return await this.roleRepository.save(role) as any;
+    return (await this.roleRepository.save(role)) as any;
   }
 
-  async findAll(adminId: string, pagination: PaginationDto): Promise<{ data: Role[]; total: number }> {
-    const { page = 1, limit = 10, search, sortBy = 'name', sortOrder = 'ASC' } = pagination;
+  async findAll(
+    adminId: string,
+    pagination: PaginationDto,
+  ): Promise<{ data: Role[]; total: number }> {
+    const {
+      page = 1,
+      limit = 10,
+      search,
+      sortBy = 'name',
+      sortOrder = 'ASC',
+    } = pagination;
     const skip = (page - 1) * limit;
 
     const queryBuilder = this.roleRepository
@@ -43,14 +58,11 @@ export class RolesService {
     if (search) {
       queryBuilder.andWhere(
         '(role.name ILIKE :search OR role.description ILIKE :search)',
-        { search: `%${search}%` }
+        { search: `%${search}%` },
       );
     }
 
-    queryBuilder
-      .orderBy(`role.${sortBy}`, sortOrder)
-      .skip(skip)
-      .take(limit);
+    queryBuilder.orderBy(`role.${sortBy}`, sortOrder).skip(skip).take(limit);
 
     const [data, total] = await queryBuilder.getManyAndCount();
 
@@ -70,7 +82,11 @@ export class RolesService {
     return role;
   }
 
-  async update(id: string, updateRoleDto: UpdateRoleDto, adminId: string): Promise<Role> {
+  async update(
+    id: string,
+    updateRoleDto: UpdateRoleDto,
+    adminId: string,
+  ): Promise<Role> {
     const role = await this.findOne(id, adminId);
 
     if (updateRoleDto.name && updateRoleDto.name !== role.name) {
@@ -79,12 +95,14 @@ export class RolesService {
       });
 
       if (existingRole) {
-        throw new ConflictException(`Role with name "${updateRoleDto.name}" already exists`);
+        throw new ConflictException(
+          `Role with name "${updateRoleDto.name}" already exists`,
+        );
       }
     }
 
     Object.assign(role, updateRoleDto);
-    return await this.roleRepository.save(role) as any;
+    return (await this.roleRepository.save(role)) as any;
   }
 
   async remove(id: string, adminId: string): Promise<void> {
@@ -92,7 +110,11 @@ export class RolesService {
     await this.roleRepository.softDelete(id);
   }
 
-  async assignPermissions(id: string, assignPermissionsDto: AssignPermissionsDto, adminId: string): Promise<Role> {
+  async assignPermissions(
+    id: string,
+    assignPermissionsDto: AssignPermissionsDto,
+    adminId: string,
+  ): Promise<Role> {
     const role = await this.findOne(id, adminId);
     const { add = [], remove = [] } = assignPermissionsDto;
 
@@ -102,9 +124,11 @@ export class RolesService {
       });
 
       if (permissionsToAdd.length !== add.length) {
-        const foundCodes = permissionsToAdd.map(p => p.code);
-        const notFound = add.filter(code => !foundCodes.includes(code));
-        throw new NotFoundException(`Permissions not found: ${notFound.join(', ')}`);
+        const foundCodes = permissionsToAdd.map((p) => p.code);
+        const notFound = add.filter((code) => !foundCodes.includes(code));
+        throw new NotFoundException(
+          `Permissions not found: ${notFound.join(', ')}`,
+        );
       }
 
       role.permissions = [...(role.permissions || []), ...permissionsToAdd];
@@ -112,10 +136,10 @@ export class RolesService {
 
     if (remove.length > 0) {
       role.permissions = (role.permissions || []).filter(
-        permission => !remove.includes(permission.code)
+        (permission) => !remove.includes(permission.code),
       );
     }
 
-    return await this.roleRepository.save(role) as any;
+    return (await this.roleRepository.save(role)) as any;
   }
 }

@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsOptional, IsEnum, IsDateString } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsOptional,
+  IsEnum,
+  IsDateString,
+} from 'class-validator';
 
 export enum TaskStatus {
   PENDING = 'PENDING',
@@ -10,7 +16,10 @@ export enum TaskStatus {
 }
 
 export class CreateMaintenanceTaskDto {
-  @ApiProperty({ description: 'Task title', example: 'Monthly elevator inspection' })
+  @ApiProperty({
+    description: 'Task title',
+    example: 'Monthly elevator inspection',
+  })
   @IsNotEmpty()
   @IsString()
   title: string;
@@ -20,12 +29,19 @@ export class CreateMaintenanceTaskDto {
   @IsString()
   description?: string;
 
-  @ApiProperty({ description: 'Scheduled date', example: '2024-02-15T09:00:00Z' })
+  @ApiProperty({
+    description: 'Scheduled date',
+    example: '2024-02-15T09:00:00Z',
+  })
   @IsNotEmpty()
   @IsDateString()
   scheduledDate: string;
 
-  @ApiProperty({ description: 'Task status', enum: TaskStatus, example: TaskStatus.PENDING })
+  @ApiProperty({
+    description: 'Task status',
+    enum: TaskStatus,
+    example: TaskStatus.PENDING,
+  })
   @IsOptional()
   @IsEnum(TaskStatus)
   status?: TaskStatus;

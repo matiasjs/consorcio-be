@@ -8,9 +8,14 @@ import {
   Patch,
   Post,
   Query,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CurrentUser, Roles } from '../../common/decorators';
 import { PaginationDto } from '../../common/dto';
 import { UserRole } from '../../common/enums';
@@ -29,21 +34,36 @@ export class NotificationsController {
   @Post()
   @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF)
   @ApiOperation({ summary: 'Create notification' })
-  @ApiResponse({ status: 201, description: 'Notification created successfully' })
-  create(@Body() createNotificationDto: CreateNotificationDto, @CurrentUser() user: RequestUser) {
+  @ApiResponse({
+    status: 201,
+    description: 'Notification created successfully',
+  })
+  create(
+    @Body() createNotificationDto: CreateNotificationDto,
+    @CurrentUser() user: RequestUser,
+  ) {
     return this.notificationsService.create(createNotificationDto, user);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all notifications' })
-  @ApiResponse({ status: 200, description: 'Notifications retrieved successfully' })
-  findAll(@CurrentUser() user: RequestUser, @Query() paginationDto: PaginationDto) {
+  @ApiResponse({
+    status: 200,
+    description: 'Notifications retrieved successfully',
+  })
+  findAll(
+    @CurrentUser() user: RequestUser,
+    @Query() paginationDto: PaginationDto,
+  ) {
     return this.notificationsService.findAll(user, paginationDto);
   }
 
   @Get('unread')
   @ApiOperation({ summary: 'Get unread notifications for current user' })
-  @ApiResponse({ status: 200, description: 'Unread notifications retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Unread notifications retrieved successfully',
+  })
   findUnread(@CurrentUser() user: RequestUser) {
     return this.notificationsService.findUnread(user);
   }
@@ -51,22 +71,37 @@ export class NotificationsController {
   @Get('user/:userId')
   @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF)
   @ApiOperation({ summary: 'Get notifications for specific user' })
-  @ApiResponse({ status: 200, description: 'User notifications retrieved successfully' })
-  findByUser(@Param('userId', ParseUUIDPipe) userId: string, @CurrentUser() user: RequestUser) {
+  @ApiResponse({
+    status: 200,
+    description: 'User notifications retrieved successfully',
+  })
+  findByUser(
+    @Param('userId', ParseUUIDPipe) userId: string,
+    @CurrentUser() user: RequestUser,
+  ) {
     return this.notificationsService.findByUser(userId, user);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get notification by ID' })
-  @ApiResponse({ status: 200, description: 'Notification retrieved successfully' })
-  findOne(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: RequestUser) {
+  @ApiResponse({
+    status: 200,
+    description: 'Notification retrieved successfully',
+  })
+  findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: RequestUser,
+  ) {
     return this.notificationsService.findOne(id, user);
   }
 
   @Patch(':id')
   @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF)
   @ApiOperation({ summary: 'Update notification' })
-  @ApiResponse({ status: 200, description: 'Notification updated successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Notification updated successfully',
+  })
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateNotificationDto: UpdateNotificationDto,
@@ -78,7 +113,10 @@ export class NotificationsController {
   @Patch(':id/read')
   @ApiOperation({ summary: 'Mark notification as read' })
   @ApiResponse({ status: 200, description: 'Notification marked as read' })
-  markAsRead(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: RequestUser) {
+  markAsRead(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: RequestUser,
+  ) {
     return this.notificationsService.markAsRead(id, user);
   }
 
@@ -92,8 +130,14 @@ export class NotificationsController {
   @Delete(':id')
   @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF)
   @ApiOperation({ summary: 'Delete notification' })
-  @ApiResponse({ status: 200, description: 'Notification deleted successfully' })
-  remove(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: RequestUser) {
+  @ApiResponse({
+    status: 200,
+    description: 'Notification deleted successfully',
+  })
+  remove(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: RequestUser,
+  ) {
     return this.notificationsService.remove(id, user);
   }
 }

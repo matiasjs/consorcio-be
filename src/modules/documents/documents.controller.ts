@@ -8,9 +8,14 @@ import {
   Patch,
   Post,
   Query,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CurrentUser, Roles } from '../../common/decorators';
 import { PaginationDto } from '../../common/dto';
 import { UserRole } from '../../common/enums';
@@ -24,26 +29,44 @@ import { CreateDocumentDto, UpdateDocumentDto } from './dto';
 @Controller({ path: 'documents', version: '1' })
 @UseGuards(JwtAuthGuard, TenantGuard, RolesGuard)
 export class DocumentsController {
-  constructor(private readonly documentsService: DocumentsService) { }
+  constructor(private readonly documentsService: DocumentsService) {}
 
   @Post()
   @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF)
   @ApiOperation({ summary: 'Create a new document' })
   @ApiResponse({ status: 201, description: 'Document created successfully' })
-  create(@Body() createDocumentDto: CreateDocumentDto, @CurrentUser() user: RequestUser) {
+  create(
+    @Body() createDocumentDto: CreateDocumentDto,
+    @CurrentUser() user: RequestUser,
+  ) {
     return this.documentsService.create(createDocumentDto, user);
   }
 
   @Get()
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF, UserRole.OWNER, UserRole.TENANT)
+  @Roles(
+    UserRole.SUPERADMIN,
+    UserRole.ADMIN_OWNER,
+    UserRole.STAFF,
+    UserRole.OWNER,
+    UserRole.TENANT,
+  )
   @ApiOperation({ summary: 'Get all documents' })
   @ApiResponse({ status: 200, description: 'Documents retrieved successfully' })
-  findAll(@CurrentUser() user: RequestUser, @Query() paginationDto: PaginationDto) {
+  findAll(
+    @CurrentUser() user: RequestUser,
+    @Query() paginationDto: PaginationDto,
+  ) {
     return this.documentsService.findAll(user, paginationDto);
   }
 
   @Get('type/:type')
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF, UserRole.OWNER, UserRole.TENANT)
+  @Roles(
+    UserRole.SUPERADMIN,
+    UserRole.ADMIN_OWNER,
+    UserRole.STAFF,
+    UserRole.OWNER,
+    UserRole.TENANT,
+  )
   @ApiOperation({ summary: 'Get documents by type' })
   @ApiResponse({ status: 200, description: 'Documents retrieved successfully' })
   findByType(@Param('type') type: string, @CurrentUser() user: RequestUser) {
@@ -51,26 +74,53 @@ export class DocumentsController {
   }
 
   @Get('category/:category')
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF, UserRole.OWNER, UserRole.TENANT)
+  @Roles(
+    UserRole.SUPERADMIN,
+    UserRole.ADMIN_OWNER,
+    UserRole.STAFF,
+    UserRole.OWNER,
+    UserRole.TENANT,
+  )
   @ApiOperation({ summary: 'Get documents by category' })
   @ApiResponse({ status: 200, description: 'Documents retrieved successfully' })
-  findByCategory(@Param('category') category: string, @CurrentUser() user: RequestUser) {
+  findByCategory(
+    @Param('category') category: string,
+    @CurrentUser() user: RequestUser,
+  ) {
     return this.documentsService.findByCategory(category, user);
   }
 
   @Get('building/:buildingId')
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF, UserRole.OWNER, UserRole.TENANT)
+  @Roles(
+    UserRole.SUPERADMIN,
+    UserRole.ADMIN_OWNER,
+    UserRole.STAFF,
+    UserRole.OWNER,
+    UserRole.TENANT,
+  )
   @ApiOperation({ summary: 'Get documents by building' })
   @ApiResponse({ status: 200, description: 'Documents retrieved successfully' })
-  findByBuilding(@Param('buildingId', ParseUUIDPipe) buildingId: string, @CurrentUser() user: RequestUser) {
+  findByBuilding(
+    @Param('buildingId', ParseUUIDPipe) buildingId: string,
+    @CurrentUser() user: RequestUser,
+  ) {
     return this.documentsService.findByBuilding(buildingId, user);
   }
 
   @Get(':id')
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF, UserRole.OWNER, UserRole.TENANT)
+  @Roles(
+    UserRole.SUPERADMIN,
+    UserRole.ADMIN_OWNER,
+    UserRole.STAFF,
+    UserRole.OWNER,
+    UserRole.TENANT,
+  )
   @ApiOperation({ summary: 'Get document by ID' })
   @ApiResponse({ status: 200, description: 'Document retrieved successfully' })
-  findOne(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: RequestUser) {
+  findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: RequestUser,
+  ) {
     return this.documentsService.findOne(id, user);
   }
 
@@ -90,7 +140,10 @@ export class DocumentsController {
   @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF)
   @ApiOperation({ summary: 'Delete document' })
   @ApiResponse({ status: 200, description: 'Document deleted successfully' })
-  remove(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: RequestUser) {
+  remove(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: RequestUser,
+  ) {
     return this.documentsService.remove(id, user);
   }
 }

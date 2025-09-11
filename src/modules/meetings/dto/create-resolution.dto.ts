@@ -10,17 +10,27 @@ export enum ResolutionStatus {
 }
 
 export class CreateResolutionDto {
-  @ApiProperty({ description: 'Resolution title', example: 'Approve building maintenance budget' })
+  @ApiProperty({
+    description: 'Resolution title',
+    example: 'Approve building maintenance budget',
+  })
   @IsNotEmpty()
   @IsString()
   title: string;
 
-  @ApiProperty({ description: 'Resolution description', example: 'Approve the annual maintenance budget of $50,000' })
+  @ApiProperty({
+    description: 'Resolution description',
+    example: 'Approve the annual maintenance budget of $50,000',
+  })
   @IsNotEmpty()
   @IsString()
   description: string;
 
-  @ApiProperty({ description: 'Resolution status', enum: ResolutionStatus, example: ResolutionStatus.PROPOSED })
+  @ApiProperty({
+    description: 'Resolution status',
+    enum: ResolutionStatus,
+    example: ResolutionStatus.PROPOSED,
+  })
   @IsOptional()
   @IsEnum(ResolutionStatus)
   status?: ResolutionStatus;

@@ -45,10 +45,7 @@ export class MessagesController {
     UserRole.INSPECTOR,
     UserRole.VENDOR,
   )
-  create(
-    @Body() createMessageDto: CreateMessageDto,
-    @CurrentUser() user: any,
-  ) {
+  create(@Body() createMessageDto: CreateMessageDto, @CurrentUser() user: any) {
     return this.messagesService.create(createMessageDto, user.id);
   }
 
@@ -77,7 +74,10 @@ export class MessagesController {
 
   @Get('entity/:entityType/:entityId/unread-count')
   @ApiOperation({ summary: 'Get unread message count for an entity' })
-  @ApiResponse({ status: 200, description: 'Unread count retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Unread count retrieved successfully',
+  })
   @Roles(
     UserRole.SUPERADMIN,
     UserRole.ADMIN_OWNER,
@@ -106,10 +106,7 @@ export class MessagesController {
     UserRole.INSPECTOR,
     UserRole.VENDOR,
   )
-  markAsRead(
-    @Param('id', ParseUUIDPipe) id: string,
-    @CurrentUser() user: any,
-  ) {
+  markAsRead(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: any) {
     return this.messagesService.markAsRead(id, user.id);
   }
 }

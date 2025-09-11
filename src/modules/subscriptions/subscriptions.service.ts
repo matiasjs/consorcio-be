@@ -11,36 +11,53 @@ export class SubscriptionsService {
   constructor(
     @InjectRepository(Subscription)
     private readonly subscriptionRepository: Repository<Subscription>,
-  ) { }
+  ) {}
 
-  async create(createSubscriptionDto: CreateSubscriptionDto, user: RequestUser): Promise<Subscription> {
+  async create(
+    createSubscriptionDto: CreateSubscriptionDto,
+    user: RequestUser,
+  ): Promise<Subscription> {
     const subscriptionData: any = {
       ...createSubscriptionDto,
       adminId: user.adminId,
       startDate: new Date(createSubscriptionDto.startDate),
-      endDate: createSubscriptionDto.endDate ? new Date(createSubscriptionDto.endDate) : null,
+      endDate: createSubscriptionDto.endDate
+        ? new Date(createSubscriptionDto.endDate)
+        : null,
     };
 
     const subscription = this.subscriptionRepository.create(subscriptionData);
-    return await this.subscriptionRepository.save(subscription) as any;
+    return (await this.subscriptionRepository.save(subscription)) as any;
   }
 
-  async findAll(user: RequestUser, paginationDto: PaginationDto): Promise<{
+  async findAll(
+    user: RequestUser,
+    paginationDto: PaginationDto,
+  ): Promise<{
     data: Subscription[];
     total: number;
     page: number;
     limit: number;
   }> {
-    const { page = 1, limit = 10, search, sortBy = 'createdAt', sortOrder = 'DESC' } = paginationDto;
+    const {
+      page = 1,
+      limit = 10,
+      search,
+      sortBy = 'createdAt',
+      sortOrder = 'DESC',
+    } = paginationDto;
 
-    const queryBuilder = this.subscriptionRepository.createQueryBuilder('subscription');
+    const queryBuilder =
+      this.subscriptionRepository.createQueryBuilder('subscription');
 
-    queryBuilder.where('subscription.adminId = :adminId', { adminId: user.adminId });
+    queryBuilder.where('subscription.adminId = :adminId', {
+      adminId: user.adminId,
+    });
 
     if (search) {
       queryBuilder.andWhere(
         '(subscription.name ILIKE :search OR subscription.description ILIKE :search)',
-        { search: `%${search}%` }
+        { search: `%${search}%` },
       );
     }
 
@@ -77,7 +94,9 @@ export class SubscriptionsService {
       .createQueryBuilder('subscription')
       .where('subscription.adminId = :adminId', { adminId: user.adminId })
       .andWhere('subscription.status = :status', { status: 'ACTIVE' })
-      .andWhere('subscription.endDate <= :expiryDate', { expiryDate: thirtyDaysFromNow })
+      .andWhere('subscription.endDate <= :expiryDate', {
+        expiryDate: thirtyDaysFromNow,
+      })
       .orderBy('subscription.endDate', 'ASC')
       .getMany();
   }
@@ -88,7 +107,11 @@ export class SubscriptionsService {
     });
   }
 
-  async update(id: string, updateSubscriptionDto: UpdateSubscriptionDto, user: RequestUser): Promise<Subscription | null> {
+  async update(
+    id: string,
+    updateSubscriptionDto: UpdateSubscriptionDto,
+    user: RequestUser,
+  ): Promise<Subscription | null> {
     const updateData: any = { ...updateSubscriptionDto };
 
     if (updateSubscriptionDto.startDate) {
@@ -100,7 +123,7 @@ export class SubscriptionsService {
 
     await this.subscriptionRepository.update(
       { id, adminId: user.adminId },
-      updateData
+      updateData,
     );
     return this.findOne(id, user);
   }

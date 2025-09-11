@@ -21,7 +21,7 @@ export class AddMaterialDto {
 
   @ApiProperty({
     description: 'Unit cost of the material',
-    example: 25.50,
+    example: 25.5,
   })
   @IsNotEmpty()
   @IsNumber({ maxDecimalPlaces: 2 })

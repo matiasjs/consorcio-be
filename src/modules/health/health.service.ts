@@ -11,7 +11,7 @@ export class HealthService {
 
   async check() {
     const startTime = Date.now();
-    
+
     // Check database connection
     let databaseStatus = 'disconnected';
     try {

@@ -8,9 +8,14 @@ import {
   Patch,
   Post,
   Query,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CurrentUser, Roles } from '../../common/decorators';
 import { PaginationDto } from '../../common/dto';
 import { UserRole } from '../../common/enums';
@@ -24,42 +29,77 @@ import { InspectionsService } from './inspections.service';
 @Controller({ path: 'inspections', version: '1' })
 @UseGuards(JwtAuthGuard, TenantGuard, RolesGuard)
 export class InspectionsController {
-  constructor(private readonly inspectionsService: InspectionsService) { }
+  constructor(private readonly inspectionsService: InspectionsService) {}
 
   @Post()
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF, UserRole.INSPECTOR)
+  @Roles(
+    UserRole.SUPERADMIN,
+    UserRole.ADMIN_OWNER,
+    UserRole.STAFF,
+    UserRole.INSPECTOR,
+  )
   @ApiOperation({ summary: 'Create a new inspection' })
   @ApiResponse({ status: 201, description: 'Inspection created successfully' })
   @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
-  create(@Body() createInspectionDto: CreateInspectionDto, @CurrentUser() user: RequestUser) {
+  create(
+    @Body() createInspectionDto: CreateInspectionDto,
+    @CurrentUser() user: RequestUser,
+  ) {
     return this.inspectionsService.create(createInspectionDto, user);
   }
 
   @Get()
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF, UserRole.INSPECTOR)
+  @Roles(
+    UserRole.SUPERADMIN,
+    UserRole.ADMIN_OWNER,
+    UserRole.STAFF,
+    UserRole.INSPECTOR,
+  )
   @ApiOperation({ summary: 'Get all inspections' })
-  @ApiResponse({ status: 200, description: 'Inspections retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Inspections retrieved successfully',
+  })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
-  findAll(@CurrentUser() user: RequestUser, @Query() paginationDto: PaginationDto) {
+  findAll(
+    @CurrentUser() user: RequestUser,
+    @Query() paginationDto: PaginationDto,
+  ) {
     return this.inspectionsService.findAll(user, paginationDto);
   }
 
   @Get(':id')
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF, UserRole.INSPECTOR)
+  @Roles(
+    UserRole.SUPERADMIN,
+    UserRole.ADMIN_OWNER,
+    UserRole.STAFF,
+    UserRole.INSPECTOR,
+  )
   @ApiOperation({ summary: 'Get inspection by ID' })
-  @ApiResponse({ status: 200, description: 'Inspection retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Inspection retrieved successfully',
+  })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
   @ApiResponse({ status: 404, description: 'Inspection not found' })
-  findOne(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: RequestUser) {
+  findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: RequestUser,
+  ) {
     return this.inspectionsService.findOne(id, user);
   }
 
   @Patch(':id')
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF, UserRole.INSPECTOR)
+  @Roles(
+    UserRole.SUPERADMIN,
+    UserRole.ADMIN_OWNER,
+    UserRole.STAFF,
+    UserRole.INSPECTOR,
+  )
   @ApiOperation({ summary: 'Update inspection' })
   @ApiResponse({ status: 200, description: 'Inspection updated successfully' })
   @ApiResponse({ status: 400, description: 'Bad request' })
@@ -81,7 +121,10 @@ export class InspectionsController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
   @ApiResponse({ status: 404, description: 'Inspection not found' })
-  remove(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: RequestUser) {
+  remove(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: RequestUser,
+  ) {
     return this.inspectionsService.remove(id, user);
   }
 }

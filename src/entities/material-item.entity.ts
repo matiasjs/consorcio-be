@@ -107,6 +107,9 @@ export class MaterialItem extends BaseEntity {
   notes?: string;
 
   // Relations
-  @OneToMany(() => WorkOrderMaterial, (workOrderMaterial) => workOrderMaterial.materialItem)
+  @OneToMany(
+    () => WorkOrderMaterial,
+    (workOrderMaterial) => workOrderMaterial.materialItem,
+  )
   workOrderMaterials: WorkOrderMaterial[];
 }

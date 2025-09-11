@@ -11,9 +11,12 @@ export class AuditLogsService {
   constructor(
     @InjectRepository(AuditLog)
     private readonly auditLogRepository: Repository<AuditLog>,
-  ) { }
+  ) {}
 
-  async create(createAuditLogDto: CreateAuditLogDto, user: RequestUser): Promise<AuditLog> {
+  async create(
+    createAuditLogDto: CreateAuditLogDto,
+    user: RequestUser,
+  ): Promise<AuditLog> {
     const auditData: any = {
       adminId: user.adminId,
       actorUserId: createAuditLogDto.userId || user.id,
@@ -24,23 +27,35 @@ export class AuditLogsService {
       ip: createAuditLogDto.ipAddress,
       userAgent: createAuditLogDto.userAgent,
       metadata: createAuditLogDto.metadata,
-      diff: createAuditLogDto.oldValues || createAuditLogDto.newValues ? {
-        before: createAuditLogDto.oldValues,
-        after: createAuditLogDto.newValues,
-      } : undefined,
+      diff:
+        createAuditLogDto.oldValues || createAuditLogDto.newValues
+          ? {
+              before: createAuditLogDto.oldValues,
+              after: createAuditLogDto.newValues,
+            }
+          : undefined,
     };
 
     const auditLog = this.auditLogRepository.create(auditData);
-    return await this.auditLogRepository.save(auditLog) as any;
+    return (await this.auditLogRepository.save(auditLog)) as any;
   }
 
-  async findAll(user: RequestUser, paginationDto: PaginationDto): Promise<{
+  async findAll(
+    user: RequestUser,
+    paginationDto: PaginationDto,
+  ): Promise<{
     data: AuditLog[];
     total: number;
     page: number;
     limit: number;
   }> {
-    const { page = 1, limit = 10, search, sortBy = 'timestamp', sortOrder = 'DESC' } = paginationDto;
+    const {
+      page = 1,
+      limit = 10,
+      search,
+      sortBy = 'timestamp',
+      sortOrder = 'DESC',
+    } = paginationDto;
 
     const queryBuilder = this.auditLogRepository.createQueryBuilder('audit');
 
@@ -49,7 +64,7 @@ export class AuditLogsService {
     if (search) {
       queryBuilder.andWhere(
         '(audit.description ILIKE :search OR audit.action ILIKE :search OR audit.entityType ILIKE :search)',
-        { search: `%${search}%` }
+        { search: `%${search}%` },
       );
     }
 
@@ -68,7 +83,11 @@ export class AuditLogsService {
     };
   }
 
-  async findByEntity(entityType: string, entityId: string, user: RequestUser): Promise<AuditLog[]> {
+  async findByEntity(
+    entityType: string,
+    entityId: string,
+    user: RequestUser,
+  ): Promise<AuditLog[]> {
     return await this.auditLogRepository.find({
       where: {
         adminId: user.adminId,
@@ -101,7 +120,11 @@ export class AuditLogsService {
     });
   }
 
-  async findByDateRange(startDate: string, endDate: string, user: RequestUser): Promise<AuditLog[]> {
+  async findByDateRange(
+    startDate: string,
+    endDate: string,
+    user: RequestUser,
+  ): Promise<AuditLog[]> {
     return await this.auditLogRepository
       .createQueryBuilder('audit')
       .where('audit.adminId = :adminId', { adminId: user.adminId })

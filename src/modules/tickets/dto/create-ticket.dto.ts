@@ -1,7 +1,20 @@
-import { IsString, IsEnum, IsOptional, IsUUID, IsDateString, IsNumber, IsArray, ValidateNested } from 'class-validator';
+import {
+  IsString,
+  IsEnum,
+  IsOptional,
+  IsUUID,
+  IsDateString,
+  IsNumber,
+  IsArray,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { TicketType, TicketPriority, TicketChannel } from '../../../entities/ticket.entity';
+import {
+  TicketType,
+  TicketPriority,
+  TicketChannel,
+} from '../../../entities/ticket.entity';
 
 class AttachmentDto {
   @ApiProperty()

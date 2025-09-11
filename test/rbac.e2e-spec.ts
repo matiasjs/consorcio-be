@@ -80,9 +80,7 @@ describe('RBAC System (e2e)', () => {
 
   describe('Authorization', () => {
     it('should deny access without token', async () => {
-      await request(app.getHttpServer())
-        .get('/v1/users')
-        .expect(401);
+      await request(app.getHttpServer()).get('/v1/users').expect(401);
     });
 
     it('should deny access with insufficient permissions', async () => {
@@ -191,7 +189,9 @@ describe('RBAC System (e2e)', () => {
         .expect(200);
 
       expect(response.body).toHaveProperty('roles');
-      expect(response.body.roles.some(role => role.name === 'owner')).toBe(true);
+      expect(response.body.roles.some((role) => role.name === 'owner')).toBe(
+        true,
+      );
     });
 
     it('should get user with roles and permissions', async () => {

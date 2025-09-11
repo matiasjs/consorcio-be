@@ -8,7 +8,7 @@ import {
   Patch,
   Post,
   Query,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -29,7 +29,9 @@ import { CreateAdministrationDto, UpdateAdministrationDto } from './dto';
 @UseGuards(JwtAuthGuard, RolesGuard)
 @ApiBearerAuth()
 export class AdministrationsController {
-  constructor(private readonly administrationsService: AdministrationsService) { }
+  constructor(
+    private readonly administrationsService: AdministrationsService,
+  ) {}
 
   @Post()
   @Roles(UserRole.SUPERADMIN)

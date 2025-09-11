@@ -1,5 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsUUID, IsOptional, IsEnum, IsNumber, IsDateString, IsPositive } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsUUID,
+  IsOptional,
+  IsEnum,
+  IsNumber,
+  IsDateString,
+  IsPositive,
+} from 'class-validator';
 
 export enum PaymentStatus {
   PENDING = 'PENDING',
@@ -66,7 +75,7 @@ export class CreatePaymentDto {
 
   @ApiProperty({
     description: 'Payment amount',
-    example: 1500.00,
+    example: 1500.0,
   })
   @IsNotEmpty()
   @IsNumber({ maxDecimalPlaces: 2 })

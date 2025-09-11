@@ -12,7 +12,10 @@ function parseCorsOrigins(input?: string | string[]): string[] {
   if (!input) return ['http://localhost:3000'];
   if (Array.isArray(input)) return input;
   // admite CSV en env: APP_CORS_ORIGIN="http://a.com,http://b.com"
-  return input.split(',').map(s => s.trim()).filter(Boolean);
+  return input
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
 }
 
 async function bootstrap() {
@@ -20,12 +23,14 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
 
   // Validation
-  app.useGlobalPipes(new ValidationPipe({
-    whitelist: true,
-    forbidNonWhitelisted: true,
-    transform: true,
-    transformOptions: { enableImplicitConversion: true },
-  }));
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+      transformOptions: { enableImplicitConversion: true },
+    }),
+  );
 
   // Versioning
   app.enableVersioning({
@@ -38,7 +43,7 @@ async function bootstrap() {
 
   // CORS
   const corsOrigin = parseCorsOrigins(
-    configService.get<string | string[]>('app.corsOrigin')
+    configService.get<string | string[]>('app.corsOrigin'),
   );
   app.enableCors({ origin: corsOrigin, credentials: true });
 

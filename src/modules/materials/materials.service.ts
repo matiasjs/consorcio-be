@@ -11,24 +11,36 @@ export class MaterialsService {
   constructor(
     @InjectRepository(MaterialItem)
     private readonly materialRepository: Repository<MaterialItem>,
-  ) { }
+  ) {}
 
-  async create(createMaterialDto: CreateMaterialDto, user: RequestUser): Promise<MaterialItem> {
+  async create(
+    createMaterialDto: CreateMaterialDto,
+    user: RequestUser,
+  ): Promise<MaterialItem> {
     const material = this.materialRepository.create({
       ...createMaterialDto,
       adminId: user.adminId,
     } as any);
 
-    return await this.materialRepository.save(material) as any;
+    return (await this.materialRepository.save(material)) as any;
   }
 
-  async findAll(user: RequestUser, paginationDto: PaginationDto): Promise<{
+  async findAll(
+    user: RequestUser,
+    paginationDto: PaginationDto,
+  ): Promise<{
     data: MaterialItem[];
     total: number;
     page: number;
     limit: number;
   }> {
-    const { page = 1, limit = 10, search, sortBy = 'createdAt', sortOrder = 'DESC' } = paginationDto;
+    const {
+      page = 1,
+      limit = 10,
+      search,
+      sortBy = 'createdAt',
+      sortOrder = 'DESC',
+    } = paginationDto;
     const skip = (page - 1) * limit;
 
     const queryBuilder = this.materialRepository
@@ -38,12 +50,12 @@ export class MaterialsService {
     if (search) {
       queryBuilder.andWhere(
         '(material.name ILIKE :search OR material.description ILIKE :search OR material.category ILIKE :search OR material.sku ILIKE :search)',
-        { search: `%${search}%` }
+        { search: `%${search}%` },
       );
     }
 
     queryBuilder
-      .orderBy(`material.${sortBy}`, sortOrder as 'ASC' | 'DESC')
+      .orderBy(`material.${sortBy}`, sortOrder)
       .skip(skip)
       .take(limit);
 
@@ -69,11 +81,15 @@ export class MaterialsService {
     return material;
   }
 
-  async update(id: string, updateMaterialDto: UpdateMaterialDto, user: RequestUser): Promise<MaterialItem> {
+  async update(
+    id: string,
+    updateMaterialDto: UpdateMaterialDto,
+    user: RequestUser,
+  ): Promise<MaterialItem> {
     const material = await this.findOne(id, user);
 
     Object.assign(material, updateMaterialDto);
-    return await this.materialRepository.save(material) as any;
+    return (await this.materialRepository.save(material)) as any;
   }
 
   async remove(id: string, user: RequestUser): Promise<void> {
@@ -81,7 +97,10 @@ export class MaterialsService {
     await this.materialRepository.softDelete(id);
   }
 
-  async findByCategory(category: string, user: RequestUser): Promise<MaterialItem[]> {
+  async findByCategory(
+    category: string,
+    user: RequestUser,
+  ): Promise<MaterialItem[]> {
     return await this.materialRepository.find({
       where: {
         adminId: user.adminId,

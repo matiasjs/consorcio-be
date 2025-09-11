@@ -11,25 +11,37 @@ export class DocumentsService {
   constructor(
     @InjectRepository(Document)
     private readonly documentRepository: Repository<Document>,
-  ) { }
+  ) {}
 
-  async create(createDocumentDto: CreateDocumentDto, user: RequestUser): Promise<Document> {
+  async create(
+    createDocumentDto: CreateDocumentDto,
+    user: RequestUser,
+  ): Promise<Document> {
     const document = this.documentRepository.create({
       ...createDocumentDto,
       adminId: user.adminId,
       uploadedByUserId: user.id,
     } as any);
 
-    return await this.documentRepository.save(document) as any;
+    return (await this.documentRepository.save(document)) as any;
   }
 
-  async findAll(user: RequestUser, paginationDto: PaginationDto): Promise<{
+  async findAll(
+    user: RequestUser,
+    paginationDto: PaginationDto,
+  ): Promise<{
     data: Document[];
     total: number;
     page: number;
     limit: number;
   }> {
-    const { page = 1, limit = 10, search, sortBy = 'createdAt', sortOrder = 'DESC' } = paginationDto;
+    const {
+      page = 1,
+      limit = 10,
+      search,
+      sortBy = 'createdAt',
+      sortOrder = 'DESC',
+    } = paginationDto;
     const skip = (page - 1) * limit;
 
     const queryBuilder = this.documentRepository
@@ -41,12 +53,12 @@ export class DocumentsService {
     if (search) {
       queryBuilder.andWhere(
         '(document.title ILIKE :search OR document.description ILIKE :search OR document.category ILIKE :search OR document.tags ILIKE :search)',
-        { search: `%${search}%` }
+        { search: `%${search}%` },
       );
     }
 
     queryBuilder
-      .orderBy(`document.${sortBy}`, sortOrder as 'ASC' | 'DESC')
+      .orderBy(`document.${sortBy}`, sortOrder)
       .skip(skip)
       .take(limit);
 
@@ -68,11 +80,15 @@ export class DocumentsService {
     return document;
   }
 
-  async update(id: string, updateDocumentDto: UpdateDocumentDto, user: RequestUser): Promise<Document> {
+  async update(
+    id: string,
+    updateDocumentDto: UpdateDocumentDto,
+    user: RequestUser,
+  ): Promise<Document> {
     const document = await this.findOne(id, user);
 
     Object.assign(document, updateDocumentDto);
-    return await this.documentRepository.save(document) as any;
+    return (await this.documentRepository.save(document)) as any;
   }
 
   async remove(id: string, user: RequestUser): Promise<void> {
@@ -91,7 +107,10 @@ export class DocumentsService {
     });
   }
 
-  async findByCategory(category: string, user: RequestUser): Promise<Document[]> {
+  async findByCategory(
+    category: string,
+    user: RequestUser,
+  ): Promise<Document[]> {
     return await this.documentRepository.find({
       where: {
         adminId: user.adminId,
@@ -102,7 +121,10 @@ export class DocumentsService {
     });
   }
 
-  async findByBuilding(buildingId: string, user: RequestUser): Promise<Document[]> {
+  async findByBuilding(
+    buildingId: string,
+    user: RequestUser,
+  ): Promise<Document[]> {
     return await this.documentRepository.find({
       where: {
         adminId: user.adminId,
@@ -121,11 +143,11 @@ export class DocumentsService {
       .where('document.adminId = :adminId', { adminId: user.adminId });
 
     tags.forEach((tag, index) => {
-      queryBuilder.andWhere(`document.tags ILIKE :tag${index}`, { [`tag${index}`]: `%${tag}%` });
+      queryBuilder.andWhere(`document.tags ILIKE :tag${index}`, {
+        [`tag${index}`]: `%${tag}%`,
+      });
     });
 
-    return await queryBuilder
-      .orderBy('document.createdAt', 'DESC')
-      .getMany();
+    return await queryBuilder.orderBy('document.createdAt', 'DESC').getMany();
   }
 }

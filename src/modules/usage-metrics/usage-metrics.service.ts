@@ -11,9 +11,12 @@ export class UsageMetricsService {
   constructor(
     @InjectRepository(UsageMetric)
     private readonly usageMetricRepository: Repository<UsageMetric>,
-  ) { }
+  ) {}
 
-  async create(createUsageMetricDto: CreateUsageMetricDto, user: RequestUser): Promise<UsageMetric> {
+  async create(
+    createUsageMetricDto: CreateUsageMetricDto,
+    user: RequestUser,
+  ): Promise<UsageMetric> {
     const metricData: any = {
       adminId: user.adminId,
       metric: createUsageMetricDto.type,
@@ -23,30 +26,41 @@ export class UsageMetricsService {
       value: createUsageMetricDto.value || 1,
       unit: createUsageMetricDto.unit,
       metadata: createUsageMetricDto.metadata,
-      calculatedAt: createUsageMetricDto.timestamp ? new Date(createUsageMetricDto.timestamp) : new Date(),
+      calculatedAt: createUsageMetricDto.timestamp
+        ? new Date(createUsageMetricDto.timestamp)
+        : new Date(),
     };
 
     const metric = this.usageMetricRepository.create(metricData);
-    return await this.usageMetricRepository.save(metric) as any;
+    return (await this.usageMetricRepository.save(metric)) as any;
   }
 
-  async findAll(user: RequestUser, paginationDto: PaginationDto): Promise<{
+  async findAll(
+    user: RequestUser,
+    paginationDto: PaginationDto,
+  ): Promise<{
     data: UsageMetric[];
     total: number;
     page: number;
     limit: number;
   }> {
-    const { page = 1, limit = 10, search, sortBy = 'createdAt', sortOrder = 'DESC' } = paginationDto;
+    const {
+      page = 1,
+      limit = 10,
+      search,
+      sortBy = 'createdAt',
+      sortOrder = 'DESC',
+    } = paginationDto;
 
-    const queryBuilder = this.usageMetricRepository.createQueryBuilder('metric');
+    const queryBuilder =
+      this.usageMetricRepository.createQueryBuilder('metric');
 
     queryBuilder.where('metric.adminId = :adminId', { adminId: user.adminId });
 
     if (search) {
-      queryBuilder.andWhere(
-        '(metric.metric ILIKE :search)',
-        { search: `%${search}%` }
-      );
+      queryBuilder.andWhere('(metric.metric ILIKE :search)', {
+        search: `%${search}%`,
+      });
     }
 
     queryBuilder
@@ -98,7 +112,11 @@ export class UsageMetricsService {
     return stats;
   }
 
-  async getStatsByDateRange(startDate: string, endDate: string, user: RequestUser): Promise<any> {
+  async getStatsByDateRange(
+    startDate: string,
+    endDate: string,
+    user: RequestUser,
+  ): Promise<any> {
     const stats = await this.usageMetricRepository
       .createQueryBuilder('metric')
       .select('DATE(metric.createdAt)', 'date')
@@ -115,9 +133,9 @@ export class UsageMetricsService {
   }
 
   async findOne(id: string, user: RequestUser): Promise<UsageMetric | null> {
-    return await this.usageMetricRepository.findOne({
+    return (await this.usageMetricRepository.findOne({
       where: { id, adminId: user.adminId },
-    }) as any;
+    })) as any;
   }
 
   async remove(id: string, user: RequestUser): Promise<void> {

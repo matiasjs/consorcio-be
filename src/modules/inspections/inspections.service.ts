@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Inspection } from '../../entities/inspection.entity';
@@ -13,23 +17,35 @@ export class InspectionsService {
     private readonly inspectionRepository: Repository<Inspection>,
   ) {}
 
-  async create(createInspectionDto: CreateInspectionDto, user: RequestUser): Promise<Inspection> {
+  async create(
+    createInspectionDto: CreateInspectionDto,
+    user: RequestUser,
+  ): Promise<Inspection> {
     const inspection = this.inspectionRepository.create({
       ...createInspectionDto,
       adminId: user.adminId,
       scheduledAt: new Date(createInspectionDto.scheduledAt),
     });
 
-    return await this.inspectionRepository.save(inspection) as any;
+    return (await this.inspectionRepository.save(inspection)) as any;
   }
 
-  async findAll(user: RequestUser, paginationDto: PaginationDto): Promise<{
+  async findAll(
+    user: RequestUser,
+    paginationDto: PaginationDto,
+  ): Promise<{
     data: Inspection[];
     total: number;
     page: number;
     limit: number;
   }> {
-    const { page = 1, limit = 10, search, sortBy = 'createdAt', sortOrder = 'DESC' } = paginationDto;
+    const {
+      page = 1,
+      limit = 10,
+      search,
+      sortBy = 'createdAt',
+      sortOrder = 'DESC',
+    } = paginationDto;
     const skip = (page - 1) * limit;
 
     const queryBuilder = this.inspectionRepository
@@ -41,12 +57,12 @@ export class InspectionsService {
     if (search) {
       queryBuilder.andWhere(
         '(inspection.notes ILIKE :search OR inspection.findings ILIKE :search OR inspection.recommendations ILIKE :search)',
-        { search: `%${search}%` }
+        { search: `%${search}%` },
       );
     }
 
     queryBuilder
-      .orderBy(`inspection.${sortBy}`, sortOrder as 'ASC' | 'DESC')
+      .orderBy(`inspection.${sortBy}`, sortOrder)
       .skip(skip)
       .take(limit);
 
@@ -73,7 +89,11 @@ export class InspectionsService {
     return inspection;
   }
 
-  async update(id: string, updateInspectionDto: UpdateInspectionDto, user: RequestUser): Promise<Inspection> {
+  async update(
+    id: string,
+    updateInspectionDto: UpdateInspectionDto,
+    user: RequestUser,
+  ): Promise<Inspection> {
     const inspection = await this.findOne(id, user);
 
     const updateData: any = { ...updateInspectionDto };
@@ -82,7 +102,7 @@ export class InspectionsService {
     }
 
     Object.assign(inspection, updateData);
-    return await this.inspectionRepository.save(inspection) as any;
+    return (await this.inspectionRepository.save(inspection)) as any;
   }
 
   async remove(id: string, user: RequestUser): Promise<void> {

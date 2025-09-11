@@ -1,4 +1,9 @@
-import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { PERMISSIONS_KEY } from '../decorators/permissions.decorator';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
@@ -6,7 +11,7 @@ import type { RequestUser } from '../interfaces/request-user.interface';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
-  constructor(private reflector: Reflector) { }
+  constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
     // Check if the route is public
@@ -19,10 +24,10 @@ export class PermissionsGuard implements CanActivate {
       return true;
     }
 
-    const requiredPermissions = this.reflector.getAllAndOverride<string[]>(PERMISSIONS_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const requiredPermissions = this.reflector.getAllAndOverride<string[]>(
+      PERMISSIONS_KEY,
+      [context.getHandler(), context.getClass()],
+    );
 
     if (!requiredPermissions) {
       return true;
@@ -39,12 +44,12 @@ export class PermissionsGuard implements CanActivate {
     const userPermissions = user.permissions || [];
 
     const hasPermission = requiredPermissions.some((permission) =>
-      userPermissions.includes(permission)
+      userPermissions.includes(permission),
     );
 
     if (!hasPermission) {
       throw new ForbiddenException(
-        `Insufficient permissions. Required: ${requiredPermissions.join(', ')}`
+        `Insufficient permissions. Required: ${requiredPermissions.join(', ')}`,
       );
     }
 

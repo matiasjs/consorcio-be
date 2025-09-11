@@ -1,4 +1,11 @@
-import { Entity, Column, ManyToOne, JoinColumn, OneToMany, Index } from 'typeorm';
+import {
+  Entity,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+  Index,
+} from 'typeorm';
 import { BaseEntity } from './base.entity';
 import { Administration } from './administration.entity';
 import { VendorAvailability } from './vendor-availability.entity';

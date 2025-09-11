@@ -8,9 +8,14 @@ import {
   Patch,
   Post,
   Query,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CurrentUser, Roles } from '../../common/decorators';
 import { PaginationDto } from '../../common/dto';
 import { UserRole } from '../../common/enums';
@@ -29,23 +34,38 @@ export class SubscriptionsController {
   @Post()
   @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER)
   @ApiOperation({ summary: 'Create subscription' })
-  @ApiResponse({ status: 201, description: 'Subscription created successfully' })
-  create(@Body() createSubscriptionDto: CreateSubscriptionDto, @CurrentUser() user: RequestUser) {
+  @ApiResponse({
+    status: 201,
+    description: 'Subscription created successfully',
+  })
+  create(
+    @Body() createSubscriptionDto: CreateSubscriptionDto,
+    @CurrentUser() user: RequestUser,
+  ) {
     return this.subscriptionsService.create(createSubscriptionDto, user);
   }
 
   @Get()
   @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF)
   @ApiOperation({ summary: 'Get all subscriptions' })
-  @ApiResponse({ status: 200, description: 'Subscriptions retrieved successfully' })
-  findAll(@CurrentUser() user: RequestUser, @Query() paginationDto: PaginationDto) {
+  @ApiResponse({
+    status: 200,
+    description: 'Subscriptions retrieved successfully',
+  })
+  findAll(
+    @CurrentUser() user: RequestUser,
+    @Query() paginationDto: PaginationDto,
+  ) {
     return this.subscriptionsService.findAll(user, paginationDto);
   }
 
   @Get('active')
   @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF)
   @ApiOperation({ summary: 'Get active subscriptions' })
-  @ApiResponse({ status: 200, description: 'Active subscriptions retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Active subscriptions retrieved successfully',
+  })
   findActive(@CurrentUser() user: RequestUser) {
     return this.subscriptionsService.findActive(user);
   }
@@ -53,7 +73,10 @@ export class SubscriptionsController {
   @Get('expiring')
   @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF)
   @ApiOperation({ summary: 'Get expiring subscriptions' })
-  @ApiResponse({ status: 200, description: 'Expiring subscriptions retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Expiring subscriptions retrieved successfully',
+  })
   findExpiring(@CurrentUser() user: RequestUser) {
     return this.subscriptionsService.findExpiring(user);
   }
@@ -61,15 +84,24 @@ export class SubscriptionsController {
   @Get(':id')
   @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF)
   @ApiOperation({ summary: 'Get subscription by ID' })
-  @ApiResponse({ status: 200, description: 'Subscription retrieved successfully' })
-  findOne(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: RequestUser) {
+  @ApiResponse({
+    status: 200,
+    description: 'Subscription retrieved successfully',
+  })
+  findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: RequestUser,
+  ) {
     return this.subscriptionsService.findOne(id, user);
   }
 
   @Patch(':id')
   @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER)
   @ApiOperation({ summary: 'Update subscription' })
-  @ApiResponse({ status: 200, description: 'Subscription updated successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Subscription updated successfully',
+  })
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateSubscriptionDto: UpdateSubscriptionDto,
@@ -81,8 +113,14 @@ export class SubscriptionsController {
   @Delete(':id')
   @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER)
   @ApiOperation({ summary: 'Delete subscription' })
-  @ApiResponse({ status: 200, description: 'Subscription deleted successfully' })
-  remove(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: RequestUser) {
+  @ApiResponse({
+    status: 200,
+    description: 'Subscription deleted successfully',
+  })
+  remove(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: RequestUser,
+  ) {
     return this.subscriptionsService.remove(id, user);
   }
 }

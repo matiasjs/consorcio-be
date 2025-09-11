@@ -104,4 +104,4 @@ import { WorkOrdersModule } from './modules/workorders/workorders.module';
     },
   ],
 })
-export class AppModule { }
+export class AppModule {}

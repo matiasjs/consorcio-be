@@ -8,7 +8,10 @@ export class CreatePermissionDto {
   @MaxLength(100)
   code: string;
 
-  @ApiPropertyOptional({ description: 'Permission description', example: 'Manage all users' })
+  @ApiPropertyOptional({
+    description: 'Permission description',
+    example: 'Manage all users',
+  })
   @IsString()
   @IsOptional()
   description?: string;
