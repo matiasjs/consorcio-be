@@ -5,10 +5,8 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  Request,
-  UseGuards,
+  Request
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CurrentUser, Public } from '../../common/decorators';
 import type { RequestUser } from '../../common/interfaces';
@@ -21,7 +19,6 @@ export class AuthController {
   constructor(private authService: AuthService) { }
 
   @Public()
-  @UseGuards(AuthGuard('local'))
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'User login' })
@@ -32,10 +29,10 @@ export class AuthController {
   })
   @ApiResponse({
     status: 401,
-    description: 'Invalid credentials',
+    description: 'Invalid refresh token',
   })
   async login(@Request() req, @Body() loginDto: LoginDto): Promise<AuthResponseDto> {
-    return this.authService.login(req.user);
+    return this.authService.login(loginDto);
   }
 
   @Public()
