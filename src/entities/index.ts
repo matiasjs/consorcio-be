@@ -1,14 +1,15 @@
 export * from './administration.entity';
 export * from './base.entity';
 export * from './building.entity';
-export * from './owner-profile.entity';
-export * from './staff-profile.entity';
-export * from './tenant-profile.entity';
 export * from './unit-occupancy.entity';
 export * from './unit.entity';
 export * from './user.entity';
 export * from './vendor-availability.entity';
 export * from './vendor.entity';
+
+// RBAC
+export * from './permission.entity';
+export * from './role.entity';
 
 // Tickets and Work Orders
 export * from './inspection.entity';
@@ -44,3 +45,4 @@ export * from './usage-metric.entity';
 
 // Audit
 export * from './audit-log.entity';
+

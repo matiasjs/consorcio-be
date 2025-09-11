@@ -1,12 +1,12 @@
-import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
-import { User } from '../../entities/user.entity';
+import { Repository } from 'typeorm';
 import { UserStatus } from '../../common/enums';
 import { JwtPayload, JwtRefreshPayload } from '../../common/interfaces';
+import { User } from '../../entities/user.entity';
 import { AuthResponseDto, RefreshTokenDto } from './dto';
 
 @Injectable()
@@ -16,12 +16,12 @@ export class AuthService {
     private userRepository: Repository<User>,
     private jwtService: JwtService,
     private configService: ConfigService,
-  ) {}
+  ) { }
 
   async validateUser(email: string, password: string): Promise<User | null> {
     const user = await this.userRepository.findOne({
       where: { email, status: UserStatus.ACTIVE },
-      relations: ['administration'],
+      relations: ['administration', 'roles', 'roles.permissions'],
     });
 
     if (!user) {
@@ -39,16 +39,26 @@ export class AuthService {
   async validateUserById(userId: string): Promise<User | null> {
     return this.userRepository.findOne({
       where: { id: userId, status: UserStatus.ACTIVE },
-      relations: ['administration'],
+      relations: ['administration', 'roles', 'roles.permissions'],
     });
   }
 
   async login(user: User): Promise<AuthResponseDto> {
+    // Extract roles and permissions
+    const roles = user.roles?.map(role => role.name) || [];
+    const permissions = user.roles?.flatMap(role =>
+      role.permissions?.map(permission => permission.code) || []
+    ) || [];
+
+    // Remove duplicates
+    const uniquePermissions = [...new Set(permissions)];
+
     const payload: JwtPayload = {
       sub: user.id,
       email: user.email,
       adminId: user.adminId,
-      roles: user.roles,
+      roles,
+      permissions: uniquePermissions,
     };
 
     const refreshPayload: JwtRefreshPayload = {
@@ -81,7 +91,8 @@ export class AuthService {
         id: user.id,
         email: user.email,
         fullName: user.fullName,
-        roles: user.roles,
+        roles,
+        permissions: uniquePermissions,
         adminId: user.adminId,
       },
     };
@@ -114,11 +125,11 @@ export class AuthService {
 
   private getTokenExpirationSeconds(): number {
     const expiresIn = this.configService.get<string>('jwt.expiresIn', '24h');
-    
+
     // Parse time string (e.g., "24h", "30m", "7d")
     const timeValue = parseInt(expiresIn.slice(0, -1));
     const timeUnit = expiresIn.slice(-1);
-    
+
     switch (timeUnit) {
       case 's':
         return timeValue;

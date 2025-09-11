@@ -1,10 +1,8 @@
-import { Entity, Column, ManyToOne, JoinColumn, Index, OneToMany, OneToOne } from 'typeorm';
-import { BaseEntity } from './base.entity';
+import { Column, Entity, Index, JoinColumn, JoinTable, ManyToMany, ManyToOne } from 'typeorm';
+import { UserStatus } from '../common/enums';
 import { Administration } from './administration.entity';
-import { UserRole, UserStatus } from '../common/enums';
-import { OwnerProfile } from './owner-profile.entity';
-import { TenantProfile } from './tenant-profile.entity';
-import { StaffProfile } from './staff-profile.entity';
+import { BaseEntity } from './base.entity';
+import { Role } from './role.entity';
 
 @Entity('users')
 @Index(['email', 'adminId'], { unique: true })
@@ -24,14 +22,6 @@ export class User extends BaseEntity {
 
   @Column({ type: 'varchar', length: 255 })
   fullName: string;
-
-  @Column({
-    type: 'enum',
-    enum: UserRole,
-    array: true,
-    default: [UserRole.READONLY],
-  })
-  roles: UserRole[];
 
   @Column({
     type: 'enum',
@@ -55,17 +45,35 @@ export class User extends BaseEntity {
   @Column({ type: 'timestamp', nullable: true })
   resetPasswordExpiresAt?: Date;
 
+  // Additional profile fields (moved from profile entities)
+  @Column({ type: 'text', nullable: true })
+  notes?: string;
+
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  documentType?: string;
+
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  documentNumber?: string;
+
+  @Column({ type: 'date', nullable: true })
+  birthDate?: Date;
+
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  emergencyContact?: string;
+
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  emergencyPhone?: string;
+
   // Relations
   @ManyToOne(() => Administration, (administration) => administration.users)
   @JoinColumn({ name: 'adminId' })
   administration: Administration;
 
-  @OneToOne(() => OwnerProfile, (profile) => profile.user)
-  ownerProfile?: OwnerProfile;
-
-  @OneToOne(() => TenantProfile, (profile) => profile.user)
-  tenantProfile?: TenantProfile;
-
-  @OneToOne(() => StaffProfile, (profile) => profile.user)
-  staffProfile?: StaffProfile;
+  @ManyToMany(() => Role, (role) => role.users)
+  @JoinTable({
+    name: 'user_roles',
+    joinColumn: { name: 'userId', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'roleId', referencedColumnName: 'id' },
+  })
+  roles: Role[];
 }
