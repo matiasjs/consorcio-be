@@ -1,0 +1,354 @@
+{
+	"info": {
+		"_postman_id": "consorcios-additional-modules",
+		"name": "Consorcios Backend - Additional Modules",
+		"description": "Additional modules for Consorcios Backend: Work Orders, Materials, Invoices, Payments, Assets, Meetings, Documents, Notifications, Messages, Inspections, Subscriptions, Usage Metrics, and Audit Logs",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{jwt_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "jwt_token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "🔨 Work Orders",
+			"item": [
+				{
+					"name": "Get All Work Orders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/workorders",
+							"host": ["{{base_url}}"],
+							"path": ["workorders"]
+						},
+						"description": "Requires: readWorkOrder permission"
+					}
+				},
+				{
+					"name": "Create Work Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Elevator Repair\",\n  \"description\": \"Fix elevator motor\",\n  \"priority\": \"high\",\n  \"estimatedCost\": 5000,\n  \"ticketId\": \"ticket_id_here\",\n  \"vendorId\": \"vendor_id_here\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/workorders",
+							"host": ["{{base_url}}"],
+							"path": ["workorders"]
+						},
+						"description": "Requires: createWorkOrder permission"
+					}
+				},
+				{
+					"name": "Get Work Order by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/workorders/:id",
+							"host": ["{{base_url}}"],
+							"path": ["workorders", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "workorder_id_here"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Work Order",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"in_progress\",\n  \"actualCost\": 4500\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/workorders/:id",
+							"host": ["{{base_url}}"],
+							"path": ["workorders", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "workorder_id_here"
+								}
+							]
+						},
+						"description": "Requires: updateWorkOrder permission"
+					}
+				},
+				{
+					"name": "Delete Work Order",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/workorders/:id",
+							"host": ["{{base_url}}"],
+							"path": ["workorders", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "workorder_id_here"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Work Order Quotes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/workorders/:id/quotes",
+							"host": ["{{base_url}}"],
+							"path": ["workorders", ":id", "quotes"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "workorder_id_here"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Create Work Order Quote",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"amount\": 4800,\n  \"description\": \"Elevator motor replacement quote\",\n  \"validUntil\": \"2024-12-31\",\n  \"vendorId\": \"vendor_id_here\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/workorders/:id/quotes",
+							"host": ["{{base_url}}"],
+							"path": ["workorders", ":id", "quotes"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "workorder_id_here"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Create Work Order Schedule",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"startDate\": \"2024-01-15\",\n  \"endDate\": \"2024-01-17\",\n  \"startTime\": \"09:00\",\n  \"endTime\": \"17:00\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/workorders/:id/schedules",
+							"host": ["{{base_url}}"],
+							"path": ["workorders", ":id", "schedules"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "workorder_id_here"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Work Order Materials",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/workorders/:id/materials",
+							"host": ["{{base_url}}"],
+							"path": ["workorders", ":id", "materials"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "workorder_id_here"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Add Material to Work Order",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"materialId\": \"material_id_here\",\n  \"quantity\": 2,\n  \"unitCost\": 150\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/workorders/:id/materials",
+							"host": ["{{base_url}}"],
+							"path": ["workorders", ":id", "materials"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "workorder_id_here"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "🧱 Materials",
+			"item": [
+				{
+					"name": "Get All Materials",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/materials",
+							"host": ["{{base_url}}"],
+							"path": ["materials"]
+						}
+					}
+				},
+				{
+					"name": "Create Material",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Elevator Motor\",\n  \"description\": \"High-efficiency elevator motor\",\n  \"category\": \"mechanical\",\n  \"unit\": \"piece\",\n  \"cost\": 2500\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/materials",
+							"host": ["{{base_url}}"],
+							"path": ["materials"]
+						}
+					}
+				},
+				{
+					"name": "Get Material by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/materials/:id",
+							"host": ["{{base_url}}"],
+							"path": ["materials", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "material_id_here"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Material",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"cost\": 2600\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/materials/:id",
+							"host": ["{{base_url}}"],
+							"path": ["materials", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "material_id_here"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Delete Material",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/materials/:id",
+							"host": ["{{base_url}}"],
+							"path": ["materials", ":id"],
+							"variable": [
+								{
+									"key": "id",
+									"value": "material_id_here"
+								}
+							]
+						}
+					}
+				}
+			]
+		}
+	]
+}

@@ -1,0 +1,3230 @@
+{
+  "info": {
+    "_postman_id": "consorcios-complete-collection",
+    "name": "Consorcios Backend - Complete Collection (109 Endpoints)",
+    "description": "Complete collection with all 109 endpoints of the Consorcios Backend RBAC system",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwt_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000/api/v1",
+      "type": "string"
+    },
+    {
+      "key": "jwt_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "User login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@demo.com\",\n  \"password\": \"Admin123!\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/refresh",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "refresh"
+              ]
+            },
+            "description": "Refresh token",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            },
+            "description": "Get current user"
+          }
+        }
+      ]
+    },
+    {
+      "name": "RBAC Management",
+      "item": [
+        {
+          "name": "Get All Roles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/roles",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "roles"
+              ]
+            },
+            "description": "Get all roles"
+          }
+        },
+        {
+          "name": "Create Role",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/roles",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "roles"
+              ]
+            },
+            "description": "Create new role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Role by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/roles/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "roles",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Get role by ID"
+          }
+        },
+        {
+          "name": "Update Role",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/roles/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "roles",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Update role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Role",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/roles/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "roles",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Delete role"
+          }
+        },
+        {
+          "name": "Assign Permissions",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/roles/:id/permissions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "roles",
+                ":id",
+                "permissions"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Assign permissions to role",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get All Permissions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/permissions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "permissions"
+              ]
+            },
+            "description": "Get all permissions"
+          }
+        },
+        {
+          "name": "Create Permission",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/permissions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "permissions"
+              ]
+            },
+            "description": "Create new permission",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Assign User Roles",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/users/:id/roles",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "users",
+                ":id",
+                "roles"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Assign roles to user",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"password\": \"Password123!\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get User Roles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/users/:id/roles",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "users",
+                ":id",
+                "roles"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Get user roles"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users"
+              ]
+            },
+            "description": "Get all users"
+          }
+        },
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/users",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users"
+              ]
+            },
+            "description": "Create user",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"password\": \"Password123!\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get User by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Get user by ID"
+          }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/users/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Update user",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"password\": \"Password123!\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/users/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "users",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Delete user"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Administrations",
+      "item": [
+        {
+          "name": "Get All Administrations",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/administrations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "administrations"
+              ]
+            },
+            "description": "Get all administrations"
+          }
+        },
+        {
+          "name": "Create Administration",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/administrations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "administrations"
+              ]
+            },
+            "description": "Create administration",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Administration by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/administrations/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "administrations",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Get administration by ID"
+          }
+        },
+        {
+          "name": "Update Administration",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/administrations/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "administrations",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Update administration",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Administration",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/administrations/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "administrations",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Delete administration"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Buildings",
+      "item": [
+        {
+          "name": "Get All Buildings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/buildings",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "buildings"
+              ]
+            },
+            "description": "Get all buildings"
+          }
+        },
+        {
+          "name": "Create Building",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/buildings",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "buildings"
+              ]
+            },
+            "description": "Create building",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Building Name\",\n  \"address\": \"123 Main St\",\n  \"floors\": 10\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Building by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/buildings/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "buildings",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Get building by ID"
+          }
+        },
+        {
+          "name": "Update Building",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/buildings/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "buildings",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Update building",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Building Name\",\n  \"address\": \"123 Main St\",\n  \"floors\": 10\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Building",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/buildings/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "buildings",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Delete building"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Units",
+      "item": [
+        {
+          "name": "Get All Units",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/units",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "units"
+              ]
+            },
+            "description": "Get all units"
+          }
+        },
+        {
+          "name": "Create Unit",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/units",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "units"
+              ]
+            },
+            "description": "Create unit",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Unit by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/units/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "units",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Get unit by ID"
+          }
+        },
+        {
+          "name": "Update Unit",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/units/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "units",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Update unit",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Unit",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/units/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "units",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Delete unit"
+          }
+        },
+        {
+          "name": "Create Unit Occupancy",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/units/:id/occupancy",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "units",
+                ":id",
+                "occupancy"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Create unit occupancy",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Unit Occupancy",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/units/:id/occupancy",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "units",
+                ":id",
+                "occupancy"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Get unit occupancy"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Vendors",
+      "item": [
+        {
+          "name": "Get All Vendors",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/vendors",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "vendors"
+              ]
+            },
+            "description": "Get all vendors"
+          }
+        },
+        {
+          "name": "Create Vendor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/vendors",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "vendors"
+              ]
+            },
+            "description": "Create vendor",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Vendor by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/vendors/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "vendors",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Get vendor by ID"
+          }
+        },
+        {
+          "name": "Update Vendor",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/vendors/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "vendors",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Update vendor",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Vendor",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/vendors/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "vendors",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Delete vendor"
+          }
+        },
+        {
+          "name": "Get Vendor Availability",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/vendors/:id/availability",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "vendors",
+                ":id",
+                "availability"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Get vendor availability"
+          }
+        },
+        {
+          "name": "Create Vendor Availability",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/vendors/:id/availability",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "vendors",
+                ":id",
+                "availability"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Create vendor availability",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Vendor Availability",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/vendors/:id/availability/:availabilityId",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "vendors",
+                ":id",
+                "availability",
+                ":availabilityId"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                },
+                {
+                  "key": "availabilityId",
+                  "value": "availabilityId_here"
+                }
+              ]
+            },
+            "description": "Update vendor availability",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Vendor Availability",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/vendors/:id/availability/:availabilityId",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "vendors",
+                ":id",
+                "availability",
+                ":availabilityId"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                },
+                {
+                  "key": "availabilityId",
+                  "value": "availabilityId_here"
+                }
+              ]
+            },
+            "description": "Delete vendor availability"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tickets",
+      "item": [
+        {
+          "name": "Get All Tickets",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tickets",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tickets"
+              ]
+            },
+            "description": "Get all tickets"
+          }
+        },
+        {
+          "name": "Create Ticket",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tickets",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tickets"
+              ]
+            },
+            "description": "Create ticket",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Ticket Stats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tickets/stats",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tickets",
+                "stats"
+              ]
+            },
+            "description": "Get ticket stats"
+          }
+        },
+        {
+          "name": "Get Ticket by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tickets/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tickets",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Get ticket by ID"
+          }
+        },
+        {
+          "name": "Update Ticket",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tickets/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tickets",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Update ticket",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Ticket",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/tickets/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tickets",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Delete ticket"
+          }
+        },
+        {
+          "name": "Assign Inspector",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/tickets/:id/assign-inspector",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "tickets",
+                ":id",
+                "assign-inspector"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Assign inspector to ticket",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Inspections",
+      "item": [
+        {
+          "name": "Get All Inspections",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/inspections",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "inspections"
+              ]
+            },
+            "description": "Get all inspections"
+          }
+        },
+        {
+          "name": "Create Inspection",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/inspections",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "inspections"
+              ]
+            },
+            "description": "Create inspection",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Inspection by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/inspections/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "inspections",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Get inspection by ID"
+          }
+        },
+        {
+          "name": "Update Inspection",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/inspections/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "inspections",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Update inspection",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Inspection",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/inspections/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "inspections",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Delete inspection"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Work Orders",
+      "item": [
+        {
+          "name": "Get All Work Orders",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/workorders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workorders"
+              ]
+            },
+            "description": "Get all work orders"
+          }
+        },
+        {
+          "name": "Create Work Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/workorders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workorders"
+              ]
+            },
+            "description": "Create work order",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Work Order by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/workorders/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workorders",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Get work order by ID"
+          }
+        },
+        {
+          "name": "Update Work Order",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/workorders/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workorders",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Update work order",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Work Order",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/workorders/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workorders",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Delete work order"
+          }
+        },
+        {
+          "name": "Get Work Order Quotes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/workorders/:id/quotes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workorders",
+                ":id",
+                "quotes"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Get work order quotes"
+          }
+        },
+        {
+          "name": "Create Work Order Quote",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/workorders/:id/quotes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workorders",
+                ":id",
+                "quotes"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Create work order quote",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Create Work Order Schedule",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/workorders/:id/schedules",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workorders",
+                ":id",
+                "schedules"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Create work order schedule",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Work Order Materials",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/workorders/:id/materials",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workorders",
+                ":id",
+                "materials"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Get work order materials"
+          }
+        },
+        {
+          "name": "Add Material to Work Order",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/workorders/:id/materials",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workorders",
+                ":id",
+                "materials"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Add material to work order",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Materials",
+      "item": [
+        {
+          "name": "Get All Materials",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/materials",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "materials"
+              ]
+            },
+            "description": "Get all materials"
+          }
+        },
+        {
+          "name": "Create Material",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/materials",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "materials"
+              ]
+            },
+            "description": "Create material",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Material by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/materials/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "materials",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Get material by ID"
+          }
+        },
+        {
+          "name": "Update Material",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/materials/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "materials",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Update material",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Material",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/materials/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "materials",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Delete material"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Invoices",
+      "item": [
+        {
+          "name": "Get All Invoices",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/invoices",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "invoices"
+              ]
+            },
+            "description": "Get all invoices"
+          }
+        },
+        {
+          "name": "Create Invoice",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/invoices",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "invoices"
+              ]
+            },
+            "description": "Create invoice",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Invoice by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/invoices/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "invoices",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Get invoice by ID"
+          }
+        },
+        {
+          "name": "Update Invoice",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/invoices/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "invoices",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Update invoice",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Invoice",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/invoices/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "invoices",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Delete invoice"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Get All Payments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/payments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "payments"
+              ]
+            },
+            "description": "Get all payments"
+          }
+        },
+        {
+          "name": "Create Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "payments"
+              ]
+            },
+            "description": "Create payment",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Payment by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/payments/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "payments",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Get payment by ID"
+          }
+        },
+        {
+          "name": "Update Payment",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/payments/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "payments",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Update payment",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Payment",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/payments/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "payments",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Delete payment"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Assets",
+      "item": [
+        {
+          "name": "Get All Assets",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/assets",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "assets"
+              ]
+            },
+            "description": "Get all assets"
+          }
+        },
+        {
+          "name": "Create Asset",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/assets",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "assets"
+              ]
+            },
+            "description": "Create asset",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Asset by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/assets/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "assets",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Get asset by ID"
+          }
+        },
+        {
+          "name": "Update Asset",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/assets/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "assets",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Update asset",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Asset",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/assets/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "assets",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Delete asset"
+          }
+        },
+        {
+          "name": "Get Asset Maintenance Plans",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/assets/:id/plans",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "assets",
+                ":id",
+                "plans"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Get asset maintenance plans"
+          }
+        },
+        {
+          "name": "Create Asset Maintenance Plan",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/assets/:id/plans",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "assets",
+                ":id",
+                "plans"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Create asset maintenance plan",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Plans",
+      "item": [
+        {
+          "name": "Get Maintenance Plan Tasks",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/plans/:id/tasks",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "plans",
+                ":id",
+                "tasks"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Get maintenance plan tasks"
+          }
+        },
+        {
+          "name": "Create Maintenance Task",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/plans/:id/tasks",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "plans",
+                ":id",
+                "tasks"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Create maintenance task",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Meetings",
+      "item": [
+        {
+          "name": "Get All Meetings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/meetings",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "meetings"
+              ]
+            },
+            "description": "Get all meetings"
+          }
+        },
+        {
+          "name": "Create Meeting",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/meetings",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "meetings"
+              ]
+            },
+            "description": "Create meeting",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Meeting by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/meetings/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "meetings",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Get meeting by ID"
+          }
+        },
+        {
+          "name": "Update Meeting",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/meetings/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "meetings",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Update meeting",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Meeting",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/meetings/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "meetings",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Delete meeting"
+          }
+        },
+        {
+          "name": "Get Meeting Resolutions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/meetings/:id/resolutions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "meetings",
+                ":id",
+                "resolutions"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Get meeting resolutions"
+          }
+        },
+        {
+          "name": "Create Meeting Resolution",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/meetings/:id/resolutions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "meetings",
+                ":id",
+                "resolutions"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Create meeting resolution",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Resolutions",
+      "item": [
+        {
+          "name": "Vote on Resolution",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/resolutions/:id/votes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "resolutions",
+                ":id",
+                "votes"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Vote on resolution",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Documents",
+      "item": [
+        {
+          "name": "Get All Documents",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/documents",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "documents"
+              ]
+            },
+            "description": "Get all documents"
+          }
+        },
+        {
+          "name": "Create Document",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/documents",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "documents"
+              ]
+            },
+            "description": "Create document",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Document by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/documents/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "documents",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Get document by ID"
+          }
+        },
+        {
+          "name": "Update Document",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/documents/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "documents",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Update document",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Document",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/documents/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "documents",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Delete document"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "Get All Notifications",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/notifications",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "notifications"
+              ]
+            },
+            "description": "Get all notifications"
+          }
+        },
+        {
+          "name": "Create Notification",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/notifications",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "notifications"
+              ]
+            },
+            "description": "Create notification",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Notification by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/notifications/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "notifications",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Get notification by ID"
+          }
+        },
+        {
+          "name": "Update Notification",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/notifications/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "notifications",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Update notification",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Notification",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/notifications/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "notifications",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Delete notification"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subscriptions",
+      "item": [
+        {
+          "name": "Get All Subscriptions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/subscriptions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subscriptions"
+              ]
+            },
+            "description": "Get all subscriptions"
+          }
+        },
+        {
+          "name": "Create Subscription",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subscriptions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subscriptions"
+              ]
+            },
+            "description": "Create subscription",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Subscription by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/subscriptions/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subscriptions",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Get subscription by ID"
+          }
+        },
+        {
+          "name": "Update Subscription",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/subscriptions/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subscriptions",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Update subscription",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Subscription",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/subscriptions/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "subscriptions",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Delete subscription"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Usage Metrics",
+      "item": [
+        {
+          "name": "Get Usage Metrics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/usage-metrics",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "usage-metrics"
+              ]
+            },
+            "description": "Get usage metrics"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Audit Logs",
+      "item": [
+        {
+          "name": "Get Audit Logs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/audit-logs",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "audit-logs"
+              ]
+            },
+            "description": "Get audit logs"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Messages",
+      "item": [
+        {
+          "name": "Create Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/messages",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "messages"
+              ]
+            },
+            "description": "Create message",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Messages for Entity",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/messages/entity/:entityType/:entityId",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "messages",
+                "entity",
+                ":entityType",
+                ":entityId"
+              ],
+              "variable": [
+                {
+                  "key": "entityType",
+                  "value": "entityType_here"
+                },
+                {
+                  "key": "entityId",
+                  "value": "entityId_here"
+                }
+              ]
+            },
+            "description": "Get messages for entity"
+          }
+        },
+        {
+          "name": "Get Unread Count",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/messages/entity/:entityType/:entityId/unread-count",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "messages",
+                "entity",
+                ":entityType",
+                ":entityId",
+                "unread-count"
+              ],
+              "variable": [
+                {
+                  "key": "entityType",
+                  "value": "entityType_here"
+                },
+                {
+                  "key": "entityId",
+                  "value": "entityId_here"
+                }
+              ]
+            },
+            "description": "Get unread count"
+          }
+        },
+        {
+          "name": "Mark Message as Read",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/messages/:id/mark-read",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "messages",
+                ":id",
+                "mark-read"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "id_here"
+                }
+              ]
+            },
+            "description": "Mark message as read",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Name\",\n  \"description\": \"Sample Description\"\n}"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
