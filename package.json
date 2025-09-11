@@ -25,7 +25,10 @@
     "db:drop": "npm run typeorm -- schema:drop -d src/config/database.config.ts",
     "db:create": "npm run typeorm -- schema:sync -d src/config/database.config.ts",
     "db:migrate": "npm run migration:run",
-    "db:seed": "ts-node src/database/seed.ts"
+    "db:seed": "ts-node src/database/seed.ts",
+    "deploy:setup": "npm run migration:run && npm run db:seed",
+    "deploy:migrate": "npm run migration:run",
+    "check:env": "node scripts/check-env.js"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
