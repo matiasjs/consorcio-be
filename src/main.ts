@@ -1,3 +1,9 @@
+// Polyfill for crypto module in Node.js 18
+import { webcrypto } from 'crypto';
+if (!globalThis.crypto) {
+  globalThis.crypto = webcrypto as any;
+}
+
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';

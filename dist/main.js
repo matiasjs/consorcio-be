@@ -1,5 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const crypto_1 = require("crypto");
+if (!globalThis.crypto) {
+    globalThis.crypto = crypto_1.webcrypto;
+}
 const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const core_1 = require("@nestjs/core");
