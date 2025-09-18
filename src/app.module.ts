@@ -16,6 +16,7 @@ import { AuditLogsModule } from './modules/audit-logs/audit-logs.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { BuildingsModule } from './modules/buildings/buildings.module';
 import { DocumentsModule } from './modules/documents/documents.module';
+import { HealthModule } from './modules/health/health.module';
 import { InspectionsModule } from './modules/inspections/inspections.module';
 import { InvoicesModule } from './modules/invoices/invoices.module';
 import { MaterialsModule } from './modules/materials/materials.module';
@@ -63,6 +64,7 @@ import { WorkOrdersModule } from './modules/workorders/workorders.module';
 
     // Feature modules
     AuthModule,
+    HealthModule,
     AdministrationsModule,
     TicketsModule,
     MessagesModule,
@@ -102,4 +104,4 @@ import { WorkOrdersModule } from './modules/workorders/workorders.module';
     },
   ],
 })
-export class AppModule { }
+export class AppModule {}

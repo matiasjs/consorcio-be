@@ -7,7 +7,7 @@ import {
   CreateVendorAvailabilityDto,
   CreateVendorDto,
   UpdateVendorAvailabilityDto,
-  UpdateVendorDto
+  UpdateVendorDto,
 } from './dto';
 
 @Injectable()
@@ -17,9 +17,12 @@ export class VendorsService {
     private readonly vendorRepository: Repository<Vendor>,
     @InjectRepository(VendorAvailability)
     private readonly availabilityRepository: Repository<VendorAvailability>,
-  ) { }
+  ) {}
 
-  async create(createVendorDto: CreateVendorDto, adminId: string): Promise<Vendor> {
+  async create(
+    createVendorDto: CreateVendorDto,
+    adminId: string,
+  ): Promise<Vendor> {
     const vendor = this.vendorRepository.create({
       ...createVendorDto,
       adminId,
@@ -53,7 +56,11 @@ export class VendorsService {
     return vendor;
   }
 
-  async update(id: string, updateVendorDto: UpdateVendorDto, adminId: string): Promise<Vendor> {
+  async update(
+    id: string,
+    updateVendorDto: UpdateVendorDto,
+    adminId: string,
+  ): Promise<Vendor> {
     const vendor = await this.findOne(id, adminId);
     Object.assign(vendor, updateVendorDto);
     return this.vendorRepository.save(vendor);
@@ -81,7 +88,10 @@ export class VendorsService {
     return this.availabilityRepository.save(availability);
   }
 
-  async getAvailabilities(vendorId: string, adminId: string): Promise<VendorAvailability[]> {
+  async getAvailabilities(
+    vendorId: string,
+    adminId: string,
+  ): Promise<VendorAvailability[]> {
     const vendor = await this.findOne(vendorId, adminId);
 
     return this.availabilityRepository.find({
@@ -103,7 +113,9 @@ export class VendorsService {
     });
 
     if (!availability) {
-      throw new NotFoundException(`Availability with ID ${availabilityId} not found`);
+      throw new NotFoundException(
+        `Availability with ID ${availabilityId} not found`,
+      );
     }
 
     Object.assign(availability, updateAvailabilityDto);
@@ -122,7 +134,9 @@ export class VendorsService {
     });
 
     if (!availability) {
-      throw new NotFoundException(`Availability with ID ${availabilityId} not found`);
+      throw new NotFoundException(
+        `Availability with ID ${availabilityId} not found`,
+      );
     }
 
     await this.availabilityRepository.remove(availability);

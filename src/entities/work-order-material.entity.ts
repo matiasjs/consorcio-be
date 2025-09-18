@@ -54,7 +54,10 @@ export class WorkOrderMaterial extends BaseEntity {
   @JoinColumn({ name: 'workOrderId' })
   workOrder: WorkOrder;
 
-  @ManyToOne(() => MaterialItem, (materialItem) => materialItem.workOrderMaterials)
+  @ManyToOne(
+    () => MaterialItem,
+    (materialItem) => materialItem.workOrderMaterials,
+  )
   @JoinColumn({ name: 'materialItemId' })
   materialItem: MaterialItem;
 }

@@ -8,9 +8,14 @@ import {
   Patch,
   Post,
   Query,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CurrentUser, Roles } from '../../common/decorators';
 import { PaginationDto } from '../../common/dto';
 import { UserRole } from '../../common/enums';
@@ -24,29 +29,50 @@ import { MeetingsService } from './meetings.service';
 @Controller({ path: 'meetings', version: '1' })
 @UseGuards(JwtAuthGuard, TenantGuard, RolesGuard)
 export class MeetingsController {
-  constructor(private readonly meetingsService: MeetingsService) { }
+  constructor(private readonly meetingsService: MeetingsService) {}
 
   @Post()
   @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF)
   @ApiOperation({ summary: 'Create a new meeting' })
   @ApiResponse({ status: 201, description: 'Meeting created successfully' })
-  create(@Body() createMeetingDto: CreateMeetingDto, @CurrentUser() user: RequestUser) {
+  create(
+    @Body() createMeetingDto: CreateMeetingDto,
+    @CurrentUser() user: RequestUser,
+  ) {
     return this.meetingsService.create(createMeetingDto, user);
   }
 
   @Get()
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF, UserRole.OWNER, UserRole.TENANT)
+  @Roles(
+    UserRole.SUPERADMIN,
+    UserRole.ADMIN_OWNER,
+    UserRole.STAFF,
+    UserRole.OWNER,
+    UserRole.TENANT,
+  )
   @ApiOperation({ summary: 'Get all meetings' })
   @ApiResponse({ status: 200, description: 'Meetings retrieved successfully' })
-  findAll(@CurrentUser() user: RequestUser, @Query() paginationDto: PaginationDto) {
+  findAll(
+    @CurrentUser() user: RequestUser,
+    @Query() paginationDto: PaginationDto,
+  ) {
     return this.meetingsService.findAll(user, paginationDto);
   }
 
   @Get(':id')
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF, UserRole.OWNER, UserRole.TENANT)
+  @Roles(
+    UserRole.SUPERADMIN,
+    UserRole.ADMIN_OWNER,
+    UserRole.STAFF,
+    UserRole.OWNER,
+    UserRole.TENANT,
+  )
   @ApiOperation({ summary: 'Get meeting by ID' })
   @ApiResponse({ status: 200, description: 'Meeting retrieved successfully' })
-  findOne(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: RequestUser) {
+  findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: RequestUser,
+  ) {
     return this.meetingsService.findOne(id, user);
   }
 
@@ -66,15 +92,30 @@ export class MeetingsController {
   @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF)
   @ApiOperation({ summary: 'Delete meeting' })
   @ApiResponse({ status: 200, description: 'Meeting deleted successfully' })
-  remove(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: RequestUser) {
+  remove(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: RequestUser,
+  ) {
     return this.meetingsService.remove(id, user);
   }
 
   @Get(':id/resolutions')
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF, UserRole.OWNER, UserRole.TENANT)
+  @Roles(
+    UserRole.SUPERADMIN,
+    UserRole.ADMIN_OWNER,
+    UserRole.STAFF,
+    UserRole.OWNER,
+    UserRole.TENANT,
+  )
   @ApiOperation({ summary: 'Get meeting resolutions' })
-  @ApiResponse({ status: 200, description: 'Resolutions retrieved successfully' })
-  getResolutions(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: RequestUser) {
+  @ApiResponse({
+    status: 200,
+    description: 'Resolutions retrieved successfully',
+  })
+  getResolutions(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: RequestUser,
+  ) {
     return this.meetingsService.getResolutions(id, user);
   }
 

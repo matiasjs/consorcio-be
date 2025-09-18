@@ -1,7 +1,15 @@
 import * as bcrypt from 'bcryptjs';
 import { DataSource } from 'typeorm';
 import { UserStatus } from '../../common/enums';
-import { Administration, Building, Permission, Role, Unit, UnitOccupancy, User } from '../../entities';
+import {
+  Administration,
+  Building,
+  Permission,
+  Role,
+  Unit,
+  UnitOccupancy,
+  User,
+} from '../../entities';
 
 export async function seedRBAC(dataSource: DataSource): Promise<void> {
   const permissionRepository = dataSource.getRepository(Permission);
@@ -21,28 +29,64 @@ export async function seedRBAC(dataSource: DataSource): Promise<void> {
     { code: 'readUsers', description: 'Read users', module: 'users' },
 
     // Buildings & Units
-    { code: 'manageBuildings', description: 'Manage buildings', module: 'buildings' },
+    {
+      code: 'manageBuildings',
+      description: 'Manage buildings',
+      module: 'buildings',
+    },
     { code: 'manageUnits', description: 'Manage units', module: 'units' },
-    { code: 'managePeople', description: 'Manage people and occupancies', module: 'people' },
+    {
+      code: 'managePeople',
+      description: 'Manage people and occupancies',
+      module: 'people',
+    },
 
     // Billing
-    { code: 'readBilling', description: 'Read billing information', module: 'billing' },
+    {
+      code: 'readBilling',
+      description: 'Read billing information',
+      module: 'billing',
+    },
     { code: 'manageBilling', description: 'Manage billing', module: 'billing' },
 
     // Work Orders
-    { code: 'createWorkOrder', description: 'Create work orders', module: 'workorders' },
-    { code: 'updateWorkOrder', description: 'Update work orders', module: 'workorders' },
-    { code: 'readWorkOrder', description: 'Read work orders', module: 'workorders' },
-    { code: 'closeWorkOrder', description: 'Close work orders', module: 'workorders' },
+    {
+      code: 'createWorkOrder',
+      description: 'Create work orders',
+      module: 'workorders',
+    },
+    {
+      code: 'updateWorkOrder',
+      description: 'Update work orders',
+      module: 'workorders',
+    },
+    {
+      code: 'readWorkOrder',
+      description: 'Read work orders',
+      module: 'workorders',
+    },
+    {
+      code: 'closeWorkOrder',
+      description: 'Close work orders',
+      module: 'workorders',
+    },
 
     // Vendors
     { code: 'manageVendors', description: 'Manage vendors', module: 'vendors' },
 
     // Documents
-    { code: 'manageDocuments', description: 'Manage documents', module: 'documents' },
+    {
+      code: 'manageDocuments',
+      description: 'Manage documents',
+      module: 'documents',
+    },
 
     // Notifications
-    { code: 'manageNotifications', description: 'Manage notifications', module: 'notifications' },
+    {
+      code: 'manageNotifications',
+      description: 'Manage notifications',
+      module: 'notifications',
+    },
 
     // Audit
     { code: 'readAuditLogs', description: 'Read audit logs', module: 'audit' },
@@ -50,13 +94,23 @@ export async function seedRBAC(dataSource: DataSource): Promise<void> {
     // RBAC Management
     { code: 'manageRoles', description: 'Manage roles', module: 'rbac' },
     { code: 'readRoles', description: 'Read roles', module: 'rbac' },
-    { code: 'managePermissions', description: 'Manage permissions', module: 'rbac' },
-    { code: 'readPermissions', description: 'Read permissions', module: 'rbac' },
+    {
+      code: 'managePermissions',
+      description: 'Manage permissions',
+      module: 'rbac',
+    },
+    {
+      code: 'readPermissions',
+      description: 'Read permissions',
+      module: 'rbac',
+    },
   ];
 
   const createdPermissions: Permission[] = [];
   for (const permissionData of permissions) {
-    let permission = await permissionRepository.findOne({ where: { code: permissionData.code } });
+    let permission = await permissionRepository.findOne({
+      where: { code: permissionData.code },
+    });
     if (!permission) {
       permission = permissionRepository.create(permissionData);
       permission = await permissionRepository.save(permission);
@@ -67,7 +121,9 @@ export async function seedRBAC(dataSource: DataSource): Promise<void> {
   console.log(`✅ Created ${createdPermissions.length} permissions`);
 
   // 2. Create Administration for testing
-  let administration = await administrationRepository.findOne({ where: { name: 'Demo Administration' } });
+  let administration = await administrationRepository.findOne({
+    where: { name: 'Demo Administration' },
+  });
   if (!administration) {
     administration = administrationRepository.create({
       name: 'Demo Administration',
@@ -87,15 +143,24 @@ export async function seedRBAC(dataSource: DataSource): Promise<void> {
     {
       name: 'admin',
       description: 'Administrator with full access',
-      permissionCodes: permissions.map(p => p.code), // All permissions
+      permissionCodes: permissions.map((p) => p.code), // All permissions
     },
     {
       name: 'secretaria',
       description: 'Secretary with management permissions',
       permissionCodes: [
-        'readUsers', 'manageBuildings', 'manageUnits', 'managePeople',
-        'readBilling', 'manageBilling', 'createWorkOrder', 'updateWorkOrder',
-        'readWorkOrder', 'manageVendors', 'manageDocuments', 'manageNotifications'
+        'readUsers',
+        'manageBuildings',
+        'manageUnits',
+        'managePeople',
+        'readBilling',
+        'manageBilling',
+        'createWorkOrder',
+        'updateWorkOrder',
+        'readWorkOrder',
+        'manageVendors',
+        'manageDocuments',
+        'manageNotifications',
       ],
     },
     {
@@ -119,7 +184,7 @@ export async function seedRBAC(dataSource: DataSource): Promise<void> {
   for (const roleData of roleDefinitions) {
     let role = await roleRepository.findOne({
       where: { name: roleData.name, adminId: administration.id },
-      relations: ['permissions']
+      relations: ['permissions'],
     });
 
     if (!role) {
@@ -132,8 +197,8 @@ export async function seedRBAC(dataSource: DataSource): Promise<void> {
     }
 
     // Assign permissions to role
-    const rolePermissions = createdPermissions.filter(p =>
-      roleData.permissionCodes.includes(p.code)
+    const rolePermissions = createdPermissions.filter((p) =>
+      roleData.permissionCodes.includes(p.code),
     );
     role.permissions = rolePermissions;
     role = await roleRepository.save(role);
@@ -177,7 +242,7 @@ export async function seedRBAC(dataSource: DataSource): Promise<void> {
   for (const userData of users) {
     let user = await userRepository.findOne({
       where: { email: userData.email, adminId: administration.id },
-      relations: ['roles']
+      relations: ['roles'],
     });
 
     if (!user) {
@@ -193,7 +258,7 @@ export async function seedRBAC(dataSource: DataSource): Promise<void> {
     }
 
     // Assign role to user
-    const role = createdRoles.find(r => r.name === userData.roleName);
+    const role = createdRoles.find((r) => r.name === userData.roleName);
     if (role) {
       user.roles = [role];
       user = await userRepository.save(user);

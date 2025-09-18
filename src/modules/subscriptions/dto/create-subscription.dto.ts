@@ -1,4 +1,11 @@
-import { IsString, IsUUID, IsOptional, IsEnum, IsNumber, IsDateString } from 'class-validator';
+import {
+  IsString,
+  IsUUID,
+  IsOptional,
+  IsEnum,
+  IsNumber,
+  IsDateString,
+} from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export enum SubscriptionStatus {

@@ -8,9 +8,14 @@ import {
   Patch,
   Post,
   Query,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CurrentUser, Roles } from '../../common/decorators';
 import { PaginationDto } from '../../common/dto';
 import { UserRole } from '../../common/enums';
@@ -24,7 +29,7 @@ import { MaterialsService } from './materials.service';
 @Controller({ path: 'materials', version: '1' })
 @UseGuards(JwtAuthGuard, TenantGuard, RolesGuard)
 export class MaterialsController {
-  constructor(private readonly materialsService: MaterialsService) { }
+  constructor(private readonly materialsService: MaterialsService) {}
 
   @Post()
   @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF)
@@ -33,24 +38,38 @@ export class MaterialsController {
   @ApiResponse({ status: 400, description: 'Bad request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
-  create(@Body() createMaterialDto: CreateMaterialDto, @CurrentUser() user: RequestUser) {
+  create(
+    @Body() createMaterialDto: CreateMaterialDto,
+    @CurrentUser() user: RequestUser,
+  ) {
     return this.materialsService.create(createMaterialDto, user);
   }
 
   @Get()
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF, UserRole.VENDOR)
+  @Roles(
+    UserRole.SUPERADMIN,
+    UserRole.ADMIN_OWNER,
+    UserRole.STAFF,
+    UserRole.VENDOR,
+  )
   @ApiOperation({ summary: 'Get all materials' })
   @ApiResponse({ status: 200, description: 'Materials retrieved successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
-  findAll(@CurrentUser() user: RequestUser, @Query() paginationDto: PaginationDto) {
+  findAll(
+    @CurrentUser() user: RequestUser,
+    @Query() paginationDto: PaginationDto,
+  ) {
     return this.materialsService.findAll(user, paginationDto);
   }
 
   @Get('low-stock')
   @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF)
   @ApiOperation({ summary: 'Get materials with low stock' })
-  @ApiResponse({ status: 200, description: 'Low stock materials retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Low stock materials retrieved successfully',
+  })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
   getLowStockItems(@CurrentUser() user: RequestUser) {
@@ -58,23 +77,39 @@ export class MaterialsController {
   }
 
   @Get('category/:category')
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF, UserRole.VENDOR)
+  @Roles(
+    UserRole.SUPERADMIN,
+    UserRole.ADMIN_OWNER,
+    UserRole.STAFF,
+    UserRole.VENDOR,
+  )
   @ApiOperation({ summary: 'Get materials by category' })
   @ApiResponse({ status: 200, description: 'Materials retrieved successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
-  findByCategory(@Param('category') category: string, @CurrentUser() user: RequestUser) {
+  findByCategory(
+    @Param('category') category: string,
+    @CurrentUser() user: RequestUser,
+  ) {
     return this.materialsService.findByCategory(category, user);
   }
 
   @Get(':id')
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF, UserRole.VENDOR)
+  @Roles(
+    UserRole.SUPERADMIN,
+    UserRole.ADMIN_OWNER,
+    UserRole.STAFF,
+    UserRole.VENDOR,
+  )
   @ApiOperation({ summary: 'Get material by ID' })
   @ApiResponse({ status: 200, description: 'Material retrieved successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
   @ApiResponse({ status: 404, description: 'Material not found' })
-  findOne(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: RequestUser) {
+  findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: RequestUser,
+  ) {
     return this.materialsService.findOne(id, user);
   }
 
@@ -101,7 +136,10 @@ export class MaterialsController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
   @ApiResponse({ status: 404, description: 'Material not found' })
-  remove(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: RequestUser) {
+  remove(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: RequestUser,
+  ) {
     return this.materialsService.remove(id, user);
   }
 }

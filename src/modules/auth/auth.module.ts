@@ -6,7 +6,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Permission, Role, User } from '../../entities';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { PermissionsController, RolesController, UserRolesController } from './controllers';
+import {
+  PermissionsController,
+  RolesController,
+  UserRolesController,
+} from './controllers';
 import { PermissionsService, RolesService, UserRolesService } from './services';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
@@ -42,4 +46,4 @@ import { LocalStrategy } from './strategies/local.strategy';
   ],
   exports: [AuthService, RolesService, PermissionsService, UserRolesService],
 })
-export class AuthModule { }
+export class AuthModule {}

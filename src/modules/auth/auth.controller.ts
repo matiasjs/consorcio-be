@@ -6,10 +6,13 @@ import {
   HttpStatus,
   Post,
   Request,
-  UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CurrentUser, Public } from '../../common/decorators';
 import type { RequestUser } from '../../common/interfaces';
 import { AuthService } from './auth.service';
@@ -18,10 +21,9 @@ import { AuthResponseDto, LoginDto, RefreshTokenDto } from './dto';
 @ApiTags('Authentication')
 @Controller({ path: 'auth', version: '1' })
 export class AuthController {
-  constructor(private authService: AuthService) { }
+  constructor(private authService: AuthService) {}
 
   @Public()
-  @UseGuards(AuthGuard('local'))
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'User login' })
@@ -32,10 +34,13 @@ export class AuthController {
   })
   @ApiResponse({
     status: 401,
-    description: 'Invalid credentials',
+    description: 'Invalid refresh token',
   })
-  async login(@Request() req, @Body() loginDto: LoginDto): Promise<AuthResponseDto> {
-    return this.authService.login(req.user);
+  async login(
+    @Request() req,
+    @Body() loginDto: LoginDto,
+  ): Promise<AuthResponseDto> {
+    return this.authService.login(loginDto);
   }
 
   @Public()
@@ -51,7 +56,9 @@ export class AuthController {
     status: 401,
     description: 'Invalid refresh token',
   })
-  async refresh(@Body() refreshTokenDto: RefreshTokenDto): Promise<AuthResponseDto> {
+  async refresh(
+    @Body() refreshTokenDto: RefreshTokenDto,
+  ): Promise<AuthResponseDto> {
     return this.authService.refreshToken(refreshTokenDto);
   }
 

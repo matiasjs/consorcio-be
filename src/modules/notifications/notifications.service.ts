@@ -11,34 +11,49 @@ export class NotificationsService {
   constructor(
     @InjectRepository(Notification)
     private readonly notificationRepository: Repository<Notification>,
-  ) { }
+  ) {}
 
-  async create(createNotificationDto: CreateNotificationDto, user: RequestUser): Promise<Notification> {
+  async create(
+    createNotificationDto: CreateNotificationDto,
+    user: RequestUser,
+  ): Promise<Notification> {
     const notification = this.notificationRepository.create({
       ...createNotificationDto,
       adminId: user.adminId,
       sentByUserId: user.id,
     } as any);
 
-    return await this.notificationRepository.save(notification) as any;
+    return (await this.notificationRepository.save(notification)) as any;
   }
 
-  async findAll(user: RequestUser, paginationDto: PaginationDto): Promise<{
+  async findAll(
+    user: RequestUser,
+    paginationDto: PaginationDto,
+  ): Promise<{
     data: Notification[];
     total: number;
     page: number;
     limit: number;
   }> {
-    const { page = 1, limit = 10, search, sortBy = 'createdAt', sortOrder = 'DESC' } = paginationDto;
+    const {
+      page = 1,
+      limit = 10,
+      search,
+      sortBy = 'createdAt',
+      sortOrder = 'DESC',
+    } = paginationDto;
 
-    const queryBuilder = this.notificationRepository.createQueryBuilder('notification');
+    const queryBuilder =
+      this.notificationRepository.createQueryBuilder('notification');
 
-    queryBuilder.where('notification.adminId = :adminId', { adminId: user.adminId });
+    queryBuilder.where('notification.adminId = :adminId', {
+      adminId: user.adminId,
+    });
 
     if (search) {
       queryBuilder.andWhere(
         '(notification.title ILIKE :search OR notification.message ILIKE :search)',
-        { search: `%${search}%` }
+        { search: `%${search}%` },
       );
     }
 
@@ -84,18 +99,25 @@ export class NotificationsService {
     });
   }
 
-  async update(id: string, updateNotificationDto: UpdateNotificationDto, user: RequestUser): Promise<Notification | null> {
+  async update(
+    id: string,
+    updateNotificationDto: UpdateNotificationDto,
+    user: RequestUser,
+  ): Promise<Notification | null> {
     await this.notificationRepository.update(
       { id, adminId: user.adminId },
-      updateNotificationDto as any
+      updateNotificationDto as any,
     );
     return this.findOne(id, user);
   }
 
-  async markAsRead(id: string, user: RequestUser): Promise<Notification | null> {
+  async markAsRead(
+    id: string,
+    user: RequestUser,
+  ): Promise<Notification | null> {
     await this.notificationRepository.update(
       { id, adminId: user.adminId },
-      { isRead: true, readAt: new Date() }
+      { isRead: true, readAt: new Date() },
     );
     return this.findOne(id, user);
   }
@@ -103,7 +125,7 @@ export class NotificationsService {
   async markAllAsRead(user: RequestUser): Promise<void> {
     await this.notificationRepository.update(
       { adminId: user.adminId, targetUserId: user.id, isRead: false },
-      { isRead: true, readAt: new Date() }
+      { isRead: true, readAt: new Date() },
     );
   }
 

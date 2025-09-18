@@ -14,9 +14,12 @@ export class MeetingsService {
     private readonly meetingRepository: Repository<Meeting>,
     @InjectRepository(Resolution)
     private readonly resolutionRepository: Repository<Resolution>,
-  ) { }
+  ) {}
 
-  async create(createMeetingDto: CreateMeetingDto, user: RequestUser): Promise<Meeting> {
+  async create(
+    createMeetingDto: CreateMeetingDto,
+    user: RequestUser,
+  ): Promise<Meeting> {
     const meetingData: any = {
       ...createMeetingDto,
       adminId: user.adminId,
@@ -25,16 +28,25 @@ export class MeetingsService {
     };
 
     const meeting = this.meetingRepository.create(meetingData);
-    return await this.meetingRepository.save(meeting) as any;
+    return (await this.meetingRepository.save(meeting)) as any;
   }
 
-  async findAll(user: RequestUser, paginationDto: PaginationDto): Promise<{
+  async findAll(
+    user: RequestUser,
+    paginationDto: PaginationDto,
+  ): Promise<{
     data: Meeting[];
     total: number;
     page: number;
     limit: number;
   }> {
-    const { page = 1, limit = 10, search, sortBy = 'scheduledDate', sortOrder = 'DESC' } = paginationDto;
+    const {
+      page = 1,
+      limit = 10,
+      search,
+      sortBy = 'scheduledDate',
+      sortOrder = 'DESC',
+    } = paginationDto;
     const skip = (page - 1) * limit;
 
     const queryBuilder = this.meetingRepository
@@ -45,14 +57,11 @@ export class MeetingsService {
     if (search) {
       queryBuilder.andWhere(
         '(meeting.title ILIKE :search OR meeting.description ILIKE :search OR meeting.location ILIKE :search)',
-        { search: `%${search}%` }
+        { search: `%${search}%` },
       );
     }
 
-    queryBuilder
-      .orderBy(`meeting.${sortBy}`, sortOrder as 'ASC' | 'DESC')
-      .skip(skip)
-      .take(limit);
+    queryBuilder.orderBy(`meeting.${sortBy}`, sortOrder).skip(skip).take(limit);
 
     const [data, total] = await queryBuilder.getManyAndCount();
 
@@ -72,7 +81,11 @@ export class MeetingsService {
     return meeting;
   }
 
-  async update(id: string, updateMeetingDto: UpdateMeetingDto, user: RequestUser): Promise<Meeting> {
+  async update(
+    id: string,
+    updateMeetingDto: UpdateMeetingDto,
+    user: RequestUser,
+  ): Promise<Meeting> {
     const meeting = await this.findOne(id, user);
 
     const updateData: any = { ...updateMeetingDto };
@@ -81,7 +94,7 @@ export class MeetingsService {
     }
 
     Object.assign(meeting, updateData);
-    return await this.meetingRepository.save(meeting) as any;
+    return (await this.meetingRepository.save(meeting)) as any;
   }
 
   async remove(id: string, user: RequestUser): Promise<void> {
@@ -90,7 +103,10 @@ export class MeetingsService {
   }
 
   // Resolutions
-  async getResolutions(meetingId: string, user: RequestUser): Promise<Resolution[]> {
+  async getResolutions(
+    meetingId: string,
+    user: RequestUser,
+  ): Promise<Resolution[]> {
     const meeting = await this.findOne(meetingId, user);
     return await this.resolutionRepository.find({
       where: { meetingId },
@@ -99,7 +115,11 @@ export class MeetingsService {
     });
   }
 
-  async createResolution(meetingId: string, createResolutionDto: CreateResolutionDto, user: RequestUser): Promise<Resolution> {
+  async createResolution(
+    meetingId: string,
+    createResolutionDto: CreateResolutionDto,
+    user: RequestUser,
+  ): Promise<Resolution> {
     const meeting = await this.findOne(meetingId, user);
 
     const resolution = this.resolutionRepository.create({
@@ -107,6 +127,6 @@ export class MeetingsService {
       meetingId,
     });
 
-    return await this.resolutionRepository.save(resolution) as any;
+    return (await this.resolutionRepository.save(resolution)) as any;
   }
 }

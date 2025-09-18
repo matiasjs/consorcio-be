@@ -8,7 +8,10 @@ export class CreateRoleDto {
   @MaxLength(100)
   name: string;
 
-  @ApiPropertyOptional({ description: 'Role description', example: 'Administrator with full access' })
+  @ApiPropertyOptional({
+    description: 'Role description',
+    example: 'Administrator with full access',
+  })
   @IsString()
   @IsOptional()
   description?: string;

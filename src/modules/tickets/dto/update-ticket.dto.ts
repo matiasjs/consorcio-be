@@ -1,5 +1,11 @@
 import { PartialType } from '@nestjs/swagger';
-import { IsEnum, IsOptional, IsString, IsDateString, IsUUID } from 'class-validator';
+import {
+  IsEnum,
+  IsOptional,
+  IsString,
+  IsDateString,
+  IsUUID,
+} from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { CreateTicketDto } from './create-ticket.dto';
 import { TicketStatus } from '../../../entities/ticket.entity';

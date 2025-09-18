@@ -13,7 +13,10 @@ export class PaymentsService {
     private readonly paymentRepository: Repository<Payment>,
   ) {}
 
-  async create(createPaymentDto: CreatePaymentDto, user: RequestUser): Promise<Payment> {
+  async create(
+    createPaymentDto: CreatePaymentDto,
+    user: RequestUser,
+  ): Promise<Payment> {
     const paymentData: any = {
       ...createPaymentDto,
       adminId: user.adminId,
@@ -21,16 +24,25 @@ export class PaymentsService {
     };
 
     const payment = this.paymentRepository.create(paymentData);
-    return await this.paymentRepository.save(payment) as any;
+    return (await this.paymentRepository.save(payment)) as any;
   }
 
-  async findAll(user: RequestUser, paginationDto: PaginationDto): Promise<{
+  async findAll(
+    user: RequestUser,
+    paginationDto: PaginationDto,
+  ): Promise<{
     data: Payment[];
     total: number;
     page: number;
     limit: number;
   }> {
-    const { page = 1, limit = 10, search, sortBy = 'createdAt', sortOrder = 'DESC' } = paginationDto;
+    const {
+      page = 1,
+      limit = 10,
+      search,
+      sortBy = 'createdAt',
+      sortOrder = 'DESC',
+    } = paginationDto;
     const skip = (page - 1) * limit;
 
     const queryBuilder = this.paymentRepository
@@ -42,14 +54,11 @@ export class PaymentsService {
     if (search) {
       queryBuilder.andWhere(
         '(payment.referenceNumber ILIKE :search OR payment.description ILIKE :search OR payment.transactionId ILIKE :search)',
-        { search: `%${search}%` }
+        { search: `%${search}%` },
       );
     }
 
-    queryBuilder
-      .orderBy(`payment.${sortBy}`, sortOrder as 'ASC' | 'DESC')
-      .skip(skip)
-      .take(limit);
+    queryBuilder.orderBy(`payment.${sortBy}`, sortOrder).skip(skip).take(limit);
 
     const [data, total] = await queryBuilder.getManyAndCount();
 
@@ -74,7 +83,11 @@ export class PaymentsService {
     return payment;
   }
 
-  async update(id: string, updatePaymentDto: UpdatePaymentDto, user: RequestUser): Promise<Payment> {
+  async update(
+    id: string,
+    updatePaymentDto: UpdatePaymentDto,
+    user: RequestUser,
+  ): Promise<Payment> {
     const payment = await this.findOne(id, user);
 
     const updateData: any = { ...updatePaymentDto };
@@ -83,7 +96,7 @@ export class PaymentsService {
     }
 
     Object.assign(payment, updateData);
-    return await this.paymentRepository.save(payment) as any;
+    return (await this.paymentRepository.save(payment)) as any;
   }
 
   async remove(id: string, user: RequestUser): Promise<void> {
@@ -93,7 +106,7 @@ export class PaymentsService {
 
   async findByStatus(status: string, user: RequestUser): Promise<Payment[]> {
     return await this.paymentRepository.find({
-      where: { 
+      where: {
         adminId: user.adminId,
         status: status as any,
       },
@@ -104,7 +117,7 @@ export class PaymentsService {
 
   async findByMethod(method: string, user: RequestUser): Promise<Payment[]> {
     return await this.paymentRepository.find({
-      where: { 
+      where: {
         adminId: user.adminId,
         method: method as any,
       },
@@ -113,7 +126,11 @@ export class PaymentsService {
     });
   }
 
-  async findByDateRange(startDate: Date, endDate: Date, user: RequestUser): Promise<Payment[]> {
+  async findByDateRange(
+    startDate: Date,
+    endDate: Date,
+    user: RequestUser,
+  ): Promise<Payment[]> {
     return await this.paymentRepository
       .createQueryBuilder('payment')
       .leftJoinAndSelect('payment.invoice', 'invoice')

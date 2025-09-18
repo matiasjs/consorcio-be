@@ -5,9 +5,14 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CurrentUser, Roles } from '../../common/decorators';
 import { UserRole } from '../../common/enums';
 import { JwtAuthGuard, RolesGuard, TenantGuard } from '../../common/guards';
@@ -20,16 +25,24 @@ import { PlansService } from './plans.service';
 @Controller({ path: 'plans', version: '1' })
 @UseGuards(JwtAuthGuard, TenantGuard, RolesGuard)
 export class PlansController {
-  constructor(private readonly plansService: PlansService) { }
+  constructor(private readonly plansService: PlansService) {}
 
   @Get(':id/tasks')
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF, UserRole.MAINTENANCE)
+  @Roles(
+    UserRole.SUPERADMIN,
+    UserRole.ADMIN_OWNER,
+    UserRole.STAFF,
+    UserRole.MAINTENANCE,
+  )
   @ApiOperation({ summary: 'Get maintenance plan tasks' })
   @ApiResponse({ status: 200, description: 'Tasks retrieved successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
   @ApiResponse({ status: 404, description: 'Plan not found' })
-  getTasks(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: RequestUser) {
+  getTasks(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: RequestUser,
+  ) {
     return this.plansService.getTasks(id, user);
   }
 

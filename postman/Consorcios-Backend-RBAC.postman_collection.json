@@ -1,0 +1,1309 @@
+{
+	"info": {
+		"_postman_id": "consorcios-rbac-collection",
+		"name": "Consorcios Backend - RBAC System",
+		"description": "Complete API collection for Consorcios Backend with RBAC (Role-Based Access Control)\n\n**Authentication:**\n- Use the Login endpoint first to get a JWT token\n- Copy the token and set it in the Authorization header for protected endpoints\n\n**Test Users:**\n- admin@demo.com / Admin123! (admin role - full access)\n- secretaria@demo.com / Admin123! (secretaria role - operational access)\n- owner@demo.com / Admin123! (owner role - owner access)\n- tenant@demo.com / Admin123! (tenant role - tenant access)\n\n**Base URL:** http://localhost:3000/api/v1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{jwt_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "jwt_token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "🔐 Authentication",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    pm.collectionVariables.set('jwt_token', response.access_token);",
+									"    console.log('JWT Token saved:', response.access_token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"admin@demo.com\",\n  \"password\": \"Admin123!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login with admin credentials. Token will be automatically saved."
+					}
+				},
+				{
+					"name": "Login - Secretaria",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const response = pm.response.json();",
+									"    pm.collectionVariables.set('jwt_token', response.access_token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"secretaria@demo.com\",\n  \"password\": \"Admin123!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Current User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auth/me",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"me"
+							]
+						},
+						"description": "Get current user profile with roles and permissions"
+					}
+				},
+				{
+					"name": "Refresh Token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"refresh_token\": \"your_refresh_token_here\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/refresh",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"refresh"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "🔑 RBAC Management",
+			"item": [
+				{
+					"name": "Roles",
+					"item": [
+						{
+							"name": "Get All Roles",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/auth/roles",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"auth",
+										"roles"
+									]
+								}
+							}
+						},
+						{
+							"name": "Create Role",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"custom_role\",\n  \"description\": \"Custom role for testing\",\n  \"permissionIds\": []\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/roles",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"auth",
+										"roles"
+									]
+								}
+							}
+						},
+						{
+							"name": "Get Role by ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/auth/roles/:id",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"auth",
+										"roles",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "role_id_here"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Update Role",
+							"request": {
+								"method": "PATCH",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"updated_role_name\",\n  \"description\": \"Updated description\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/roles/:id",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"auth",
+										"roles",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "role_id_here"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Delete Role",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/auth/roles/:id",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"auth",
+										"roles",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "role_id_here"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Assign Permissions to Role",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"permissionIds\": [\"permission_id_1\", \"permission_id_2\"]\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/roles/:id/permissions",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"auth",
+										"roles",
+										":id",
+										"permissions"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "role_id_here"
+										}
+									]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "Permissions",
+					"item": [
+						{
+							"name": "Get All Permissions",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/auth/permissions",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"auth",
+										"permissions"
+									]
+								}
+							}
+						},
+						{
+							"name": "Create Permission",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"code\": \"customPermission\",\n  \"name\": \"Custom Permission\",\n  \"description\": \"Custom permission for testing\",\n  \"module\": \"custom\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/permissions",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"auth",
+										"permissions"
+									]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "User Roles",
+					"item": [
+						{
+							"name": "Assign Roles to User",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"roleIds\": [\"role_id_1\", \"role_id_2\"]\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/users/:id/roles",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"auth",
+										"users",
+										":id",
+										"roles"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "user_id_here"
+										}
+									]
+								}
+							}
+						},
+						{
+							"name": "Get User Roles",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/auth/users/:id/roles",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"auth",
+										"users",
+										":id",
+										"roles"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "user_id_here"
+										}
+									]
+								}
+							}
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "👥 Users",
+			"item": [
+				{
+					"name": "Get All Users",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users?page=1&limit=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Requires: readUsers permission"
+					}
+				},
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"newuser@demo.com\",\n  \"password\": \"Password123!\",\n  \"firstName\": \"New\",\n  \"lastName\": \"User\",\n  \"phone\": \"+1234567890\",\n  \"roleIds\": [\"role_id_here\"]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "Requires: allUsers permission"
+					}
+				},
+				{
+					"name": "Get User by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "user_id_here"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"firstName\": \"Updated\",\n  \"lastName\": \"Name\",\n  \"phone\": \"+0987654321\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/users/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "user_id_here"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "user_id_here"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "🏢 Administrations",
+			"item": [
+				{
+					"name": "Get All Administrations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/administrations",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"administrations"
+							]
+						}
+					}
+				},
+				{
+					"name": "Create Administration",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"New Administration\",\n  \"address\": \"123 Main St\",\n  \"phone\": \"+1234567890\",\n  \"email\": \"admin@newadmin.com\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/administrations",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"administrations"
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Administration by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/administrations/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"administrations",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "admin_id_here"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Administration",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Updated Administration Name\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/administrations/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"administrations",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "admin_id_here"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Delete Administration",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/administrations/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"administrations",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "admin_id_here"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "🏗️ Buildings",
+			"item": [
+				{
+					"name": "Get All Buildings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/buildings",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"buildings"
+							]
+						},
+						"description": "Requires: manageBuildings permission"
+					}
+				},
+				{
+					"name": "Create Building",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"New Building\",\n  \"address\": \"456 Building St\",\n  \"floors\": 10,\n  \"unitsPerFloor\": 4,\n  \"totalUnits\": 40\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/buildings",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"buildings"
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Building by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/buildings/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"buildings",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "building_id_here"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Building",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Updated Building Name\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/buildings/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"buildings",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "building_id_here"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Delete Building",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/buildings/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"buildings",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "building_id_here"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "🏠 Units",
+			"item": [
+				{
+					"name": "Get All Units",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/units",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"units"
+							]
+						},
+						"description": "Requires: manageUnits permission"
+					}
+				},
+				{
+					"name": "Create Unit",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"number\": \"101\",\n  \"floor\": 1,\n  \"type\": \"apartment\",\n  \"area\": 85.5,\n  \"buildingId\": \"building_id_here\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/units",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"units"
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Unit by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/units/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"units",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "unit_id_here"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Unit",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"area\": 90.0\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/units/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"units",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "unit_id_here"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Delete Unit",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/units/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"units",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "unit_id_here"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Create Unit Occupancy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"userId\": \"user_id_here\",\n  \"type\": \"owner\",\n  \"startDate\": \"2024-01-01\",\n  \"percentage\": 100\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/units/:id/occupancy",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"units",
+								":id",
+								"occupancy"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "unit_id_here"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Unit Occupancy",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/units/:id/occupancy",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"units",
+								":id",
+								"occupancy"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "unit_id_here"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "🎫 Tickets",
+			"item": [
+				{
+					"name": "Get All Tickets",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/tickets",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tickets"
+							]
+						}
+					}
+				},
+				{
+					"name": "Create Ticket",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Maintenance Request\",\n  \"description\": \"Elevator not working properly\",\n  \"priority\": \"high\",\n  \"category\": \"maintenance\",\n  \"buildingId\": \"building_id_here\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/tickets",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tickets"
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Ticket Stats",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/tickets/stats",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tickets",
+								"stats"
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Ticket by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/tickets/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tickets",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "ticket_id_here"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Ticket",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"in_progress\",\n  \"priority\": \"medium\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/tickets/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tickets",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "ticket_id_here"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Delete Ticket",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/tickets/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tickets",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "ticket_id_here"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Assign Inspector to Ticket",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"inspectorId\": \"user_id_here\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/tickets/:id/assign-inspector",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"tickets",
+								":id",
+								"assign-inspector"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "ticket_id_here"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "🔧 Vendors",
+			"item": [
+				{
+					"name": "Get All Vendors",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/vendors",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"vendors"
+							]
+						},
+						"description": "Requires: manageVendors permission"
+					}
+				},
+				{
+					"name": "Create Vendor",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"ABC Maintenance Co.\",\n  \"email\": \"contact@abcmaintenance.com\",\n  \"phone\": \"+1234567890\",\n  \"services\": [\"plumbing\", \"electrical\"],\n  \"address\": \"789 Service St\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/vendors",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"vendors"
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Vendor by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/vendors/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"vendors",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "vendor_id_here"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Update Vendor",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"phone\": \"+0987654321\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/vendors/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"vendors",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "vendor_id_here"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Delete Vendor",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/vendors/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"vendors",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "vendor_id_here"
+								}
+							]
+						}
+					}
+				}
+			]
+		}
+	]
+}

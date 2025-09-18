@@ -14,7 +14,7 @@ import { WorkOrderMaterial } from '../../entities/work-order-material.entity';
       Quote,
       ScheduleSlot,
       WorkOrderMaterial,
-    ])
+    ]),
   ],
   controllers: [WorkOrdersController],
   providers: [WorkOrdersService],

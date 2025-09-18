@@ -11,7 +11,10 @@ export class MessagesService {
     private messageRepository: Repository<Message>,
   ) {}
 
-  async create(createMessageDto: CreateMessageDto, authorUserId?: string): Promise<Message> {
+  async create(
+    createMessageDto: CreateMessageDto,
+    authorUserId?: string,
+  ): Promise<Message> {
     const message = this.messageRepository.create({
       ...createMessageDto,
       authorUserId,

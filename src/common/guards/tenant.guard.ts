@@ -1,4 +1,9 @@
-import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 import { UserRole } from '../enums';
@@ -6,7 +11,7 @@ import { RequestUser } from '../interfaces';
 
 @Injectable()
 export class TenantGuard implements CanActivate {
-  constructor(private reflector: Reflector) { }
+  constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
     // Check if the route is public
@@ -31,7 +36,10 @@ export class TenantGuard implements CanActivate {
     }
 
     // Extract admin_id from request params or query
-    const adminId = request.params?.adminId || request.query?.admin_id || request.body?.adminId;
+    const adminId =
+      request.params?.adminId ||
+      request.query?.admin_id ||
+      request.body?.adminId;
 
     // If no adminId in request, allow (will be filtered by user's adminId in service)
     if (!adminId) {

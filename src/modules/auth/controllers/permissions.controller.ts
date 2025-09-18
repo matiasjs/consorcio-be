@@ -10,7 +10,12 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Permissions } from '../../../common/decorators';
 import { PaginationDto } from '../../../common/dto';
 import { JwtAuthGuard, PermissionsGuard } from '../../../common/guards';
@@ -22,7 +27,7 @@ import { PermissionsService } from '../services/permissions.service';
 @Controller({ path: 'auth/permissions', version: '1' })
 @UseGuards(JwtAuthGuard, PermissionsGuard)
 export class PermissionsController {
-  constructor(private readonly permissionsService: PermissionsService) { }
+  constructor(private readonly permissionsService: PermissionsService) {}
 
   @Post()
   @Permissions('managePermissions')
@@ -36,7 +41,10 @@ export class PermissionsController {
   @Get()
   @Permissions('readPermissions')
   @ApiOperation({ summary: 'Get all permissions' })
-  @ApiResponse({ status: 200, description: 'Permissions retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Permissions retrieved successfully',
+  })
   findAll(@Query() pagination: PaginationDto) {
     return this.permissionsService.findAll(pagination);
   }
@@ -44,7 +52,10 @@ export class PermissionsController {
   @Get(':id')
   @Permissions('readPermissions')
   @ApiOperation({ summary: 'Get permission by ID' })
-  @ApiResponse({ status: 200, description: 'Permission retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Permission retrieved successfully',
+  })
   @ApiResponse({ status: 404, description: 'Permission not found' })
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.permissionsService.findOne(id);

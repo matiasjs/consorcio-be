@@ -13,7 +13,10 @@ export class InvoicesService {
     private readonly invoiceRepository: Repository<VendorInvoice>,
   ) {}
 
-  async create(createInvoiceDto: CreateInvoiceDto, user: RequestUser): Promise<VendorInvoice> {
+  async create(
+    createInvoiceDto: CreateInvoiceDto,
+    user: RequestUser,
+  ): Promise<VendorInvoice> {
     const invoiceData: any = {
       ...createInvoiceDto,
       adminId: user.adminId,
@@ -22,16 +25,25 @@ export class InvoicesService {
     };
 
     const invoice = this.invoiceRepository.create(invoiceData);
-    return await this.invoiceRepository.save(invoice) as any;
+    return (await this.invoiceRepository.save(invoice)) as any;
   }
 
-  async findAll(user: RequestUser, paginationDto: PaginationDto): Promise<{
+  async findAll(
+    user: RequestUser,
+    paginationDto: PaginationDto,
+  ): Promise<{
     data: VendorInvoice[];
     total: number;
     page: number;
     limit: number;
   }> {
-    const { page = 1, limit = 10, search, sortBy = 'createdAt', sortOrder = 'DESC' } = paginationDto;
+    const {
+      page = 1,
+      limit = 10,
+      search,
+      sortBy = 'createdAt',
+      sortOrder = 'DESC',
+    } = paginationDto;
     const skip = (page - 1) * limit;
 
     const queryBuilder = this.invoiceRepository
@@ -43,14 +55,11 @@ export class InvoicesService {
     if (search) {
       queryBuilder.andWhere(
         '(invoice.invoiceNumber ILIKE :search OR invoice.description ILIKE :search)',
-        { search: `%${search}%` }
+        { search: `%${search}%` },
       );
     }
 
-    queryBuilder
-      .orderBy(`invoice.${sortBy}`, sortOrder as 'ASC' | 'DESC')
-      .skip(skip)
-      .take(limit);
+    queryBuilder.orderBy(`invoice.${sortBy}`, sortOrder).skip(skip).take(limit);
 
     const [data, total] = await queryBuilder.getManyAndCount();
 
@@ -75,7 +84,11 @@ export class InvoicesService {
     return invoice;
   }
 
-  async update(id: string, updateInvoiceDto: UpdateInvoiceDto, user: RequestUser): Promise<VendorInvoice> {
+  async update(
+    id: string,
+    updateInvoiceDto: UpdateInvoiceDto,
+    user: RequestUser,
+  ): Promise<VendorInvoice> {
     const invoice = await this.findOne(id, user);
 
     const updateData: any = { ...updateInvoiceDto };
@@ -87,7 +100,7 @@ export class InvoicesService {
     }
 
     Object.assign(invoice, updateData);
-    return await this.invoiceRepository.save(invoice) as any;
+    return (await this.invoiceRepository.save(invoice)) as any;
   }
 
   async remove(id: string, user: RequestUser): Promise<void> {
@@ -95,9 +108,12 @@ export class InvoicesService {
     await this.invoiceRepository.softDelete(id);
   }
 
-  async findByStatus(status: string, user: RequestUser): Promise<VendorInvoice[]> {
+  async findByStatus(
+    status: string,
+    user: RequestUser,
+  ): Promise<VendorInvoice[]> {
     return await this.invoiceRepository.find({
-      where: { 
+      where: {
         adminId: user.adminId,
         status: status as any,
       },
@@ -115,7 +131,9 @@ export class InvoicesService {
       .where('invoice.adminId = :adminId', { adminId: user.adminId })
       .andWhere('invoice.dueDate < :today', { today })
       .andWhere('invoice.status != :paidStatus', { paidStatus: 'PAID' })
-      .andWhere('invoice.status != :cancelledStatus', { cancelledStatus: 'CANCELLED' })
+      .andWhere('invoice.status != :cancelledStatus', {
+        cancelledStatus: 'CANCELLED',
+      })
       .orderBy('invoice.dueDate', 'ASC')
       .getMany();
   }

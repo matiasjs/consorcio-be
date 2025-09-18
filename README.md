@@ -78,7 +78,7 @@ Sistema completo de gestión para administraciones de consorcios que incluye:
 
 ### Usuarios de Prueba
 ```
-admin@local / Admin123! (admin)
+admin@local.com / Admin123! (admin)
 secretaria@demo.com / Admin123! (secretaria)
 owner@demo.com / Admin123! (owner)
 tenant@demo.com / Admin123! (tenant)
@@ -250,7 +250,7 @@ REDIS_URL=redis://host:port
 POST /api/v1/auth/login
 {
   "email": "admin@example.com",
-  "password": "password123"
+  "password": "Admin123!"
 }
 
 # Response

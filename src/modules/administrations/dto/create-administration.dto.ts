@@ -1,4 +1,11 @@
-import { IsString, IsEmail, IsOptional, IsEnum, Length, Matches } from 'class-validator';
+import {
+  IsString,
+  IsEmail,
+  IsOptional,
+  IsEnum,
+  Length,
+  Matches,
+} from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { PlanTier } from '../../../entities/administration.entity';
 

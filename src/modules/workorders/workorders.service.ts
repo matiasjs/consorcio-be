@@ -12,7 +12,7 @@ import {
   CreateQuoteDto,
   CreateScheduleDto,
   CreateWorkOrderDto,
-  UpdateWorkOrderDto
+  UpdateWorkOrderDto,
 } from './dto';
 
 @Injectable()
@@ -26,32 +26,48 @@ export class WorkOrdersService {
     private readonly scheduleRepository: Repository<ScheduleSlot>,
     @InjectRepository(WorkOrderMaterial)
     private readonly workOrderMaterialRepository: Repository<WorkOrderMaterial>,
-  ) { }
+  ) {}
 
-  async create(createWorkOrderDto: CreateWorkOrderDto, user: RequestUser): Promise<WorkOrder> {
+  async create(
+    createWorkOrderDto: CreateWorkOrderDto,
+    user: RequestUser,
+  ): Promise<WorkOrder> {
     const workOrderData: any = {
       ...createWorkOrderDto,
       adminId: user.adminId,
     };
 
     if (createWorkOrderDto.scheduledStartDate) {
-      workOrderData.scheduledStartDate = new Date(createWorkOrderDto.scheduledStartDate);
+      workOrderData.scheduledStartDate = new Date(
+        createWorkOrderDto.scheduledStartDate,
+      );
     }
     if (createWorkOrderDto.scheduledCompletionDate) {
-      workOrderData.scheduledCompletionDate = new Date(createWorkOrderDto.scheduledCompletionDate);
+      workOrderData.scheduledCompletionDate = new Date(
+        createWorkOrderDto.scheduledCompletionDate,
+      );
     }
 
     const workOrder = this.workOrderRepository.create(workOrderData);
-    return await this.workOrderRepository.save(workOrder) as any;
+    return (await this.workOrderRepository.save(workOrder)) as any;
   }
 
-  async findAll(user: RequestUser, paginationDto: PaginationDto): Promise<{
+  async findAll(
+    user: RequestUser,
+    paginationDto: PaginationDto,
+  ): Promise<{
     data: WorkOrder[];
     total: number;
     page: number;
     limit: number;
   }> {
-    const { page = 1, limit = 10, search, sortBy = 'createdAt', sortOrder = 'DESC' } = paginationDto;
+    const {
+      page = 1,
+      limit = 10,
+      search,
+      sortBy = 'createdAt',
+      sortOrder = 'DESC',
+    } = paginationDto;
     const skip = (page - 1) * limit;
 
     const queryBuilder = this.workOrderRepository
@@ -63,12 +79,12 @@ export class WorkOrdersService {
     if (search) {
       queryBuilder.andWhere(
         '(workOrder.title ILIKE :search OR workOrder.description ILIKE :search)',
-        { search: `%${search}%` }
+        { search: `%${search}%` },
       );
     }
 
     queryBuilder
-      .orderBy(`workOrder.${sortBy}`, sortOrder as 'ASC' | 'DESC')
+      .orderBy(`workOrder.${sortBy}`, sortOrder)
       .skip(skip)
       .take(limit);
 
@@ -85,7 +101,14 @@ export class WorkOrdersService {
   async findOne(id: string, user: RequestUser): Promise<WorkOrder> {
     const workOrder = await this.workOrderRepository.findOne({
       where: { id, adminId: user.adminId },
-      relations: ['ticket', 'vendor', 'quotes', 'schedules', 'materials', 'materials.materialItem'],
+      relations: [
+        'ticket',
+        'vendor',
+        'quotes',
+        'schedules',
+        'materials',
+        'materials.materialItem',
+      ],
     });
 
     if (!workOrder) {
@@ -95,19 +118,27 @@ export class WorkOrdersService {
     return workOrder;
   }
 
-  async update(id: string, updateWorkOrderDto: UpdateWorkOrderDto, user: RequestUser): Promise<WorkOrder> {
+  async update(
+    id: string,
+    updateWorkOrderDto: UpdateWorkOrderDto,
+    user: RequestUser,
+  ): Promise<WorkOrder> {
     const workOrder = await this.findOne(id, user);
 
     const updateData: any = { ...updateWorkOrderDto };
     if (updateWorkOrderDto.scheduledStartDate) {
-      updateData.scheduledStartDate = new Date(updateWorkOrderDto.scheduledStartDate);
+      updateData.scheduledStartDate = new Date(
+        updateWorkOrderDto.scheduledStartDate,
+      );
     }
     if (updateWorkOrderDto.scheduledCompletionDate) {
-      updateData.scheduledCompletionDate = new Date(updateWorkOrderDto.scheduledCompletionDate);
+      updateData.scheduledCompletionDate = new Date(
+        updateWorkOrderDto.scheduledCompletionDate,
+      );
     }
 
     Object.assign(workOrder, updateData);
-    return await this.workOrderRepository.save(workOrder) as any;
+    return (await this.workOrderRepository.save(workOrder)) as any;
   }
 
   async remove(id: string, user: RequestUser): Promise<void> {
@@ -125,7 +156,11 @@ export class WorkOrdersService {
     });
   }
 
-  async createQuote(workOrderId: string, createQuoteDto: CreateQuoteDto, user: RequestUser): Promise<Quote> {
+  async createQuote(
+    workOrderId: string,
+    createQuoteDto: CreateQuoteDto,
+    user: RequestUser,
+  ): Promise<Quote> {
     const workOrder = await this.findOne(workOrderId, user);
 
     const quote = this.quoteRepository.create({
@@ -134,11 +169,15 @@ export class WorkOrdersService {
       validUntil: new Date(createQuoteDto.validUntil),
     });
 
-    return await this.quoteRepository.save(quote) as any;
+    return (await this.quoteRepository.save(quote)) as any;
   }
 
   // Schedule management
-  async createSchedule(workOrderId: string, createScheduleDto: CreateScheduleDto, user: RequestUser): Promise<ScheduleSlot> {
+  async createSchedule(
+    workOrderId: string,
+    createScheduleDto: CreateScheduleDto,
+    user: RequestUser,
+  ): Promise<ScheduleSlot> {
     const workOrder = await this.findOne(workOrderId, user);
 
     const schedule = this.scheduleRepository.create({
@@ -150,11 +189,14 @@ export class WorkOrdersService {
       endDate: new Date(createScheduleDto.endDate),
     });
 
-    return await this.scheduleRepository.save(schedule) as any;
+    return (await this.scheduleRepository.save(schedule)) as any;
   }
 
   // Material management
-  async getMaterials(workOrderId: string, user: RequestUser): Promise<WorkOrderMaterial[]> {
+  async getMaterials(
+    workOrderId: string,
+    user: RequestUser,
+  ): Promise<WorkOrderMaterial[]> {
     const workOrder = await this.findOne(workOrderId, user);
     return await this.workOrderMaterialRepository.find({
       where: { workOrderId },
@@ -163,7 +205,11 @@ export class WorkOrdersService {
     });
   }
 
-  async addMaterial(workOrderId: string, addMaterialDto: AddMaterialDto, user: RequestUser): Promise<WorkOrderMaterial> {
+  async addMaterial(
+    workOrderId: string,
+    addMaterialDto: AddMaterialDto,
+    user: RequestUser,
+  ): Promise<WorkOrderMaterial> {
     const workOrder = await this.findOne(workOrderId, user);
 
     const material = this.workOrderMaterialRepository.create({
@@ -171,6 +217,6 @@ export class WorkOrdersService {
       workOrderId,
     });
 
-    return await this.workOrderMaterialRepository.save(material) as any;
+    return (await this.workOrderMaterialRepository.save(material)) as any;
   }
 }

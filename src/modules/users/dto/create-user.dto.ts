@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsEmail, IsOptional, IsString, IsUUID, MinLength } from 'class-validator';
+import {
+  IsArray,
+  IsEmail,
+  IsOptional,
+  IsString,
+  IsUUID,
+  MinLength,
+} from 'class-validator';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'john.doe@example.com' })
@@ -24,7 +31,7 @@ export class CreateUserDto {
     example: ['role-uuid-1', 'role-uuid-2'],
     description: 'Array of role IDs to assign to the user',
     isArray: true,
-    required: false
+    required: false,
   })
   @IsOptional()
   @IsArray()

@@ -7,7 +7,12 @@ import { Repository } from 'typeorm';
 import { getDatabaseConfig } from './config/database.config';
 import { Administration } from './entities/administration.entity';
 import { Building } from './entities/building.entity';
-import { EntityType, Message, MessageChannel, MessageDirection } from './entities/message.entity';
+import {
+  EntityType,
+  Message,
+  MessageChannel,
+  MessageDirection,
+} from './entities/message.entity';
 import { Ticket } from './entities/ticket.entity';
 import { Unit } from './entities/unit.entity';
 import { User } from './entities/user.entity';
@@ -70,7 +75,9 @@ describe('Database Integration Tests', () => {
       ],
     }).compile();
 
-    adminRepo = module.get<Repository<Administration>>('AdministrationRepository');
+    adminRepo = module.get<Repository<Administration>>(
+      'AdministrationRepository',
+    );
     userRepo = module.get<Repository<User>>('UserRepository');
     buildingRepo = module.get<Repository<Building>>('BuildingRepository');
     unitRepo = module.get<Repository<Unit>>('UnitRepository');
@@ -80,13 +87,19 @@ describe('Database Integration Tests', () => {
 
     // Clean up existing data before tests
     try {
-      await messageRepo.query('TRUNCATE TABLE messages RESTART IDENTITY CASCADE');
+      await messageRepo.query(
+        'TRUNCATE TABLE messages RESTART IDENTITY CASCADE',
+      );
       await ticketRepo.query('TRUNCATE TABLE tickets RESTART IDENTITY CASCADE');
       await vendorRepo.query('TRUNCATE TABLE vendors RESTART IDENTITY CASCADE');
       await unitRepo.query('TRUNCATE TABLE units RESTART IDENTITY CASCADE');
-      await buildingRepo.query('TRUNCATE TABLE buildings RESTART IDENTITY CASCADE');
+      await buildingRepo.query(
+        'TRUNCATE TABLE buildings RESTART IDENTITY CASCADE',
+      );
       await userRepo.query('TRUNCATE TABLE users RESTART IDENTITY CASCADE');
-      await adminRepo.query('TRUNCATE TABLE administrations RESTART IDENTITY CASCADE');
+      await adminRepo.query(
+        'TRUNCATE TABLE administrations RESTART IDENTITY CASCADE',
+      );
     } catch (error) {
       console.log('Error cleaning up data:', error.message);
     }

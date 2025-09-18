@@ -5,7 +5,11 @@ import { PaginationDto } from '../../common/dto';
 import { RequestUser } from '../../common/interfaces';
 import { Asset } from '../../entities/asset.entity';
 import { MaintenancePlan } from '../../entities/maintenance-plan.entity';
-import { CreateAssetDto, CreateMaintenancePlanDto, UpdateAssetDto } from './dto';
+import {
+  CreateAssetDto,
+  CreateMaintenancePlanDto,
+  UpdateAssetDto,
+} from './dto';
 
 @Injectable()
 export class AssetsService {
@@ -14,9 +18,12 @@ export class AssetsService {
     private readonly assetRepository: Repository<Asset>,
     @InjectRepository(MaintenancePlan)
     private readonly maintenancePlanRepository: Repository<MaintenancePlan>,
-  ) { }
+  ) {}
 
-  async create(createAssetDto: CreateAssetDto, user: RequestUser): Promise<Asset> {
+  async create(
+    createAssetDto: CreateAssetDto,
+    user: RequestUser,
+  ): Promise<Asset> {
     const assetData: any = {
       ...createAssetDto,
       adminId: user.adminId,
@@ -26,20 +33,31 @@ export class AssetsService {
       assetData.purchaseDate = new Date(createAssetDto.purchaseDate);
     }
     if (createAssetDto.warrantyExpiryDate) {
-      assetData.warrantyExpiryDate = new Date(createAssetDto.warrantyExpiryDate);
+      assetData.warrantyExpiryDate = new Date(
+        createAssetDto.warrantyExpiryDate,
+      );
     }
 
     const asset = this.assetRepository.create(assetData);
-    return await this.assetRepository.save(asset) as any;
+    return (await this.assetRepository.save(asset)) as any;
   }
 
-  async findAll(user: RequestUser, paginationDto: PaginationDto): Promise<{
+  async findAll(
+    user: RequestUser,
+    paginationDto: PaginationDto,
+  ): Promise<{
     data: Asset[];
     total: number;
     page: number;
     limit: number;
   }> {
-    const { page = 1, limit = 10, search, sortBy = 'createdAt', sortOrder = 'DESC' } = paginationDto;
+    const {
+      page = 1,
+      limit = 10,
+      search,
+      sortBy = 'createdAt',
+      sortOrder = 'DESC',
+    } = paginationDto;
     const skip = (page - 1) * limit;
 
     const queryBuilder = this.assetRepository
@@ -50,14 +68,11 @@ export class AssetsService {
     if (search) {
       queryBuilder.andWhere(
         '(asset.name ILIKE :search OR asset.category ILIKE :search OR asset.location ILIKE :search)',
-        { search: `%${search}%` }
+        { search: `%${search}%` },
       );
     }
 
-    queryBuilder
-      .orderBy(`asset.${sortBy}`, sortOrder as 'ASC' | 'DESC')
-      .skip(skip)
-      .take(limit);
+    queryBuilder.orderBy(`asset.${sortBy}`, sortOrder).skip(skip).take(limit);
 
     const [data, total] = await queryBuilder.getManyAndCount();
 
@@ -77,7 +92,11 @@ export class AssetsService {
     return asset;
   }
 
-  async update(id: string, updateAssetDto: UpdateAssetDto, user: RequestUser): Promise<Asset> {
+  async update(
+    id: string,
+    updateAssetDto: UpdateAssetDto,
+    user: RequestUser,
+  ): Promise<Asset> {
     const asset = await this.findOne(id, user);
 
     const updateData: any = { ...updateAssetDto };
@@ -85,11 +104,13 @@ export class AssetsService {
       updateData.purchaseDate = new Date(updateAssetDto.purchaseDate);
     }
     if (updateAssetDto.warrantyExpiryDate) {
-      updateData.warrantyExpiryDate = new Date(updateAssetDto.warrantyExpiryDate);
+      updateData.warrantyExpiryDate = new Date(
+        updateAssetDto.warrantyExpiryDate,
+      );
     }
 
     Object.assign(asset, updateData);
-    return await this.assetRepository.save(asset) as any;
+    return (await this.assetRepository.save(asset)) as any;
   }
 
   async remove(id: string, user: RequestUser): Promise<void> {
@@ -98,7 +119,10 @@ export class AssetsService {
   }
 
   // Maintenance Plans
-  async getMaintenancePlans(assetId: string, user: RequestUser): Promise<MaintenancePlan[]> {
+  async getMaintenancePlans(
+    assetId: string,
+    user: RequestUser,
+  ): Promise<MaintenancePlan[]> {
     const asset = await this.findOne(assetId, user);
     return await this.maintenancePlanRepository.find({
       where: { assetId },
@@ -106,7 +130,11 @@ export class AssetsService {
     });
   }
 
-  async createMaintenancePlan(assetId: string, createPlanDto: CreateMaintenancePlanDto, user: RequestUser): Promise<MaintenancePlan> {
+  async createMaintenancePlan(
+    assetId: string,
+    createPlanDto: CreateMaintenancePlanDto,
+    user: RequestUser,
+  ): Promise<MaintenancePlan> {
     const asset = await this.findOne(assetId, user);
 
     const plan = this.maintenancePlanRepository.create({
@@ -114,6 +142,6 @@ export class AssetsService {
       assetId,
     } as any);
 
-    return await this.maintenancePlanRepository.save(plan) as any;
+    return (await this.maintenancePlanRepository.save(plan)) as any;
   }
 }

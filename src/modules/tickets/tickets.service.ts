@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Ticket, TicketStatus } from '../../entities/ticket.entity';
@@ -14,12 +18,18 @@ export class TicketsService {
     private inspectionRepository: Repository<Inspection>,
   ) {}
 
-  async create(createTicketDto: CreateTicketDto, createdByUserId: string, adminId: string): Promise<Ticket> {
+  async create(
+    createTicketDto: CreateTicketDto,
+    createdByUserId: string,
+    adminId: string,
+  ): Promise<Ticket> {
     const ticket = this.ticketRepository.create({
       ...createTicketDto,
       createdByUserId,
       adminId,
-      dueDate: createTicketDto.dueDate ? new Date(createTicketDto.dueDate) : undefined,
+      dueDate: createTicketDto.dueDate
+        ? new Date(createTicketDto.dueDate)
+        : undefined,
     });
 
     return this.ticketRepository.save(ticket);
@@ -87,13 +97,21 @@ export class TicketsService {
     return ticket;
   }
 
-  async update(id: string, updateTicketDto: UpdateTicketDto, adminId: string): Promise<Ticket> {
+  async update(
+    id: string,
+    updateTicketDto: UpdateTicketDto,
+    adminId: string,
+  ): Promise<Ticket> {
     const ticket = await this.findOne(id, adminId);
 
     Object.assign(ticket, {
       ...updateTicketDto,
-      resolvedAt: updateTicketDto.resolvedAt ? new Date(updateTicketDto.resolvedAt) : ticket.resolvedAt,
-      dueDate: updateTicketDto.dueDate ? new Date(updateTicketDto.dueDate) : ticket.dueDate,
+      resolvedAt: updateTicketDto.resolvedAt
+        ? new Date(updateTicketDto.resolvedAt)
+        : ticket.resolvedAt,
+      dueDate: updateTicketDto.dueDate
+        ? new Date(updateTicketDto.dueDate)
+        : ticket.dueDate,
     });
 
     return this.ticketRepository.save(ticket);

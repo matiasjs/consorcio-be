@@ -12,7 +12,7 @@ export class UnitsService {
     private readonly unitRepository: Repository<Unit>,
     @InjectRepository(UnitOccupancy)
     private readonly occupancyRepository: Repository<UnitOccupancy>,
-  ) { }
+  ) {}
 
   async create(createUnitDto: CreateUnitDto, adminId: string): Promise<Unit> {
     const unit = this.unitRepository.create({
@@ -47,7 +47,11 @@ export class UnitsService {
     return unit;
   }
 
-  async update(id: string, updateUnitDto: UpdateUnitDto, adminId: string): Promise<Unit> {
+  async update(
+    id: string,
+    updateUnitDto: UpdateUnitDto,
+    adminId: string,
+  ): Promise<Unit> {
     const unit = await this.findOne(id, adminId);
     Object.assign(unit, updateUnitDto);
     return this.unitRepository.save(unit);
@@ -70,13 +74,18 @@ export class UnitsService {
       ownerUserId: createOccupancyDto.ownerUserId,
       tenantUserId: createOccupancyDto.tenantUserId,
       startDate: new Date(createOccupancyDto.startDate),
-      endDate: createOccupancyDto.endDate ? new Date(createOccupancyDto.endDate) : undefined,
+      endDate: createOccupancyDto.endDate
+        ? new Date(createOccupancyDto.endDate)
+        : undefined,
     });
 
     return this.occupancyRepository.save(occupancy);
   }
 
-  async getOccupancy(unitId: string, adminId: string): Promise<UnitOccupancy[]> {
+  async getOccupancy(
+    unitId: string,
+    adminId: string,
+  ): Promise<UnitOccupancy[]> {
     const unit = await this.findOne(unitId, adminId);
 
     return this.occupancyRepository.find({

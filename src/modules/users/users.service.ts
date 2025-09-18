@@ -13,7 +13,7 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Role)
     private readonly roleRepository: Repository<Role>,
-  ) { }
+  ) {}
 
   async create(createUserDto: CreateUserDto, adminId: string): Promise<User> {
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
@@ -24,7 +24,7 @@ export class UsersService {
       phone: createUserDto.phone,
       passwordHash: hashedPassword,
       fullName: createUserDto.fullName,
-      status: createUserDto.status as any || 'ACTIVE',
+      status: (createUserDto.status as any) || 'ACTIVE',
       adminId,
     });
 
@@ -60,7 +60,11 @@ export class UsersService {
     return user;
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto, adminId: string): Promise<User> {
+  async update(
+    id: string,
+    updateUserDto: UpdateUserDto,
+    adminId: string,
+  ): Promise<User> {
     const user = await this.findOne(id, adminId);
 
     if (updateUserDto.password) {

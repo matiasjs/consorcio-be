@@ -30,7 +30,7 @@ import { UnitsService } from './units.service';
 @UseGuards(JwtAuthGuard, TenantGuard, RolesGuard)
 @Controller({ path: 'units', version: '1' })
 export class UnitsController {
-  constructor(private readonly unitsService: UnitsService) { }
+  constructor(private readonly unitsService: UnitsService) {}
 
   @Post()
   @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER)
@@ -88,19 +88,29 @@ export class UnitsController {
   @Post(':id/occupancy')
   @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER)
   @ApiOperation({ summary: 'Create unit occupancy' })
-  @ApiResponse({ status: 201, description: 'Unit occupancy created successfully' })
+  @ApiResponse({
+    status: 201,
+    description: 'Unit occupancy created successfully',
+  })
   createOccupancy(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() createOccupancyDto: CreateUnitOccupancyDto,
     @CurrentUser() currentUser: User,
   ) {
-    return this.unitsService.createOccupancy(id, createOccupancyDto, currentUser.adminId);
+    return this.unitsService.createOccupancy(
+      id,
+      createOccupancyDto,
+      currentUser.adminId,
+    );
   }
 
   @Get(':id/occupancy')
   @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF)
   @ApiOperation({ summary: 'Get unit occupancy' })
-  @ApiResponse({ status: 200, description: 'Unit occupancy retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Unit occupancy retrieved successfully',
+  })
   getOccupancy(
     @Param('id', ParseUUIDPipe) id: string,
     @CurrentUser() currentUser: User,

@@ -8,9 +8,14 @@ import {
   Patch,
   Post,
   Query,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CurrentUser, Roles } from '../../common/decorators';
 import { PaginationDto } from '../../common/dto';
 import { UserRole } from '../../common/enums';
@@ -21,7 +26,7 @@ import {
   CreateQuoteDto,
   CreateScheduleDto,
   CreateWorkOrderDto,
-  UpdateWorkOrderDto
+  UpdateWorkOrderDto,
 } from './dto';
 import { WorkOrdersService } from './workorders.service';
 
@@ -30,29 +35,54 @@ import { WorkOrdersService } from './workorders.service';
 @Controller({ path: 'workorders', version: '1' })
 @UseGuards(JwtAuthGuard, TenantGuard, RolesGuard)
 export class WorkOrdersController {
-  constructor(private readonly workOrdersService: WorkOrdersService) { }
+  constructor(private readonly workOrdersService: WorkOrdersService) {}
 
   @Post()
   @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF)
   @ApiOperation({ summary: 'Create a new work order' })
   @ApiResponse({ status: 201, description: 'Work order created successfully' })
-  create(@Body() createWorkOrderDto: CreateWorkOrderDto, @CurrentUser() user: RequestUser) {
+  create(
+    @Body() createWorkOrderDto: CreateWorkOrderDto,
+    @CurrentUser() user: RequestUser,
+  ) {
     return this.workOrdersService.create(createWorkOrderDto, user);
   }
 
   @Get()
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF, UserRole.VENDOR)
+  @Roles(
+    UserRole.SUPERADMIN,
+    UserRole.ADMIN_OWNER,
+    UserRole.STAFF,
+    UserRole.VENDOR,
+  )
   @ApiOperation({ summary: 'Get all work orders' })
-  @ApiResponse({ status: 200, description: 'Work orders retrieved successfully' })
-  findAll(@CurrentUser() user: RequestUser, @Query() paginationDto: PaginationDto) {
+  @ApiResponse({
+    status: 200,
+    description: 'Work orders retrieved successfully',
+  })
+  findAll(
+    @CurrentUser() user: RequestUser,
+    @Query() paginationDto: PaginationDto,
+  ) {
     return this.workOrdersService.findAll(user, paginationDto);
   }
 
   @Get(':id')
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF, UserRole.VENDOR)
+  @Roles(
+    UserRole.SUPERADMIN,
+    UserRole.ADMIN_OWNER,
+    UserRole.STAFF,
+    UserRole.VENDOR,
+  )
   @ApiOperation({ summary: 'Get work order by ID' })
-  @ApiResponse({ status: 200, description: 'Work order retrieved successfully' })
-  findOne(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: RequestUser) {
+  @ApiResponse({
+    status: 200,
+    description: 'Work order retrieved successfully',
+  })
+  findOne(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: RequestUser,
+  ) {
     return this.workOrdersService.findOne(id, user);
   }
 
@@ -72,21 +102,37 @@ export class WorkOrdersController {
   @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF)
   @ApiOperation({ summary: 'Delete work order' })
   @ApiResponse({ status: 200, description: 'Work order deleted successfully' })
-  remove(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: RequestUser) {
+  remove(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: RequestUser,
+  ) {
     return this.workOrdersService.remove(id, user);
   }
 
   // Quote endpoints
   @Get(':id/quotes')
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF, UserRole.VENDOR)
+  @Roles(
+    UserRole.SUPERADMIN,
+    UserRole.ADMIN_OWNER,
+    UserRole.STAFF,
+    UserRole.VENDOR,
+  )
   @ApiOperation({ summary: 'Get work order quotes' })
   @ApiResponse({ status: 200, description: 'Quotes retrieved successfully' })
-  getQuotes(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: RequestUser) {
+  getQuotes(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: RequestUser,
+  ) {
     return this.workOrdersService.getQuotes(id, user);
   }
 
   @Post(':id/quotes')
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF, UserRole.VENDOR)
+  @Roles(
+    UserRole.SUPERADMIN,
+    UserRole.ADMIN_OWNER,
+    UserRole.STAFF,
+    UserRole.VENDOR,
+  )
   @ApiOperation({ summary: 'Create work order quote' })
   @ApiResponse({ status: 201, description: 'Quote created successfully' })
   createQuote(
@@ -112,10 +158,18 @@ export class WorkOrdersController {
 
   // Material endpoints
   @Get(':id/materials')
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF, UserRole.VENDOR)
+  @Roles(
+    UserRole.SUPERADMIN,
+    UserRole.ADMIN_OWNER,
+    UserRole.STAFF,
+    UserRole.VENDOR,
+  )
   @ApiOperation({ summary: 'Get work order materials' })
   @ApiResponse({ status: 200, description: 'Materials retrieved successfully' })
-  getMaterials(@Param('id', ParseUUIDPipe) id: string, @CurrentUser() user: RequestUser) {
+  getMaterials(
+    @Param('id', ParseUUIDPipe) id: string,
+    @CurrentUser() user: RequestUser,
+  ) {
     return this.workOrdersService.getMaterials(id, user);
   }
 

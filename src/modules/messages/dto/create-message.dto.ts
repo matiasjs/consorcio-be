@@ -1,7 +1,18 @@
-import { IsString, IsEnum, IsOptional, IsUUID, IsArray, ValidateNested } from 'class-validator';
+import {
+  IsString,
+  IsEnum,
+  IsOptional,
+  IsUUID,
+  IsArray,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { EntityType, MessageDirection, MessageChannel } from '../../../entities/message.entity';
+import {
+  EntityType,
+  MessageDirection,
+  MessageChannel,
+} from '../../../entities/message.entity';
 
 class AttachmentDto {
   @ApiProperty()

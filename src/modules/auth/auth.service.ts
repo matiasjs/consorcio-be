@@ -7,7 +7,7 @@ import { Repository } from 'typeorm';
 import { UserStatus } from '../../common/enums';
 import { JwtPayload, JwtRefreshPayload } from '../../common/interfaces';
 import { User } from '../../entities/user.entity';
-import { AuthResponseDto, RefreshTokenDto } from './dto';
+import { AuthResponseDto, LoginDto, RefreshTokenDto } from './dto';
 
 @Injectable()
 export class AuthService {
@@ -16,11 +16,11 @@ export class AuthService {
     private userRepository: Repository<User>,
     private jwtService: JwtService,
     private configService: ConfigService,
-  ) { }
+  ) {}
 
   async validateUser(email: string, password: string): Promise<User | null> {
     const user = await this.userRepository.findOne({
-      where: { email, status: UserStatus.ACTIVE },
+      where: { email },
       relations: ['administration', 'roles', 'roles.permissions'],
     });
 
@@ -29,6 +29,7 @@ export class AuthService {
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
+
     if (!isPasswordValid) {
       return null;
     }
@@ -43,12 +44,23 @@ export class AuthService {
     });
   }
 
-  async login(user: User): Promise<AuthResponseDto> {
+  async login(loginDto: LoginDto): Promise<AuthResponseDto> {
+    const user = await this.validateUser(loginDto.email, loginDto.password);
+
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    return this.generateAuthResponse(user);
+  }
+
+  private async generateAuthResponse(user: User): Promise<AuthResponseDto> {
     // Extract roles and permissions
-    const roles = user.roles?.map(role => role.name) || [];
-    const permissions = user.roles?.flatMap(role =>
-      role.permissions?.map(permission => permission.code) || []
-    ) || [];
+    const roles = user.roles?.map((role) => role.name) || [];
+    const permissions =
+      user.roles?.flatMap(
+        (role) => role.permissions?.map((permission) => permission.code) || [],
+      ) || [];
 
     // Remove duplicates
     const uniquePermissions = [...new Set(permissions)];
@@ -98,7 +110,9 @@ export class AuthService {
     };
   }
 
-  async refreshToken(refreshTokenDto: RefreshTokenDto): Promise<AuthResponseDto> {
+  async refreshToken(
+    refreshTokenDto: RefreshTokenDto,
+  ): Promise<AuthResponseDto> {
     try {
       const payload = await this.jwtService.verifyAsync<JwtRefreshPayload>(
         refreshTokenDto.refreshToken,
@@ -112,7 +126,7 @@ export class AuthService {
         throw new UnauthorizedException('User not found');
       }
 
-      return this.login(user);
+      return this.generateAuthResponse(user);
     } catch (error) {
       throw new UnauthorizedException('Invalid refresh token');
     }

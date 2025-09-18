@@ -38,7 +38,10 @@ export const getDatabaseConfig = (
     migrations: [join(__dirname, '..', 'migrations', '*{.ts,.js}')],
     synchronize: configService.get<boolean>('DATABASE_SYNCHRONIZE', true),
     logging: configService.get<boolean>('DATABASE_LOGGING', true),
-    ssl: configService.get<string>('NODE_ENV') === 'production' ? { rejectUnauthorized: false } : false,
+    ssl:
+      configService.get<string>('NODE_ENV') === 'production'
+        ? { rejectUnauthorized: false }
+        : false,
     extra: {
       connectionLimit: 10,
       acquireTimeout: 60000,
@@ -48,17 +51,47 @@ export const getDatabaseConfig = (
 };
 
 // DataSource for migrations
-const dataSourceOptions: DataSourceOptions = {
-  type: 'postgres',
-  host: process.env.DATABASE_HOST || 'localhost',
-  port: parseInt(process.env.DATABASE_PORT || '5432'),
-  username: process.env.DATABASE_USERNAME || 'postgres',
-  password: process.env.DATABASE_PASSWORD || 'postgres123',
-  database: process.env.DATABASE_NAME || 'consorcios_db',
-  entities: [join(__dirname, '..', 'entities', '**', '*.entity{.ts,.js}')],
-  migrations: [join(__dirname, '..', 'migrations', '*{.ts,.js}')],
-  synchronize: false,
-  logging: process.env.DATABASE_LOGGING === 'true',
+const getDataSourceOptions = (): DataSourceOptions => {
+  const databaseUrl = process.env.DATABASE_URL;
+
+  if (databaseUrl) {
+    return {
+      type: 'postgres',
+      url: databaseUrl,
+      entities: [join(__dirname, '..', 'entities', '**', '*.entity{.ts,.js}')],
+      migrations: [join(__dirname, '..', 'migrations', '*{.ts,.js}')],
+      synchronize: false,
+      logging: process.env.DATABASE_LOGGING === 'true',
+      ssl: { rejectUnauthorized: false },
+      extra: {
+        connectionLimit: 10,
+        acquireTimeout: 60000,
+        timeout: 60000,
+      },
+    };
+  }
+
+  return {
+    type: 'postgres',
+    host: process.env.DATABASE_HOST || 'localhost',
+    port: parseInt(process.env.DATABASE_PORT || '5432'),
+    username: process.env.DATABASE_USERNAME || 'postgres',
+    password: process.env.DATABASE_PASSWORD || 'postgres123',
+    database: process.env.DATABASE_NAME || 'consorcios_db',
+    entities: [join(__dirname, '..', 'entities', '**', '*.entity{.ts,.js}')],
+    migrations: [join(__dirname, '..', 'migrations', '*{.ts,.js}')],
+    synchronize: false,
+    logging: process.env.DATABASE_LOGGING === 'true',
+    ssl:
+      process.env.NODE_ENV === 'production'
+        ? { rejectUnauthorized: false }
+        : false,
+    extra: {
+      connectionLimit: 10,
+      acquireTimeout: 60000,
+      timeout: 60000,
+    },
+  };
 };
 
-export default new DataSource(dataSourceOptions);
+export default new DataSource(getDataSourceOptions());

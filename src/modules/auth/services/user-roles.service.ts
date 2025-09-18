@@ -13,7 +13,11 @@ export class UserRolesService {
     private readonly roleRepository: Repository<Role>,
   ) {}
 
-  async assignRoles(userId: string, assignRolesDto: AssignRolesDto, adminId: string): Promise<User> {
+  async assignRoles(
+    userId: string,
+    assignRolesDto: AssignRolesDto,
+    adminId: string,
+  ): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id: userId, adminId },
       relations: ['roles'],
@@ -31,8 +35,8 @@ export class UserRolesService {
       });
 
       if (rolesToAdd.length !== add.length) {
-        const foundNames = rolesToAdd.map(r => r.name);
-        const notFound = add.filter(name => !foundNames.includes(name));
+        const foundNames = rolesToAdd.map((r) => r.name);
+        const notFound = add.filter((name) => !foundNames.includes(name));
         throw new NotFoundException(`Roles not found: ${notFound.join(', ')}`);
       }
 
@@ -41,11 +45,11 @@ export class UserRolesService {
 
     if (remove.length > 0) {
       user.roles = (user.roles || []).filter(
-        role => !remove.includes(role.name)
+        (role) => !remove.includes(role.name),
       );
     }
 
-    return await this.userRepository.save(user) as any;
+    return (await this.userRepository.save(user)) as any;
   }
 
   async getUserWithRoles(userId: string, adminId: string): Promise<User> {
