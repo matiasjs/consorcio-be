@@ -1,3 +1,7 @@
+// Web Crypto en Node (solo si falta)
+import { webcrypto as nodeCrypto } from 'node:crypto';
+globalThis.crypto ??= nodeCrypto as unknown as Crypto;
+
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppModule } from './app.module';

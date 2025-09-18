@@ -1,17 +1,20 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
-  IsString,
+  IsBoolean,
   IsEnum,
   IsNumber,
-  IsBoolean,
-  IsUUID,
   IsOptional,
+  IsString,
+  IsUUID,
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
 
 export enum UnitType {
-  APARTMENT = 'apartment',
-  STORE = 'store',
-  GARAGE = 'garage',
+  APARTMENT = 'APARTMENT',
+  STORE = 'STORE',
+  GARAGE = 'GARAGE',
+  STORAGE = 'STORAGE',
+  OFFICE = 'OFFICE',
+  HOME = 'HOME',
 }
 
 export class CreateUnitDto {
