@@ -13,7 +13,7 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Role)
     private readonly roleRepository: Repository<Role>,
-  ) {}
+  ) { }
 
   async create(createUserDto: CreateUserDto, adminId: string): Promise<User> {
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
@@ -43,7 +43,7 @@ export class UsersService {
   async findAll(adminId: string): Promise<User[]> {
     return this.userRepository.find({
       where: { adminId },
-      relations: ['administration'],
+      relations: ['administration', 'roles'],
     });
   }
 
