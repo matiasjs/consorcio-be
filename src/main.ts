@@ -11,8 +11,13 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 function parseCorsOrigins(input?: string | string[]): string[] {
   if (!input) return ['http://localhost:3000'];
-  if (Array.isArray(input)) return input;
-  // admite CSV en env: APP_CORS_ORIGIN="http://a.com,http://b.com"
+
+  // If it's already an array (from config), clean it up
+  if (Array.isArray(input)) {
+    return input.map((s) => s.trim()).filter(Boolean);
+  }
+
+  // If it's a string, split and clean
   return input
     .split(',')
     .map((s) => s.trim())
@@ -45,15 +50,12 @@ async function bootstrap() {
   // Global prefix
   app.setGlobalPrefix(configService.get<string>('app.apiPrefix', 'api'));
 
-  // CORS
-  const corsOrigin = parseCorsOrigins(
-    configService.get<string | string[]>('app.corsOrigin'),
-  );
+  // CORS configuration
   app.enableCors({
-    origin: corsOrigin,
+    origin: ['http://localhost:5173'],
+    methods: 'GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS',
+    allowedHeaders: 'Authorization,Content-Type,Accept',
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
   });
 
   // Swagger (solo no-prod)
