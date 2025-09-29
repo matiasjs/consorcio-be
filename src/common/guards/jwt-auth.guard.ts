@@ -23,6 +23,12 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       return true;
     }
 
+    // Skip authentication for OPTIONS requests (CORS preflight)
+    const request = context.switchToHttp().getRequest();
+    if (request.method === 'OPTIONS') {
+      return true;
+    }
+
     return super.canActivate(context);
   }
 

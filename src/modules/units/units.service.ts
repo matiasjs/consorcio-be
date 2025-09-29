@@ -27,9 +27,15 @@ export class UnitsService {
     return this.unitRepository.save(unit);
   }
 
-  async findAll(adminId: string): Promise<Unit[]> {
+  async findAll(adminId: string, buildingId?: string): Promise<Unit[]> {
+    const whereCondition: any = { building: { adminId } };
+
+    if (buildingId) {
+      whereCondition.buildingId = buildingId;
+    }
+
     return this.unitRepository.find({
-      where: { building: { adminId } },
+      where: whereCondition,
       relations: ['building', 'occupancies'],
     });
   }

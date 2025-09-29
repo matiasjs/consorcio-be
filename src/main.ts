@@ -7,6 +7,7 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 function parseCorsOrigins(input?: string | string[]): string[] {
   if (!input) return ['http://localhost:3000'];
@@ -21,6 +22,9 @@ function parseCorsOrigins(input?: string | string[]): string[] {
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
+
+  // Global exception filter
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   // Validation
   app.useGlobalPipes(
@@ -45,7 +49,12 @@ async function bootstrap() {
   const corsOrigin = parseCorsOrigins(
     configService.get<string | string[]>('app.corsOrigin'),
   );
-  app.enableCors({ origin: corsOrigin, credentials: true });
+  app.enableCors({
+    origin: corsOrigin,
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+  });
 
   // Swagger (solo no-prod)
   if (configService.get<string>('app.nodeEnv') !== 'production') {

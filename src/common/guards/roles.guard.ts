@@ -14,6 +14,13 @@ export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
+    const request = context.switchToHttp().getRequest();
+
+    // Skip roles validation for OPTIONS requests (CORS preflight)
+    if (request.method === 'OPTIONS') {
+      return true;
+    }
+
     const requiredRoles = this.reflector.getAllAndOverride<UserRole[]>(
       ROLES_KEY,
       [context.getHandler(), context.getClass()],
@@ -22,8 +29,6 @@ export class RolesGuard implements CanActivate {
     if (!requiredRoles) {
       return true;
     }
-
-    const request = context.switchToHttp().getRequest();
     const user: RequestUser = request.user;
 
     if (!user) {

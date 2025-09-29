@@ -24,6 +24,13 @@ export class PermissionsGuard implements CanActivate {
       return true;
     }
 
+    const request = context.switchToHttp().getRequest();
+
+    // Skip permissions validation for OPTIONS requests (CORS preflight)
+    if (request.method === 'OPTIONS') {
+      return true;
+    }
+
     const requiredPermissions = this.reflector.getAllAndOverride<string[]>(
       PERMISSIONS_KEY,
       [context.getHandler(), context.getClass()],
@@ -32,8 +39,6 @@ export class PermissionsGuard implements CanActivate {
     if (!requiredPermissions) {
       return true;
     }
-
-    const request = context.switchToHttp().getRequest();
     const user: RequestUser = request.user;
 
     if (!user) {
