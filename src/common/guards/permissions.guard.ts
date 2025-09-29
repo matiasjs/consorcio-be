@@ -16,22 +16,8 @@ export class PermissionsGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
 
-    // DEBUG: Log all requests to buildings endpoints
-    if (request.url?.includes('buildings')) {
-      console.log('🔑 PermissionsGuard:', {
-        timestamp: new Date().toISOString(),
-        method: request.method,
-        url: request.url,
-        origin: request.headers.origin,
-        headers: Object.keys(request.headers),
-      });
-    }
-
-    // Skip permissions validation for OPTIONS requests (CORS preflight) - FIRST PRIORITY
+    // Skip permissions validation for OPTIONS requests (CORS preflight)
     if (request.method === 'OPTIONS') {
-      console.log(
-        `🔑 PermissionsGuard: ✅ ALLOWING OPTIONS request for CORS preflight - ${new Date().toISOString()}`,
-      );
       return true;
     }
 
@@ -42,9 +28,6 @@ export class PermissionsGuard implements CanActivate {
     ]);
 
     if (isPublic) {
-      console.log(
-        `🔑 PermissionsGuard: ✅ ALLOWING public route - ${new Date().toISOString()}`,
-      );
       return true;
     }
 

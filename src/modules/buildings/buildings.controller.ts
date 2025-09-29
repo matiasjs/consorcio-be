@@ -74,14 +74,6 @@ export class BuildingsController {
     @Body() updateBuildingDto: UpdateBuildingDto,
     @CurrentUser() currentUser: RequestUser,
   ) {
-    console.log('🏢 BuildingsController.update called:', {
-      timestamp: new Date().toISOString(),
-      id,
-      updateBuildingDto,
-      currentUser: currentUser
-        ? { id: currentUser.id, adminId: currentUser.adminId }
-        : null,
-    });
     return this.buildingsService.update(
       id,
       updateBuildingDto,

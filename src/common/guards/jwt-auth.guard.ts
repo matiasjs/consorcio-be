@@ -16,22 +16,8 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
   canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
 
-    // DEBUG: Log all requests to buildings endpoints
-    if (request.url?.includes('buildings')) {
-      console.log('🔐 JwtAuthGuard:', {
-        timestamp: new Date().toISOString(),
-        method: request.method,
-        url: request.url,
-        origin: request.headers.origin,
-        headers: Object.keys(request.headers),
-      });
-    }
-
-    // Skip authentication for OPTIONS requests (CORS preflight) - FIRST PRIORITY
+    // Skip authentication for OPTIONS requests (CORS preflight)
     if (request.method === 'OPTIONS') {
-      console.log(
-        `🔐 JwtAuthGuard: ✅ ALLOWING OPTIONS request for CORS preflight - ${new Date().toISOString()}`,
-      );
       return true;
     }
 
@@ -41,15 +27,9 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     ]);
 
     if (isPublic) {
-      console.log(
-        `🔐 JwtAuthGuard: ✅ ALLOWING public route - ${new Date().toISOString()}`,
-      );
       return true;
     }
 
-    console.log(
-      `🔐 JwtAuthGuard: 🔒 Checking JWT authentication - ${new Date().toISOString()}`,
-    );
     return super.canActivate(context);
   }
 
