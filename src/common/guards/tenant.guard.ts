@@ -11,7 +11,7 @@ import { RequestUser } from '../interfaces';
 
 @Injectable()
 export class TenantGuard implements CanActivate {
-  constructor(private reflector: Reflector) { }
+  constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
     // Check if the route is public

@@ -7,7 +7,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
-  UseGuards
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -30,7 +30,7 @@ import { CreateBuildingDto, UpdateBuildingDto } from './dto';
 @UseGuards(JwtAuthGuard, TenantGuard, PermissionsGuard)
 @Controller({ path: 'buildings', version: '1' })
 export class BuildingsController {
-  constructor(private readonly buildingsService: BuildingsService) { }
+  constructor(private readonly buildingsService: BuildingsService) {}
 
   @Post()
   @Permissions('manageBuildings')

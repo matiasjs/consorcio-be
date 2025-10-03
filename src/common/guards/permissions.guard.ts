@@ -11,7 +11,7 @@ import type { RequestUser } from '../interfaces/request-user.interface';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
-  constructor(private reflector: Reflector) { }
+  constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
