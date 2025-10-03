@@ -4,25 +4,26 @@
  */
 
 // Mock environment variables for testing
-process.env.NODE_ENV = 'test'
-process.env.JWT_SECRET = 'test-jwt-secret-key-for-testing-purposes-only'
-process.env.JWT_REFRESH_SECRET = 'test-jwt-refresh-secret-key-for-testing-purposes-only'
-process.env.JWT_EXPIRES_IN = '1h'
-process.env.JWT_REFRESH_EXPIRES_IN = '7d'
+process.env.NODE_ENV = 'test';
+process.env.JWT_SECRET = 'test-jwt-secret-key-for-testing-purposes-only';
+process.env.JWT_REFRESH_SECRET =
+  'test-jwt-refresh-secret-key-for-testing-purposes-only';
+process.env.JWT_EXPIRES_IN = '1h';
+process.env.JWT_REFRESH_EXPIRES_IN = '7d';
 
 // Mock database configuration for tests
-process.env.DB_HOST = 'localhost'
-process.env.DB_PORT = '5432'
-process.env.DB_USERNAME = 'test'
-process.env.DB_PASSWORD = 'test'
-process.env.DB_NAME = 'test_db'
+process.env.DB_HOST = 'localhost';
+process.env.DB_PORT = '5432';
+process.env.DB_USERNAME = 'test';
+process.env.DB_PASSWORD = 'test';
+process.env.DB_NAME = 'test_db';
 
 // Mock Redis configuration for tests
-process.env.REDIS_HOST = 'localhost'
-process.env.REDIS_PORT = '6379'
+process.env.REDIS_HOST = 'localhost';
+process.env.REDIS_PORT = '6379';
 
 // Increase timeout for async operations
-jest.setTimeout(30000)
+jest.setTimeout(30000);
 
 // Mock console methods to reduce noise in test output
 global.console = {
@@ -32,7 +33,7 @@ global.console = {
   info: jest.fn(),
   warn: jest.fn(),
   error: jest.fn(),
-}
+};
 
 // Global test utilities
 global.testUtils = {
@@ -54,17 +55,17 @@ global.testUtils = {
       send: jest.fn().mockReturnThis(),
       cookie: jest.fn().mockReturnThis(),
       clearCookie: jest.fn().mockReturnThis(),
-    }
-    return res
+    };
+    return res;
   },
 
   // Helper to wait for async operations
-  wait: (ms = 100) => new Promise(resolve => setTimeout(resolve, ms)),
-}
+  wait: (ms = 100) => new Promise((resolve) => setTimeout(resolve, ms)),
+};
 
 // Mock TypeORM for unit tests that don't need real database
 jest.mock('typeorm', () => {
-  const actual = jest.requireActual('typeorm')
+  const actual = jest.requireActual('typeorm');
   return {
     ...actual,
     createConnection: jest.fn(),
@@ -81,8 +82,8 @@ jest.mock('typeorm', () => {
     ManyToMany: actual.ManyToMany,
     JoinTable: actual.JoinTable,
     JoinColumn: actual.JoinColumn,
-  }
-})
+  };
+});
 
 // Mock Redis for tests
 jest.mock('ioredis', () => {
@@ -98,10 +99,10 @@ jest.mock('ioredis', () => {
     on: jest.fn(),
     connect: jest.fn(),
     disconnect: jest.fn(),
-  }))
-})
+  }));
+});
 
 // Clean up after each test
 afterEach(() => {
-  jest.clearAllMocks()
-})
+  jest.clearAllMocks();
+});

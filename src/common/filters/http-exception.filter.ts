@@ -1,7 +1,7 @@
 import {
-  ExceptionFilter,
-  Catch,
   ArgumentsHost,
+  Catch,
+  ExceptionFilter,
   HttpException,
   HttpStatus,
   Logger,
@@ -40,7 +40,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
       // Log the full error for debugging
       this.logger.error(
-        `Unhandled exception: ${exception}`,
+        `Unhandled exception: ${String(exception)}`,
         exception instanceof Error ? exception.stack : undefined,
       );
     }

@@ -11,7 +11,7 @@ export const testAdministration = {
   address: 'Test Address 123',
   planTier: 'BASIC',
   isActive: true,
-}
+};
 
 export const testSuperAdmin = {
   id: 'test-superadmin-id',
@@ -20,7 +20,7 @@ export const testSuperAdmin = {
   status: 'ACTIVE',
   adminId: testAdministration.id,
   roles: [{ name: 'SUPERADMIN', description: 'Super Administrator' }],
-}
+};
 
 export const testAdminOwner = {
   id: 'test-admin-owner-id',
@@ -29,7 +29,7 @@ export const testAdminOwner = {
   status: 'ACTIVE',
   adminId: testAdministration.id,
   roles: [{ name: 'ADMIN', description: 'Administrator' }],
-}
+};
 
 export const testStaff = {
   id: 'test-staff-id',
@@ -38,7 +38,7 @@ export const testStaff = {
   status: 'ACTIVE',
   adminId: testAdministration.id,
   roles: [{ name: 'STAFF', description: 'Staff Member' }],
-}
+};
 
 export const testOwner = {
   id: 'test-owner-id',
@@ -47,7 +47,7 @@ export const testOwner = {
   status: 'ACTIVE',
   adminId: testAdministration.id,
   roles: [{ name: 'OWNER', description: 'Property Owner' }],
-}
+};
 
 export const testBuilding = {
   id: 'test-building-id',
@@ -57,7 +57,7 @@ export const testBuilding = {
   units: 20,
   adminId: testAdministration.id,
   status: 'ACTIVE',
-}
+};
 
 export const testUnit = {
   id: 'test-unit-id',
@@ -68,7 +68,7 @@ export const testUnit = {
   buildingId: testBuilding.id,
   adminId: testAdministration.id,
   status: 'OCCUPIED',
-}
+};
 
 export const testTicket = {
   id: 'test-ticket-id',
@@ -81,7 +81,7 @@ export const testTicket = {
   unitId: testUnit.id,
   reportedById: testOwner.id,
   adminId: testAdministration.id,
-}
+};
 
 export const testVendor = {
   id: 'test-vendor-id',
@@ -91,7 +91,7 @@ export const testVendor = {
   category: 'MAINTENANCE',
   status: 'ACTIVE',
   adminId: testAdministration.id,
-}
+};
 
 export const testWorkOrder = {
   id: 'test-workorder-id',
@@ -105,29 +105,29 @@ export const testWorkOrder = {
   assignedToId: testVendor.id,
   requestedById: testOwner.id,
   adminId: testAdministration.id,
-}
+};
 
 export const testInvoice = {
   id: 'test-invoice-id',
   number: 'INV-001',
-  amount: 1500.00,
+  amount: 1500.0,
   dueDate: new Date('2024-12-31'),
   status: 'PENDING',
   type: 'MONTHLY_FEE',
   buildingId: testBuilding.id,
   unitId: testUnit.id,
   adminId: testAdministration.id,
-}
+};
 
 export const testPayment = {
   id: 'test-payment-id',
-  amount: 1500.00,
+  amount: 1500.0,
   paymentDate: new Date(),
   method: 'BANK_TRANSFER',
   status: 'COMPLETED',
   invoiceId: testInvoice.id,
   adminId: testAdministration.id,
-}
+};
 
 export const testMeeting = {
   id: 'test-meeting-id',
@@ -138,7 +138,7 @@ export const testMeeting = {
   type: 'ORDINARY',
   buildingId: testBuilding.id,
   adminId: testAdministration.id,
-}
+};
 
 export const testDocument = {
   id: 'test-document-id',
@@ -150,7 +150,7 @@ export const testDocument = {
   mimeType: 'application/pdf',
   buildingId: testBuilding.id,
   adminId: testAdministration.id,
-}
+};
 
 export const testInspection = {
   id: 'test-inspection-id',
@@ -162,7 +162,7 @@ export const testInspection = {
   buildingId: testBuilding.id,
   inspectorId: testStaff.id,
   adminId: testAdministration.id,
-}
+};
 
 export const testAsset = {
   id: 'test-asset-id',
@@ -171,10 +171,10 @@ export const testAsset = {
   category: 'EQUIPMENT',
   status: 'ACTIVE',
   purchaseDate: new Date('2023-01-01'),
-  purchasePrice: 5000.00,
+  purchasePrice: 5000.0,
   buildingId: testBuilding.id,
   adminId: testAdministration.id,
-}
+};
 
 export const testMaterial = {
   id: 'test-material-id',
@@ -184,6 +184,6 @@ export const testMaterial = {
   unit: 'UNIT',
   currentStock: 10,
   minStock: 5,
-  unitPrice: 25.50,
+  unitPrice: 25.5,
   adminId: testAdministration.id,
-}
+};
