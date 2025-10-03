@@ -7,11 +7,17 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 function parseCorsOrigins(input?: string | string[]): string[] {
   if (!input) return ['http://localhost:3000'];
-  if (Array.isArray(input)) return input;
-  // admite CSV en env: APP_CORS_ORIGIN="http://a.com,http://b.com"
+
+  // If it's already an array (from config), clean it up
+  if (Array.isArray(input)) {
+    return input.map((s) => s.trim()).filter(Boolean);
+  }
+
+  // If it's a string, split and clean
   return input
     .split(',')
     .map((s) => s.trim())
@@ -21,6 +27,9 @@ function parseCorsOrigins(input?: string | string[]): string[] {
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
+
+  // Global exception filter
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   // Validation
   app.useGlobalPipes(
@@ -41,11 +50,16 @@ async function bootstrap() {
   // Global prefix
   app.setGlobalPrefix(configService.get<string>('app.apiPrefix', 'api'));
 
-  // CORS
-  const corsOrigin = parseCorsOrigins(
-    configService.get<string | string[]>('app.corsOrigin'),
-  );
-  app.enableCors({ origin: corsOrigin, credentials: true });
+  // CORS configuration
+  app.enableCors({
+    origin:
+      process.env.NODE_ENV === 'local'
+        ? true
+        : process.env.CORS_ORIGIN?.split(','),
+    methods: 'GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS',
+    allowedHeaders: 'Authorization,Content-Type,Accept',
+    credentials: true,
+  });
 
   // Swagger (solo no-prod)
   if (configService.get<string>('app.nodeEnv') !== 'production') {

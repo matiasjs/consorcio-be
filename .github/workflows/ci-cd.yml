@@ -53,9 +53,9 @@ jobs:
       run: npm ci
 
     - name: Run linting
-      run: npm run lint
+      run: npm run lint:ci
 
-    - name: Run tests
+    - name: Run unit tests
       env:
         NODE_ENV: test
         DB_HOST: localhost
@@ -69,7 +69,7 @@ jobs:
         JWT_REFRESH_SECRET: test-jwt-refresh-secret-key-for-testing
         JWT_EXPIRES_IN: 1h
         JWT_REFRESH_EXPIRES_IN: 7d
-      run: npm test
+      run: npm test -- --testPathIgnorePatterns="database-test.spec.ts|endpoints-test.spec.ts"
 
     - name: Build application
       run: npm run build

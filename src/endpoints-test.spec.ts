@@ -80,7 +80,7 @@ describe('API Endpoints Test (e2e)', () => {
     },
     {
       method: 'GET',
-      path: '/api/v1/buildings/:id',
+      path: '/api/v1/:id',
       description: 'Get building by ID',
     },
     {
