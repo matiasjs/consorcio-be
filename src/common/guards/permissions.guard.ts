@@ -16,11 +16,6 @@ export class PermissionsGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
 
-    // Skip permissions validation for OPTIONS requests (CORS preflight)
-    if (request.method === 'OPTIONS') {
-      return true;
-    }
-
     // Check if the route is public
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),

@@ -26,10 +26,6 @@ export class TenantGuard implements CanActivate {
 
     const request = context.switchToHttp().getRequest();
 
-    // Skip tenant validation for OPTIONS requests (CORS preflight)
-    if (request.method === 'OPTIONS') {
-      return true;
-    }
     const user: RequestUser = request.user;
 
     if (!user) {

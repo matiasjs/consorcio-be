@@ -3,22 +3,19 @@ import {
   Controller,
   Delete,
   Get,
-  Options,
   Param,
   ParseUUIDPipe,
   Patch,
   Post,
-  Res,
   UseGuards,
 } from '@nestjs/common';
-import type { Response } from 'express';
 import {
   ApiBearerAuth,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { CurrentUser, Permissions, Public } from '../../common/decorators';
+import { CurrentUser, Permissions } from '../../common/decorators';
 import {
   JwtAuthGuard,
   PermissionsGuard,
@@ -91,31 +88,4 @@ export class BuildingsController {
   ) {
     return this.buildingsService.remove(id, currentUser.adminId);
   }
-
-  // Manual OPTIONS handler for CORS preflight - COMMENTED OUT FOR GLOBAL HANDLER TEST
-  // @Options(':id')
-  // @Public()
-  // @ApiOperation({ summary: 'Handle CORS preflight for building operations' })
-  // handleOptions(@Param('id') id: string, @Res() res: Response) {
-  //   console.log(
-  //     `🚀 Manual OPTIONS handler called for building: ${id} - ${new Date().toISOString()}`,
-  //   );
-
-  //   res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
-  //   res.header(
-  //     'Access-Control-Allow-Methods',
-  //     'GET,POST,PUT,PATCH,DELETE,OPTIONS',
-  //   );
-  //   res.header(
-  //     'Access-Control-Allow-Headers',
-  //     'Content-Type,Authorization,Accept,X-Force-Preflight',
-  //   );
-  //   res.header('Access-Control-Allow-Credentials', 'true');
-  //   res.header('Access-Control-Max-Age', '86400'); // 24 hours
-
-  //   console.log(
-  //     `🚀 Manual OPTIONS response sent with CORS headers - ${new Date().toISOString()}`,
-  //   );
-  //   res.status(204).send();
-  // }
 }
