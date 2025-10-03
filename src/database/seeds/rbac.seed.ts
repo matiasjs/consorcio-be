@@ -71,6 +71,28 @@ export async function seedRBAC(dataSource: DataSource): Promise<void> {
       module: 'workorders',
     },
 
+    // Tickets
+    {
+      code: 'createTickets',
+      description: 'Create tickets',
+      module: 'tickets',
+    },
+    {
+      code: 'readTickets',
+      description: 'Read tickets',
+      module: 'tickets',
+    },
+    {
+      code: 'updateTickets',
+      description: 'Update tickets',
+      module: 'tickets',
+    },
+    {
+      code: 'deleteTickets',
+      description: 'Delete tickets',
+      module: 'tickets',
+    },
+
     // Vendors
     { code: 'manageVendors', description: 'Manage vendors', module: 'vendors' },
 
@@ -158,6 +180,10 @@ export async function seedRBAC(dataSource: DataSource): Promise<void> {
         'createWorkOrder',
         'updateWorkOrder',
         'readWorkOrder',
+        'createTickets',
+        'readTickets',
+        'updateTickets',
+        'deleteTickets',
         'manageVendors',
         'manageDocuments',
         'manageNotifications',
@@ -166,17 +192,27 @@ export async function seedRBAC(dataSource: DataSource): Promise<void> {
     {
       name: 'owner',
       description: 'Property owner with limited access',
-      permissionCodes: ['readBilling', 'readWorkOrder'],
+      permissionCodes: [
+        'readBilling',
+        'readWorkOrder',
+        'createTickets',
+        'readTickets',
+      ],
     },
     {
       name: 'tenant',
       description: 'Tenant with basic access',
-      permissionCodes: ['readBilling', 'readWorkOrder'],
+      permissionCodes: [
+        'readBilling',
+        'readWorkOrder',
+        'createTickets',
+        'readTickets',
+      ],
     },
     {
       name: 'provider',
       description: 'Service provider',
-      permissionCodes: ['readWorkOrder', 'updateWorkOrder'],
+      permissionCodes: ['readWorkOrder', 'updateWorkOrder', 'readTickets'],
     },
   ];
 
@@ -235,6 +271,12 @@ export async function seedRBAC(dataSource: DataSource): Promise<void> {
       fullName: 'Ana Inquilina',
       passwordHash,
       roleName: 'tenant',
+    },
+    {
+      email: 'provider@demo.com',
+      fullName: 'Carlos Proveedor',
+      passwordHash,
+      roleName: 'provider',
     },
   ];
 

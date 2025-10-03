@@ -18,10 +18,10 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
-import { Roles } from '../../common/decorators/roles.decorator';
+import { Permissions } from '../../common/decorators/permissions.decorator';
 import { UserRole } from '../../common/enums/user-role.enum';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
-import { RolesGuard } from '../../common/guards/roles.guard';
+import { PermissionsGuard } from '../../common/guards/permissions.guard';
 import { TenantGuard } from '../../common/guards/tenant.guard';
 import { User } from '../../entities/user.entity';
 import {
@@ -34,13 +34,13 @@ import { VendorsService } from './vendors.service';
 
 @ApiTags('vendors')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard, TenantGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, TenantGuard, PermissionsGuard)
 @Controller({ path: 'vendors', version: '1' })
 export class VendorsController {
   constructor(private readonly vendorsService: VendorsService) {}
 
   @Post()
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER)
+  @Permissions('manageVendors')
   @ApiOperation({ summary: 'Create a new vendor' })
   @ApiResponse({ status: 201, description: 'Vendor created successfully' })
   create(
@@ -51,7 +51,7 @@ export class VendorsController {
   }
 
   @Get()
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF)
+  @Permissions('manageVendors', 'readWorkOrder') // Permitir también a usuarios que pueden leer work orders
   @ApiOperation({ summary: 'Get all vendors' })
   @ApiQuery({ name: 'trade', required: false, description: 'Filter by trade' })
   @ApiResponse({ status: 200, description: 'Vendors retrieved successfully' })
@@ -60,7 +60,7 @@ export class VendorsController {
   }
 
   @Get(':id')
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF)
+  @Permissions('manageVendors', 'readWorkOrder')
   @ApiOperation({ summary: 'Get vendor by ID' })
   @ApiResponse({ status: 200, description: 'Vendor retrieved successfully' })
   findOne(
@@ -71,7 +71,7 @@ export class VendorsController {
   }
 
   @Patch(':id')
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER)
+  @Permissions('manageVendors')
   @ApiOperation({ summary: 'Update vendor' })
   @ApiResponse({ status: 200, description: 'Vendor updated successfully' })
   update(
@@ -83,7 +83,7 @@ export class VendorsController {
   }
 
   @Delete(':id')
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER)
+  @Permissions('manageVendors')
   @ApiOperation({ summary: 'Delete vendor' })
   @ApiResponse({ status: 200, description: 'Vendor deleted successfully' })
   remove(
@@ -94,7 +94,7 @@ export class VendorsController {
   }
 
   @Post(':id/availability')
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER)
+  @Permissions('manageVendors')
   @ApiOperation({ summary: 'Create vendor availability' })
   @ApiResponse({
     status: 201,
@@ -113,7 +113,7 @@ export class VendorsController {
   }
 
   @Get(':id/availability')
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF)
+  @Permissions('manageVendors', 'readWorkOrder')
   @ApiOperation({ summary: 'Get vendor availability' })
   @ApiResponse({
     status: 200,
@@ -127,7 +127,7 @@ export class VendorsController {
   }
 
   @Patch(':id/availability/:availabilityId')
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER)
+  @Permissions('manageVendors')
   @ApiOperation({ summary: 'Update vendor availability' })
   @ApiResponse({
     status: 200,
@@ -148,7 +148,7 @@ export class VendorsController {
   }
 
   @Delete(':id/availability/:availabilityId')
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER)
+  @Permissions('manageVendors')
   @ApiOperation({ summary: 'Delete vendor availability' })
   @ApiResponse({
     status: 200,

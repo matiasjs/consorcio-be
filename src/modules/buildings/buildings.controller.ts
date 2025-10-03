@@ -47,7 +47,7 @@ export class BuildingsController {
   }
 
   @Get()
-  @Permissions('manageBuildings')
+  @Permissions('manageBuildings', 'readBilling') // Permitir también a usuarios con readBilling
   @ApiOperation({ summary: 'Get all buildings' })
   @ApiResponse({ status: 200, description: 'Buildings retrieved successfully' })
   findAll(@CurrentUser() currentUser: RequestUser) {
@@ -55,7 +55,7 @@ export class BuildingsController {
   }
 
   @Get(':id')
-  @Permissions('manageBuildings')
+  @Permissions('manageBuildings', 'readBilling') // Permitir también a usuarios con readBilling
   @ApiOperation({ summary: 'Get building by ID' })
   @ApiResponse({ status: 200, description: 'Building retrieved successfully' })
   findOne(
