@@ -11,7 +11,7 @@ import { RequestUser } from '../interfaces';
 
 @Injectable()
 export class TenantGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
+  constructor(private reflector: Reflector) { }
 
   canActivate(context: ExecutionContext): boolean {
     // Check if the route is public
@@ -26,10 +26,6 @@ export class TenantGuard implements CanActivate {
 
     const request = context.switchToHttp().getRequest();
 
-    // Skip tenant validation for OPTIONS requests (CORS preflight)
-    if (request.method === 'OPTIONS') {
-      return true;
-    }
     const user: RequestUser = request.user;
 
     if (!user) {

@@ -11,15 +11,10 @@ import type { RequestUser } from '../interfaces/request-user.interface';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
-  constructor(private reflector: Reflector) {}
+  constructor(private reflector: Reflector) { }
 
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
-
-    // Skip permissions validation for OPTIONS requests (CORS preflight)
-    if (request.method === 'OPTIONS') {
-      return true;
-    }
 
     // Check if the route is public
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
