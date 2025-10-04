@@ -18,6 +18,7 @@ Sistema completo de gestión para administraciones de consorcios que incluye:
 - **📱 API REST con documentación Swagger**
 - **🔐 Sistema RBAC con permisos granulares**
 - **📊 Sistema de mensajería interno**
+- **🤖 Asistente IA con LLM self-hosted (Qwen)**
 
 ## 🚀 Tecnologías
 
@@ -27,11 +28,12 @@ Sistema completo de gestión para administraciones de consorcios que incluye:
 - **Autenticación**: JWT + Passport
 - **Documentación**: Swagger/OpenAPI
 - **Testing**: Jest
+- **IA/LLM**: Ollama + LiteLLM + Qwen 2.5
 - **Deployment**: Docker + Render + Supabase
 
 ## 📊 Estado del Proyecto
 
-### ✅ **COMPLETADO - 109/109 endpoints (100%)**
+### ✅ **COMPLETADO - 114/114 endpoints (100%)**
 
 **Core Modules:**
 - **Autenticación + RBAC** (12 endpoints): Login, refresh, me, roles, permissions, user-roles
@@ -58,6 +60,7 @@ Sistema completo de gestión para administraciones de consorcios que incluye:
 - **Suscripciones** (7 endpoints): Gestión de planes
 - **Métricas** (8 endpoints): Estadísticas de uso
 - **Auditoría** (10 endpoints): Logs del sistema
+- **🤖 Asistente IA** (5 endpoints): Chat, herramientas, catálogo, salud
 
 ## 🔐 Sistema RBAC
 
@@ -83,6 +86,67 @@ secretaria@demo.com / Admin123! (secretaria)
 owner@demo.com / Admin123! (owner)
 tenant@demo.com / Admin123! (tenant)
 ```
+
+## 🤖 Asistente IA
+
+### Características
+- **LLM Self-hosted**: Qwen 2.5 via Ollama + LiteLLM
+- **Tool Calling**: Operaciones CRUD automáticas
+- **Dry-run vs Apply**: Vista previa segura antes de ejecutar
+- **Permisos RBAC**: Solo ADMIN/SUPERADMIN pueden aplicar cambios
+- **Idempotencia**: Previene ejecuciones duplicadas
+- **Auditoría completa**: Logs de todas las interacciones
+- **Catálogo automático**: Metadatos de entidades desde TypeORM
+
+### Endpoints del Asistente
+```
+POST   /assistant              # Chat no-streaming
+POST   /assistant/stream       # Chat con streaming (SSE)
+GET    /assistant/health       # Estado del LLM
+GET    /assistant/catalog      # Catálogo de entidades
+POST   /assistant/tool/execute # Ejecutar herramientas
+```
+
+### Herramientas Disponibles
+- **find**: Buscar registros con filtros complejos
+- **create**: Crear nuevos registros
+- **update**: Actualizar registros existentes
+- **delete**: Eliminar registros (con confirmación)
+- **runWorkflow**: Ejecutar flujos de trabajo personalizados
+
+### Configuración
+```bash
+# Habilitar asistente
+ASSISTANT_ENABLED=true
+ASSISTANT_DEFAULT_MODE=dry-run
+
+# LLM Configuration
+LLM_API_BASE=http://llm-gateway:8000/v1
+LLM_API_KEY=your-secure-key
+LLM_MODEL=qwen2.5-instruct
+```
+
+### Uso Básico
+```bash
+# Chat simple
+curl -X POST /assistant \
+  -H "Authorization: Bearer $JWT" \
+  -d '{"message": "Muestra todos los tickets abiertos"}'
+
+# Ejecutar herramienta
+curl -X POST /assistant/tool/execute \
+  -H "Authorization: Bearer $JWT" \
+  -H "x-idempotency-key: unique-key" \
+  -d '{
+    "toolCall": {
+      "type": "find",
+      "parameters": {"entity": "Ticket", "where": {"status": "open"}}
+    },
+    "mode": "dry-run"
+  }'
+```
+
+Ver [LLM_SETUP.md](./LLM_SETUP.md) para configuración detallada.
 
 ## 🛠️ Instalación y Desarrollo
 
@@ -129,10 +193,25 @@ npm run migration:run
 npm run db:seed
 ```
 
-6. **Ejecutar la aplicación**
+6. **Configurar Asistente IA (Opcional)**
+```bash
+# Levantar servicios LLM
+docker-compose --profile llm up -d
+
+# Inicializar modelos
+./scripts/init-llm.sh
+
+# Habilitar en .env
+ASSISTANT_ENABLED=true
+```
+
+7. **Ejecutar la aplicación**
 ```bash
 # Desarrollo
 npm run start:dev
+
+# Desarrollo con IA
+docker-compose --profile dev --profile llm up -d
 
 # Producción
 npm run build
@@ -150,6 +229,10 @@ npm run test:cov
 
 # Tests E2E
 npm run test:e2e
+
+# Tests del asistente IA
+npm test -- --testNamePattern="Assistant"
+npm test -- src/modules/assistant/test/
 ```
 
 ## 📚 Documentación API

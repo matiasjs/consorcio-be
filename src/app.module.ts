@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { APP_GUARD, APP_FILTER } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { JwtAuthGuard, PermissionsGuard, TenantGuard } from './common/guards';
 import { BusinessExceptionFilter } from './common/filters/business-exception.filter';
+import { JwtAuthGuard, PermissionsGuard, TenantGuard } from './common/guards';
 import appConfig from './config/app.config';
 import { getDatabaseConfig } from './config/database.config';
 import jwtConfig from './config/jwt.config';
@@ -17,6 +17,7 @@ import { AuditLogsModule } from './modules/audit-logs/audit-logs.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { BuildingsModule } from './modules/buildings/buildings.module';
 import { DocumentsModule } from './modules/documents/documents.module';
+import { ExpensesModule } from './modules/expenses/expenses.module';
 import { HealthModule } from './modules/health/health.module';
 import { InspectionsModule } from './modules/inspections/inspections.module';
 import { InvoicesModule } from './modules/invoices/invoices.module';
@@ -34,14 +35,13 @@ import { UsageMetricsModule } from './modules/usage-metrics/usage-metrics.module
 import { UsersModule } from './modules/users/users.module';
 import { VendorsModule } from './modules/vendors/vendors.module';
 import { WorkOrdersModule } from './modules/workorders/workorders.module';
-import { ExpensesModule } from './modules/expenses/expenses.module';
 
 @Module({
   imports: [
     // Configuration
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [appConfig, jwtConfig, redisConfig],
+      load: [appConfig, jwtConfig, redisConfig, assistantConfig],
       envFilePath: ['.env.local', '.env'],
     }),
 
@@ -89,6 +89,7 @@ import { ExpensesModule } from './modules/expenses/expenses.module';
     SubscriptionsModule,
     UsageMetricsModule,
     AuditLogsModule,
+    AssistantModule,
   ],
   controllers: [AppController],
   providers: [
@@ -111,4 +112,4 @@ import { ExpensesModule } from './modules/expenses/expenses.module';
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }

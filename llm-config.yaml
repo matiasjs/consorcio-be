@@ -1,0 +1,56 @@
+model_list:
+  - model_name: qwen2.5-instruct
+    litellm_params:
+      model: ollama/qwen2.5:7b-instruct
+      api_base: http://ollama:11434
+      stream: true
+      temperature: 0.1
+      max_tokens: 4000
+
+  - model_name: qwen2.5-14b-instruct
+    litellm_params:
+      model: ollama/qwen2.5:14b-instruct
+      api_base: http://ollama:11434
+      stream: true
+      temperature: 0.1
+      max_tokens: 4000
+
+  - model_name: qwen2.5-32b-instruct
+    litellm_params:
+      model: ollama/qwen2.5:32b-instruct
+      api_base: http://ollama:11434
+      stream: true
+      temperature: 0.1
+      max_tokens: 4000
+
+litellm_settings:
+  # Logging
+  set_verbose: true
+  json_logs: true
+  
+  # Rate limiting
+  rpm: 100
+  tpm: 10000
+  
+  # Caching
+  cache: true
+  cache_params:
+    type: "redis"
+    host: "redis"
+    port: 6379
+    
+  # Security
+  master_key: "internal-llm-key-change-in-production"
+  
+  # Health checks
+  health_check_interval: 300
+
+general_settings:
+  completion_model: qwen2.5-instruct
+  
+router_settings:
+  routing_strategy: "simple-shuffle"
+  model_group_alias:
+    qwen-small: ["qwen2.5-instruct"]
+    qwen-medium: ["qwen2.5-14b-instruct"] 
+    qwen-large: ["qwen2.5-32b-instruct"]
