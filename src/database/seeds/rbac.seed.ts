@@ -10,6 +10,11 @@ import {
   UnitOccupancy,
   User,
 } from '../../entities';
+import {
+  ROLES,
+  PERMISSIONS,
+  ROLE_PERMISSIONS,
+} from '../../auth/constants/roles-permissions';
 
 export async function seedRBAC(dataSource: DataSource): Promise<void> {
   const permissionRepository = dataSource.getRepository(Permission);
@@ -69,6 +74,28 @@ export async function seedRBAC(dataSource: DataSource): Promise<void> {
       code: 'closeWorkOrder',
       description: 'Close work orders',
       module: 'workorders',
+    },
+
+    // Tickets
+    {
+      code: 'createTickets',
+      description: 'Create tickets',
+      module: 'tickets',
+    },
+    {
+      code: 'readTickets',
+      description: 'Read tickets',
+      module: 'tickets',
+    },
+    {
+      code: 'updateTickets',
+      description: 'Update tickets',
+      module: 'tickets',
+    },
+    {
+      code: 'deleteTickets',
+      description: 'Delete tickets',
+      module: 'tickets',
     },
 
     // Vendors
@@ -138,45 +165,32 @@ export async function seedRBAC(dataSource: DataSource): Promise<void> {
 
   console.log(`✅ Created administration: ${administration.name}`);
 
-  // 3. Create Roles with permissions
+  // 3. Create Roles with permissions using constants
   const roleDefinitions = [
     {
-      name: 'admin',
+      name: ROLES.ADMIN,
       description: 'Administrator with full access',
       permissionCodes: permissions.map((p) => p.code), // All permissions
     },
     {
-      name: 'secretaria',
+      name: ROLES.SECRETARIA,
       description: 'Secretary with management permissions',
-      permissionCodes: [
-        'readUsers',
-        'manageBuildings',
-        'manageUnits',
-        'managePeople',
-        'readBilling',
-        'manageBilling',
-        'createWorkOrder',
-        'updateWorkOrder',
-        'readWorkOrder',
-        'manageVendors',
-        'manageDocuments',
-        'manageNotifications',
-      ],
+      permissionCodes: ROLE_PERMISSIONS[ROLES.SECRETARIA] as string[],
     },
     {
-      name: 'owner',
+      name: ROLES.OWNER,
       description: 'Property owner with limited access',
-      permissionCodes: ['readBilling', 'readWorkOrder'],
+      permissionCodes: ROLE_PERMISSIONS[ROLES.OWNER] as string[],
     },
     {
-      name: 'tenant',
+      name: ROLES.TENANT,
       description: 'Tenant with basic access',
-      permissionCodes: ['readBilling', 'readWorkOrder'],
+      permissionCodes: ROLE_PERMISSIONS[ROLES.TENANT] as string[],
     },
     {
-      name: 'provider',
+      name: ROLES.PROVIDER,
       description: 'Service provider',
-      permissionCodes: ['readWorkOrder', 'updateWorkOrder'],
+      permissionCodes: ROLE_PERMISSIONS[ROLES.PROVIDER] as string[],
     },
   ];
 
@@ -216,25 +230,31 @@ export async function seedRBAC(dataSource: DataSource): Promise<void> {
       email: 'admin@demo.com',
       fullName: 'Administrator',
       passwordHash,
-      roleName: 'admin',
+      roleName: ROLES.ADMIN,
     },
     {
       email: 'secretaria@demo.com',
       fullName: 'María Secretaria',
       passwordHash,
-      roleName: 'secretaria',
+      roleName: ROLES.SECRETARIA,
     },
     {
       email: 'owner@demo.com',
       fullName: 'Juan Propietario',
       passwordHash,
-      roleName: 'owner',
+      roleName: ROLES.OWNER,
     },
     {
       email: 'tenant@demo.com',
       fullName: 'Ana Inquilina',
       passwordHash,
-      roleName: 'tenant',
+      roleName: ROLES.TENANT,
+    },
+    {
+      email: 'provider@demo.com',
+      fullName: 'Carlos Proveedor',
+      passwordHash,
+      roleName: ROLES.PROVIDER,
     },
   ];
 

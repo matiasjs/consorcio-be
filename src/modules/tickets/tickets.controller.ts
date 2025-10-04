@@ -39,7 +39,7 @@ export class TicketsController {
   @Post()
   @ApiOperation({ summary: 'Create a new ticket' })
   @ApiResponse({ status: 201, description: 'Ticket created successfully' })
-  @Permissions('createWorkOrder')
+  @Permissions('createTickets')
   create(
     @Body() createTicketDto: CreateTicketDto,
     @CurrentUser() user: RequestUser,
@@ -55,7 +55,7 @@ export class TicketsController {
   @ApiQuery({ name: 'status', required: false, enum: TicketStatus })
   @ApiQuery({ name: 'buildingId', required: false, type: String })
   @ApiQuery({ name: 'unitId', required: false, type: String })
-  @Permissions('readWorkOrder')
+  @Permissions('readTickets')
   findAll(
     @CurrentUser() user: RequestUser,
     @Query('page', new ParseIntPipe({ optional: true })) page?: number,

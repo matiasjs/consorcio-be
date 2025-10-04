@@ -45,7 +45,7 @@ export class UnitsController {
   }
 
   @Get()
-  @Permissions('manageUnits')
+  @Permissions('manageUnits', 'readBilling') // Permitir también a usuarios con readBilling
   @ApiOperation({ summary: 'Get all units' })
   @ApiResponse({ status: 200, description: 'Units retrieved successfully' })
   @ApiQuery({ name: 'buildingId', required: false, type: String })
@@ -57,7 +57,7 @@ export class UnitsController {
   }
 
   @Get(':id')
-  @Permissions('manageUnits')
+  @Permissions('manageUnits', 'readBilling') // Permitir también a usuarios con readBilling
   @ApiOperation({ summary: 'Get unit by ID' })
   @ApiResponse({ status: 200, description: 'Unit retrieved successfully' })
   findOne(

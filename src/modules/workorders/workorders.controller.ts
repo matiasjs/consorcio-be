@@ -16,10 +16,14 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { CurrentUser, Roles } from '../../common/decorators';
+import { CurrentUser, Permissions } from '../../common/decorators';
 import { PaginationDto } from '../../common/dto';
 import { UserRole } from '../../common/enums';
-import { JwtAuthGuard, RolesGuard, TenantGuard } from '../../common/guards';
+import {
+  JwtAuthGuard,
+  PermissionsGuard,
+  TenantGuard,
+} from '../../common/guards';
 import type { RequestUser } from '../../common/interfaces';
 import {
   AddMaterialDto,
@@ -33,12 +37,12 @@ import { WorkOrdersService } from './workorders.service';
 @ApiTags('Work Orders')
 @ApiBearerAuth()
 @Controller({ path: 'workorders', version: '1' })
-@UseGuards(JwtAuthGuard, TenantGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, TenantGuard, PermissionsGuard)
 export class WorkOrdersController {
   constructor(private readonly workOrdersService: WorkOrdersService) {}
 
   @Post()
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF)
+  @Permissions('createWorkOrder')
   @ApiOperation({ summary: 'Create a new work order' })
   @ApiResponse({ status: 201, description: 'Work order created successfully' })
   create(
@@ -49,12 +53,7 @@ export class WorkOrdersController {
   }
 
   @Get()
-  @Roles(
-    UserRole.SUPERADMIN,
-    UserRole.ADMIN_OWNER,
-    UserRole.STAFF,
-    UserRole.VENDOR,
-  )
+  @Permissions('readWorkOrder')
   @ApiOperation({ summary: 'Get all work orders' })
   @ApiResponse({
     status: 200,
@@ -68,12 +67,7 @@ export class WorkOrdersController {
   }
 
   @Get(':id')
-  @Roles(
-    UserRole.SUPERADMIN,
-    UserRole.ADMIN_OWNER,
-    UserRole.STAFF,
-    UserRole.VENDOR,
-  )
+  @Permissions('readWorkOrder')
   @ApiOperation({ summary: 'Get work order by ID' })
   @ApiResponse({
     status: 200,
@@ -87,7 +81,7 @@ export class WorkOrdersController {
   }
 
   @Patch(':id')
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF)
+  @Permissions('updateWorkOrder')
   @ApiOperation({ summary: 'Update work order' })
   @ApiResponse({ status: 200, description: 'Work order updated successfully' })
   update(
@@ -99,7 +93,7 @@ export class WorkOrdersController {
   }
 
   @Delete(':id')
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF)
+  @Permissions('updateWorkOrder') // Solo admin/secretaria pueden eliminar
   @ApiOperation({ summary: 'Delete work order' })
   @ApiResponse({ status: 200, description: 'Work order deleted successfully' })
   remove(
@@ -111,12 +105,7 @@ export class WorkOrdersController {
 
   // Quote endpoints
   @Get(':id/quotes')
-  @Roles(
-    UserRole.SUPERADMIN,
-    UserRole.ADMIN_OWNER,
-    UserRole.STAFF,
-    UserRole.VENDOR,
-  )
+  @Permissions('readWorkOrder')
   @ApiOperation({ summary: 'Get work order quotes' })
   @ApiResponse({ status: 200, description: 'Quotes retrieved successfully' })
   getQuotes(
@@ -127,12 +116,7 @@ export class WorkOrdersController {
   }
 
   @Post(':id/quotes')
-  @Roles(
-    UserRole.SUPERADMIN,
-    UserRole.ADMIN_OWNER,
-    UserRole.STAFF,
-    UserRole.VENDOR,
-  )
+  @Permissions('updateWorkOrder') // Solo provider y admin pueden crear quotes
   @ApiOperation({ summary: 'Create work order quote' })
   @ApiResponse({ status: 201, description: 'Quote created successfully' })
   createQuote(
@@ -145,7 +129,7 @@ export class WorkOrdersController {
 
   // Schedule endpoints
   @Post(':id/schedules')
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF)
+  @Permissions('updateWorkOrder')
   @ApiOperation({ summary: 'Create work order schedule' })
   @ApiResponse({ status: 201, description: 'Schedule created successfully' })
   createSchedule(
@@ -158,12 +142,7 @@ export class WorkOrdersController {
 
   // Material endpoints
   @Get(':id/materials')
-  @Roles(
-    UserRole.SUPERADMIN,
-    UserRole.ADMIN_OWNER,
-    UserRole.STAFF,
-    UserRole.VENDOR,
-  )
+  @Permissions('readWorkOrder')
   @ApiOperation({ summary: 'Get work order materials' })
   @ApiResponse({ status: 200, description: 'Materials retrieved successfully' })
   getMaterials(
@@ -174,7 +153,7 @@ export class WorkOrdersController {
   }
 
   @Post(':id/materials')
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF)
+  @Permissions('updateWorkOrder')
   @ApiOperation({ summary: 'Add material to work order' })
   @ApiResponse({ status: 201, description: 'Material added successfully' })
   addMaterial(

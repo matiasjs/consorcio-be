@@ -32,7 +32,6 @@ export class InvoicesController {
   constructor(private readonly invoicesService: InvoicesService) {}
 
   @Post()
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF)
   @ApiOperation({ summary: 'Create a new invoice' })
   @ApiResponse({ status: 201, description: 'Invoice created successfully' })
   @ApiResponse({ status: 400, description: 'Bad request' })
@@ -46,12 +45,6 @@ export class InvoicesController {
   }
 
   @Get()
-  @Roles(
-    UserRole.SUPERADMIN,
-    UserRole.ADMIN_OWNER,
-    UserRole.STAFF,
-    UserRole.ACCOUNTANT,
-  )
   @ApiOperation({ summary: 'Get all invoices' })
   @ApiResponse({ status: 200, description: 'Invoices retrieved successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -64,12 +57,6 @@ export class InvoicesController {
   }
 
   @Get('overdue')
-  @Roles(
-    UserRole.SUPERADMIN,
-    UserRole.ADMIN_OWNER,
-    UserRole.STAFF,
-    UserRole.ACCOUNTANT,
-  )
   @ApiOperation({ summary: 'Get overdue invoices' })
   @ApiResponse({
     status: 200,
@@ -82,12 +69,6 @@ export class InvoicesController {
   }
 
   @Get('stats')
-  @Roles(
-    UserRole.SUPERADMIN,
-    UserRole.ADMIN_OWNER,
-    UserRole.STAFF,
-    UserRole.ACCOUNTANT,
-  )
   @ApiOperation({ summary: 'Get invoice statistics by status' })
   @ApiResponse({
     status: 200,
@@ -100,12 +81,6 @@ export class InvoicesController {
   }
 
   @Get('status/:status')
-  @Roles(
-    UserRole.SUPERADMIN,
-    UserRole.ADMIN_OWNER,
-    UserRole.STAFF,
-    UserRole.ACCOUNTANT,
-  )
   @ApiOperation({ summary: 'Get invoices by status' })
   @ApiResponse({ status: 200, description: 'Invoices retrieved successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -118,12 +93,6 @@ export class InvoicesController {
   }
 
   @Get(':id')
-  @Roles(
-    UserRole.SUPERADMIN,
-    UserRole.ADMIN_OWNER,
-    UserRole.STAFF,
-    UserRole.ACCOUNTANT,
-  )
   @ApiOperation({ summary: 'Get invoice by ID' })
   @ApiResponse({ status: 200, description: 'Invoice retrieved successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -137,7 +106,6 @@ export class InvoicesController {
   }
 
   @Patch(':id')
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF)
   @ApiOperation({ summary: 'Update invoice' })
   @ApiResponse({ status: 200, description: 'Invoice updated successfully' })
   @ApiResponse({ status: 400, description: 'Bad request' })
@@ -153,7 +121,6 @@ export class InvoicesController {
   }
 
   @Delete(':id')
-  @Roles(UserRole.SUPERADMIN, UserRole.ADMIN_OWNER, UserRole.STAFF)
   @ApiOperation({ summary: 'Delete invoice' })
   @ApiResponse({ status: 200, description: 'Invoice deleted successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })

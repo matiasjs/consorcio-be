@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_FILTER } from '@nestjs/core';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { JwtAuthGuard, PermissionsGuard, TenantGuard } from './common/guards';
+import { BusinessExceptionFilter } from './common/filters/business-exception.filter';
 import appConfig from './config/app.config';
 import { getDatabaseConfig } from './config/database.config';
 import jwtConfig from './config/jwt.config';
@@ -33,6 +34,7 @@ import { UsageMetricsModule } from './modules/usage-metrics/usage-metrics.module
 import { UsersModule } from './modules/users/users.module';
 import { VendorsModule } from './modules/vendors/vendors.module';
 import { WorkOrdersModule } from './modules/workorders/workorders.module';
+import { ExpensesModule } from './modules/expenses/expenses.module';
 
 @Module({
   imports: [
@@ -77,6 +79,7 @@ import { WorkOrdersModule } from './modules/workorders/workorders.module';
     MaterialsModule,
     InvoicesModule,
     PaymentsModule,
+    ExpensesModule,
     AssetsModule,
     MeetingsModule,
     DocumentsModule,
@@ -101,6 +104,10 @@ import { WorkOrdersModule } from './modules/workorders/workorders.module';
     {
       provide: APP_GUARD,
       useClass: TenantGuard,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: BusinessExceptionFilter,
     },
   ],
 })

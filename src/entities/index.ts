@@ -45,3 +45,8 @@ export * from './usage-metric.entity';
 
 // Audit
 export * from './audit-log.entity';
+
+// Expenses
+export * from './expense.entity';
+export * from './expense-item.entity';
+export * from './expense-distribution.entity';
