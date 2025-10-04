@@ -207,7 +207,9 @@ describe('ExpensesService', () => {
       jest
         .spyOn(buildingRepository, 'findOne')
         .mockResolvedValue(mockBuilding as any);
-      jest.spyOn(expenseItemRepository, 'create').mockReturnValue({} as any);
+      const createItemSpy = jest
+        .spyOn(expenseItemRepository, 'create')
+        .mockReturnValue({} as any);
       jest.spyOn(expenseItemRepository, 'save').mockResolvedValue([]);
       jest
         .spyOn(expenseRepository, 'save')
@@ -225,7 +227,7 @@ describe('ExpensesService', () => {
       const result = await service.create(createExpenseDto, mockUser as any);
 
       expect(result).toEqual(existingExpense);
-      expect(expenseItemRepository.create).toHaveBeenCalled();
+      expect(createItemSpy).toHaveBeenCalled();
     });
 
     it('should throw NotFoundException if building not found', async () => {
