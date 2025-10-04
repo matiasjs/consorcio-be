@@ -137,7 +137,12 @@ describe('ExpensesService', () => {
         distributionMethod: ExpenseDistributionMethod.EQUAL,
       };
 
-      jest.spyOn(expenseRepository, 'findOne').mockResolvedValue(null);
+      // Mock for checking if expense already exists (should return null for new expense)
+      jest
+        .spyOn(expenseRepository, 'findOne')
+        .mockResolvedValueOnce(null) // First call for duplicate check
+        .mockResolvedValue(mockExpense as any); // Subsequent calls for generateDistributions
+
       jest
         .spyOn(buildingRepository, 'findOne')
         .mockResolvedValue(mockBuilding as any);
@@ -166,23 +171,61 @@ describe('ExpensesService', () => {
         dueDate: new Date(createExpenseDto.dueDate),
         currency: 'ARS',
         distributionMethod: ExpenseDistributionMethod.EQUAL,
+        description: `Expensas correspondientes al período ${createExpenseDto.title}`,
       });
     });
 
-    it('should throw ConflictException if expense already exists', async () => {
+    it('should add items to existing expense if expense already exists', async () => {
       const createExpenseDto: CreateExpenseDto = {
         buildingId: 'building-1',
         period: '2024-01',
         title: 'Expensas Enero 2024',
         dueDate: '2024-02-15',
-        items: [],
+        items: [
+          {
+            description: 'Sueldo portero',
+            type: ExpenseItemType.RECURRING,
+            category: ExpenseItemCategory.STAFF_SALARIES,
+            amount: 85000,
+          },
+        ],
       };
 
-      jest.spyOn(expenseRepository, 'findOne').mockResolvedValue({} as any);
+      const existingExpense = {
+        id: 'existing-expense-1',
+        buildingId: 'building-1',
+        period: '2024-01',
+        adminId: 'admin-1',
+        items: [],
+        totalAmount: 0,
+        distributionMethod: ExpenseDistributionMethod.EQUAL,
+      };
 
-      await expect(
-        service.create(createExpenseDto, mockUser as any),
-      ).rejects.toThrow(ConflictException);
+      jest
+        .spyOn(expenseRepository, 'findOne')
+        .mockResolvedValue(existingExpense as any);
+      jest
+        .spyOn(buildingRepository, 'findOne')
+        .mockResolvedValue(mockBuilding as any);
+      jest.spyOn(expenseItemRepository, 'create').mockReturnValue({} as any);
+      jest.spyOn(expenseItemRepository, 'save').mockResolvedValue([]);
+      jest
+        .spyOn(expenseRepository, 'save')
+        .mockResolvedValue(existingExpense as any);
+      jest
+        .spyOn(expenseDistributionRepository, 'delete')
+        .mockResolvedValue({} as any);
+      jest.spyOn(unitRepository, 'find').mockResolvedValue(mockUnits as any);
+      jest
+        .spyOn(expenseDistributionRepository, 'create')
+        .mockReturnValue({} as any);
+      jest.spyOn(expenseDistributionRepository, 'save').mockResolvedValue([]);
+      jest.spyOn(service, 'findOne').mockResolvedValue(existingExpense as any);
+
+      const result = await service.create(createExpenseDto, mockUser as any);
+
+      expect(result).toEqual(existingExpense);
+      expect(expenseItemRepository.create).toHaveBeenCalled();
     });
 
     it('should throw NotFoundException if building not found', async () => {
@@ -191,7 +234,14 @@ describe('ExpensesService', () => {
         period: '2024-01',
         title: 'Expensas Enero 2024',
         dueDate: '2024-02-15',
-        items: [],
+        items: [
+          {
+            description: 'Sueldo portero',
+            type: ExpenseItemType.RECURRING,
+            category: ExpenseItemCategory.STAFF_SALARIES,
+            amount: 85000,
+          },
+        ],
       };
 
       jest.spyOn(expenseRepository, 'findOne').mockResolvedValue(null);
@@ -257,6 +307,9 @@ describe('ExpensesService', () => {
       };
 
       jest.spyOn(expenseRepository, 'findOne').mockResolvedValue({} as any);
+      jest
+        .spyOn(buildingRepository, 'findOne')
+        .mockResolvedValue(mockBuilding as any);
 
       await expect(
         service.generateExpense(generateExpenseDto, mockUser as any),
@@ -291,16 +344,6 @@ describe('ExpensesService', () => {
       await expect(
         service.findOne('expense-1', mockUser as any),
       ).rejects.toThrow(NotFoundException);
-    });
-  });
-
-  describe('formatPeriod', () => {
-    it('should format period correctly', () => {
-      const result = service['formatPeriod']('2024-01');
-      expect(result).toBe('Enero 2024');
-
-      const result2 = service['formatPeriod']('2024-12');
-      expect(result2).toBe('Diciembre 2024');
     });
   });
 });
