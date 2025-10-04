@@ -138,20 +138,28 @@ describe('ExpensesService', () => {
       };
 
       jest.spyOn(expenseRepository, 'findOne').mockResolvedValue(null);
-      jest.spyOn(buildingRepository, 'findOne').mockResolvedValue(mockBuilding as any);
-      jest.spyOn(expenseRepository, 'create').mockReturnValue(mockExpense as any);
-      jest.spyOn(expenseRepository, 'save').mockResolvedValue(mockExpense as any);
+      jest
+        .spyOn(buildingRepository, 'findOne')
+        .mockResolvedValue(mockBuilding as any);
+      const createSpy = jest
+        .spyOn(expenseRepository, 'create')
+        .mockReturnValue(mockExpense as any);
+      jest
+        .spyOn(expenseRepository, 'save')
+        .mockResolvedValue(mockExpense as any);
       jest.spyOn(expenseItemRepository, 'create').mockReturnValue({} as any);
       jest.spyOn(expenseItemRepository, 'save').mockResolvedValue([]);
       jest.spyOn(unitRepository, 'find').mockResolvedValue(mockUnits as any);
-      jest.spyOn(expenseDistributionRepository, 'create').mockReturnValue({} as any);
+      jest
+        .spyOn(expenseDistributionRepository, 'create')
+        .mockReturnValue({} as any);
       jest.spyOn(expenseDistributionRepository, 'save').mockResolvedValue([]);
       jest.spyOn(service, 'findOne').mockResolvedValue(mockExpense as any);
 
       const result = await service.create(createExpenseDto, mockUser as any);
 
       expect(result).toEqual(mockExpense);
-      expect(expenseRepository.create).toHaveBeenCalledWith({
+      expect(createSpy).toHaveBeenCalledWith({
         ...createExpenseDto,
         adminId: 'admin-1',
         totalAmount: 85000,
@@ -204,8 +212,12 @@ describe('ExpensesService', () => {
       };
 
       jest.spyOn(expenseRepository, 'findOne').mockResolvedValue(null);
-      jest.spyOn(buildingRepository, 'findOne').mockResolvedValue(mockBuilding as any);
-      jest.spyOn(service, 'create').mockResolvedValue({} as any);
+      jest
+        .spyOn(buildingRepository, 'findOne')
+        .mockResolvedValue(mockBuilding as any);
+      const createSpy = jest
+        .spyOn(service, 'create')
+        .mockResolvedValue({} as any);
 
       const queryBuilder = {
         leftJoin: jest.fn().mockReturnThis(),
@@ -213,11 +225,13 @@ describe('ExpensesService', () => {
         andWhere: jest.fn().mockReturnThis(),
         getMany: jest.fn().mockResolvedValue([]),
       };
-      jest.spyOn(vendorInvoiceRepository, 'createQueryBuilder').mockReturnValue(queryBuilder as any);
+      jest
+        .spyOn(vendorInvoiceRepository, 'createQueryBuilder')
+        .mockReturnValue(queryBuilder as any);
 
       await service.generateExpense(generateExpenseDto, mockUser as any);
 
-      expect(service.create).toHaveBeenCalledWith(
+      expect(createSpy).toHaveBeenCalledWith(
         expect.objectContaining({
           buildingId: 'building-1',
           period: '2024-01',
@@ -258,12 +272,14 @@ describe('ExpensesService', () => {
         buildingId: 'building-1',
       };
 
-      jest.spyOn(expenseRepository, 'findOne').mockResolvedValue(mockExpense as any);
+      const findOneSpy = jest
+        .spyOn(expenseRepository, 'findOne')
+        .mockResolvedValue(mockExpense as any);
 
       const result = await service.findOne('expense-1', mockUser as any);
 
       expect(result).toEqual(mockExpense);
-      expect(expenseRepository.findOne).toHaveBeenCalledWith({
+      expect(findOneSpy).toHaveBeenCalledWith({
         where: { id: 'expense-1', adminId: 'admin-1' },
         relations: ['building', 'items', 'distributions', 'distributions.unit'],
       });

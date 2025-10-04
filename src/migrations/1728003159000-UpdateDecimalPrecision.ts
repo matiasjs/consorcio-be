@@ -9,7 +9,7 @@ export class UpdateDecimalPrecision1728003159000 implements MigrationInterface {
       ALTER TABLE "expense_items" 
       ALTER COLUMN "amount" TYPE DECIMAL(15,2)
     `);
-    
+
     await queryRunner.query(`
       ALTER TABLE "expense_items" 
       ALTER COLUMN "unitPrice" TYPE DECIMAL(15,2)
@@ -26,12 +26,12 @@ export class UpdateDecimalPrecision1728003159000 implements MigrationInterface {
       ALTER TABLE "expense_distributions" 
       ALTER COLUMN "amount" TYPE DECIMAL(15,2)
     `);
-    
+
     await queryRunner.query(`
       ALTER TABLE "expense_distributions" 
       ALTER COLUMN "paidAmount" TYPE DECIMAL(15,2)
     `);
-    
+
     await queryRunner.query(`
       ALTER TABLE "expense_distributions" 
       ALTER COLUMN "remainingAmount" TYPE DECIMAL(15,2)
@@ -44,7 +44,7 @@ export class UpdateDecimalPrecision1728003159000 implements MigrationInterface {
       ALTER TABLE "expense_items" 
       ALTER COLUMN "amount" TYPE DECIMAL(10,2)
     `);
-    
+
     await queryRunner.query(`
       ALTER TABLE "expense_items" 
       ALTER COLUMN "unitPrice" TYPE DECIMAL(10,2)
@@ -61,12 +61,12 @@ export class UpdateDecimalPrecision1728003159000 implements MigrationInterface {
       ALTER TABLE "expense_distributions" 
       ALTER COLUMN "amount" TYPE DECIMAL(10,2)
     `);
-    
+
     await queryRunner.query(`
       ALTER TABLE "expense_distributions" 
       ALTER COLUMN "paidAmount" TYPE DECIMAL(10,2)
     `);
-    
+
     await queryRunner.query(`
       ALTER TABLE "expense_distributions" 
       ALTER COLUMN "remainingAmount" TYPE DECIMAL(10,2)

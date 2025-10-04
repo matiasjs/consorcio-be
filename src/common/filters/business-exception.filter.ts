@@ -19,10 +19,11 @@ export class BusinessExceptionFilter implements ExceptionFilter {
     const status = exception.getStatus();
 
     const exceptionResponse = exception.getResponse();
-    
+
     // Check if it's a business exception with structured error
-    const isBusinessException = typeof exceptionResponse === 'object' && 
-      exceptionResponse !== null && 
+    const isBusinessException =
+      typeof exceptionResponse === 'object' &&
+      exceptionResponse !== null &&
       'code' in exceptionResponse;
 
     let errorResponse;
@@ -43,9 +44,10 @@ export class BusinessExceptionFilter implements ExceptionFilter {
         timestamp: new Date().toISOString(),
         path: request.url,
         method: request.method,
-        message: typeof exceptionResponse === 'string' 
-          ? exceptionResponse 
-          : (exceptionResponse as any)?.message || 'Internal server error',
+        message:
+          typeof exceptionResponse === 'string'
+            ? exceptionResponse
+            : (exceptionResponse as any)?.message || 'Internal server error',
         error: this.getErrorName(status),
       };
     }
@@ -61,19 +63,19 @@ export class BusinessExceptionFilter implements ExceptionFilter {
 
   private getErrorName(status: number): string {
     switch (status) {
-      case HttpStatus.BAD_REQUEST:
+      case HttpStatus.BAD_REQUEST as number:
         return 'Bad Request';
-      case HttpStatus.UNAUTHORIZED:
+      case HttpStatus.UNAUTHORIZED as number:
         return 'Unauthorized';
-      case HttpStatus.FORBIDDEN:
+      case HttpStatus.FORBIDDEN as number:
         return 'Forbidden';
-      case HttpStatus.NOT_FOUND:
+      case HttpStatus.NOT_FOUND as number:
         return 'Not Found';
-      case HttpStatus.CONFLICT:
+      case HttpStatus.CONFLICT as number:
         return 'Conflict';
-      case HttpStatus.UNPROCESSABLE_ENTITY:
+      case HttpStatus.UNPROCESSABLE_ENTITY as number:
         return 'Unprocessable Entity';
-      case HttpStatus.INTERNAL_SERVER_ERROR:
+      case HttpStatus.INTERNAL_SERVER_ERROR as number:
         return 'Internal Server Error';
       default:
         return 'Error';

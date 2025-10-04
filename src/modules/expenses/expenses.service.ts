@@ -67,7 +67,7 @@ export class ExpensesService {
     await this.validateCreateExpenseDto(createExpenseDto, user);
 
     // Check if expense already exists for this building and period
-    let existingExpense = await this.expenseRepository.findOne({
+    const existingExpense = await this.expenseRepository.findOne({
       where: {
         buildingId: createExpenseDto.buildingId,
         period: createExpenseDto.period,
@@ -296,10 +296,7 @@ export class ExpensesService {
       );
     }
 
-    queryBuilder
-      .orderBy(`expense.${sortBy}`, sortOrder as 'ASC' | 'DESC')
-      .skip(skip)
-      .take(limit);
+    queryBuilder.orderBy(`expense.${sortBy}`, sortOrder).skip(skip).take(limit);
 
     const [data, total] = await queryBuilder.getManyAndCount();
 
@@ -748,7 +745,7 @@ export class ExpensesService {
     buildingName?: string,
   ): void {
     switch (method) {
-      case ExpenseDistributionMethod.BY_OWNERSHIP:
+      case ExpenseDistributionMethod.BY_OWNERSHIP: {
         const unitsWithoutOwnership = units.filter(
           (unit) => !unit.ownershipPercentage || unit.ownershipPercentage <= 0,
         );
@@ -756,13 +753,15 @@ export class ExpensesService {
           throw new InsufficientOwnershipDataException(buildingName);
         }
         break;
+      }
 
-      case ExpenseDistributionMethod.BY_M2:
+      case ExpenseDistributionMethod.BY_M2: {
         const unitsWithoutM2 = units.filter((unit) => !unit.m2 || unit.m2 <= 0);
         if (unitsWithoutM2.length > 0) {
           throw new InsufficientM2DataException(buildingName);
         }
         break;
+      }
 
       case ExpenseDistributionMethod.EQUAL:
       case ExpenseDistributionMethod.CUSTOM:
