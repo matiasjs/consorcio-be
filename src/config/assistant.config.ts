@@ -17,7 +17,7 @@ export interface AssistantConfig {
 
 export default registerAs('assistant', (): AssistantConfig => ({
   enabled: process.env.ASSISTANT_ENABLED === 'true',
-  defaultMode: (process.env.ASSISTANT_DEFAULT_MODE as 'dry-run' | 'apply') || 'dry-run',
+  defaultMode: (process.env.ASSISTANT_DEFAULT_MODE as 'dry-run' | 'apply') || 'apply',
   llm: {
     apiBase: process.env.LLM_API_BASE || 'http://llm-gateway:8000/v1',
     apiKey: process.env.LLM_API_KEY || '',

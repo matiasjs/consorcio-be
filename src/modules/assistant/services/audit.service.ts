@@ -12,7 +12,7 @@ export class AuditService {
   constructor(
     @InjectRepository(AuditLog)
     private auditLogRepository: Repository<AuditLog>,
-  ) {}
+  ) { }
 
   async logAssistantRequest(
     request: AssistantRequestDto,
@@ -21,17 +21,17 @@ export class AuditService {
     try {
       const auditLog = this.auditLogRepository.create({
         adminId: userContext.adminId,
-        userId: userContext.userId,
-        action: 'assistant_request',
-        entityType: 'Assistant',
-        entityId: null,
-        details: {
+        actorUserId: userContext.userId,
+        action: 'CUSTOM' as any,
+        entity: 'SYSTEM' as any,
+        entityId: undefined,
+        metadata: {
           messageCount: request.messages.length,
           message: this.redactPII(request.message),
           context: request.context,
           includeCatalog: request.includeCatalog,
         },
-        ipAddress: userContext.ipAddress,
+        ip: userContext.ipAddress,
         userAgent: userContext.userAgent,
       });
 
@@ -48,17 +48,17 @@ export class AuditService {
     try {
       const auditLog = this.auditLogRepository.create({
         adminId: userContext.adminId,
-        userId: userContext.userId,
-        action: 'assistant_response',
-        entityType: 'Assistant',
-        entityId: null,
-        details: {
+        actorUserId: userContext.userId,
+        action: 'CUSTOM' as any,
+        entity: 'SYSTEM' as any,
+        entityId: undefined,
+        metadata: {
           message: this.redactPII(response.message),
           toolCallsCount: response.toolCalls?.length || 0,
           finished: response.finished,
           usage: response.usage,
         },
-        ipAddress: userContext.ipAddress,
+        ip: userContext.ipAddress,
         userAgent: userContext.userAgent,
       });
 
@@ -77,11 +77,11 @@ export class AuditService {
     try {
       const auditLog = this.auditLogRepository.create({
         adminId: userContext.adminId,
-        userId: userContext.userId,
-        action: 'tool_execution',
-        entityType: toolResult.explain?.entity || 'Unknown',
-        entityId: null,
-        details: {
+        actorUserId: userContext.userId,
+        action: 'CUSTOM' as any,
+        entity: 'SYSTEM' as any,
+        entityId: undefined,
+        metadata: {
           operation: toolResult.explain?.operation,
           mode: toolResult.mode,
           success: toolResult.success,
@@ -91,7 +91,7 @@ export class AuditService {
           beforeData: beforeData ? this.redactPII(beforeData) : null,
           afterData: afterData ? this.redactPII(afterData) : null,
         },
-        ipAddress: userContext.ipAddress,
+        ip: userContext.ipAddress,
         userAgent: userContext.userAgent,
       });
 
@@ -109,11 +109,11 @@ export class AuditService {
     try {
       const auditLog = this.auditLogRepository.create({
         adminId: userContext.adminId,
-        userId: userContext.userId,
-        action: 'assistant_error',
-        entityType: 'Assistant',
-        entityId: null,
-        details: {
+        actorUserId: userContext.userId,
+        action: 'CUSTOM' as any,
+        entity: 'SYSTEM' as any,
+        entityId: undefined,
+        metadata: {
           error: error.message,
           stack: error.stack,
           request: {
@@ -121,7 +121,7 @@ export class AuditService {
             message: this.redactPII(request.message),
           },
         },
-        ipAddress: userContext.ipAddress,
+        ip: userContext.ipAddress,
         userAgent: userContext.userAgent,
       });
 
@@ -162,10 +162,10 @@ export class AuditService {
     // Create minimal replay payload
     return {
       action: auditLog.action,
-      entityType: auditLog.entityType,
-      details: auditLog.details,
+      entity: auditLog.entity,
+      metadata: auditLog.metadata,
       timestamp: auditLog.createdAt,
-      userId: auditLog.userId,
+      actorUserId: auditLog.actorUserId,
       adminId: auditLog.adminId,
     };
   }
@@ -197,14 +197,14 @@ export class AuditService {
   private redactStringPII(text: string): string {
     // Redact email addresses
     text = text.replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, '[EMAIL]');
-    
+
     // Redact phone numbers (basic patterns)
     text = text.replace(/\b\d{3}-\d{3}-\d{4}\b/g, '[PHONE]');
     text = text.replace(/\b\(\d{3}\)\s*\d{3}-\d{4}\b/g, '[PHONE]');
-    
+
     // Redact potential document numbers
     text = text.replace(/\b\d{8,12}\b/g, '[DOCUMENT]');
-    
+
     return text;
   }
 
@@ -218,7 +218,7 @@ export class AuditService {
       'passwordHash',
       'resetPasswordToken',
     ];
-    
+
     return piiFields.includes(fieldName.toLowerCase());
   }
 }

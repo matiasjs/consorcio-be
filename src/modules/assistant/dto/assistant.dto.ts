@@ -1,11 +1,11 @@
-import { IsString, IsArray, IsOptional, IsObject, ValidateNested } from 'class-validator';
-import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import { IsArray, IsObject, IsOptional, IsString, ValidateNested } from 'class-validator';
 
 export class ChatMessage {
-  @ApiProperty({ description: 'Message role', enum: ['user', 'assistant', 'system'] })
+  @ApiProperty({ description: 'Message role', enum: ['user', 'assistant', 'system', 'tool'] })
   @IsString()
-  role: 'user' | 'assistant' | 'system';
+  role: 'user' | 'assistant' | 'system' | 'tool';
 
   @ApiProperty({ description: 'Message content' })
   @IsString()
@@ -20,6 +20,11 @@ export class ChatMessage {
   @IsOptional()
   @IsArray()
   tool_calls?: any[];
+
+  @ApiProperty({ description: 'Tool call ID for tool responses', required: false })
+  @IsOptional()
+  @IsString()
+  tool_call_id?: string;
 }
 
 export class AssistantContext {

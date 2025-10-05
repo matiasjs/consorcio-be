@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import { EntityMetadata as TypeOrmEntityMetadata } from 'typeorm/metadata/EntityMetadata';
 import { ColumnMetadata } from 'typeorm/metadata/ColumnMetadata';
+import { EntityMetadata as TypeOrmEntityMetadata } from 'typeorm/metadata/EntityMetadata';
 import { RelationMetadata } from 'typeorm/metadata/RelationMetadata';
-import { EntityCatalog, EntityMetadata, EntityField } from '../interfaces/entity-catalog.interface';
+import { EntityCatalog, EntityField, EntityMetadata } from '../interfaces/entity-catalog.interface';
 
 @Injectable()
 export class EntityCatalogService {
-  constructor(private dataSource: DataSource) {}
+  constructor(private dataSource: DataSource) { }
 
   async generateCatalog(): Promise<EntityCatalog> {
     const entities = this.dataSource.entityMetadatas;
@@ -40,7 +40,7 @@ export class EntityCatalogService {
       for (const column of entity.columns) {
         if (column.enum) {
           const enumName = `${entity.name}.${column.propertyName}`;
-          catalog.enums[enumName] = column.enum;
+          catalog.enums[enumName] = column.enum.map(String);
         }
       }
     }
@@ -83,14 +83,14 @@ export class EntityCatalogService {
 
     // Add enum values if applicable
     if (column.enum) {
-      field.enum = column.enum;
+      field.enum = column.enum.map(String);
     }
 
     // Add validation constraints
     if (column.length || column.precision || column.scale) {
       field.validation = {};
       if (column.length) {
-        field.validation.maxLength = column.length;
+        field.validation.maxLength = Number(column.length);
       }
     }
 
@@ -115,7 +115,7 @@ export class EntityCatalogService {
 
   private mapColumnType(column: ColumnMetadata): string {
     const type = column.type.toString().toLowerCase();
-    
+
     switch (type) {
       case 'varchar':
       case 'text':
@@ -166,7 +166,7 @@ export class EntityCatalogService {
       Asset: 'Activos del consorcio',
       // Add more descriptions as needed
     };
-    
+
     return descriptions[entityName] || `Entidad ${entityName} del sistema`;
   }
 
@@ -184,7 +184,7 @@ export class EntityCatalogService {
       deletedAt: 'Fecha de eliminación (soft delete)',
       // Add more descriptions as needed
     };
-    
+
     return descriptions[fieldName];
   }
 

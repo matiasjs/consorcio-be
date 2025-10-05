@@ -1,27 +1,27 @@
-import { 
-  Controller, 
-  Post, 
-  Body, 
-  UseGuards, 
+import {
+  Body,
+  Controller,
   Headers,
-  Request
+  Post,
+  Request,
+  UseGuards
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiHeader } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AssistantApplyGuard, AssistantGuard } from '../../../common/guards/assistant.guard';
 import { JwtAuthGuard } from '../../../common/guards/jwt-auth.guard';
-import { AssistantGuard, AssistantApplyGuard } from '../../../common/guards/assistant.guard';
-import { ToolExecutionService } from '../services/tool-execution.service';
 import { ToolExecutionDto, ToolResultDto } from '../dto/tool-call.dto';
+import { ToolExecutionService } from '../services/tool-execution.service';
 
 @ApiTags('Assistant')
-@Controller('assistant/tool')
+@Controller({ path: 'assistant/tool', version: '1' })
 @UseGuards(JwtAuthGuard, AssistantGuard)
 @ApiBearerAuth()
 export class ToolExecutionController {
-  constructor(private readonly toolExecutionService: ToolExecutionService) {}
+  constructor(private readonly toolExecutionService: ToolExecutionService) { }
 
   @Post('execute')
   @UseGuards(AssistantApplyGuard)
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Execute a tool call',
     description: 'Executes a tool call against the domain layer. Supports dry-run and apply modes with idempotency.'
   })
@@ -30,18 +30,18 @@ export class ToolExecutionController {
     description: 'Idempotency key to prevent duplicate operations',
     required: false,
   })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Tool executed successfully',
     type: ToolResultDto
   })
-  @ApiResponse({ 
-    status: 400, 
-    description: 'Invalid tool call or parameters' 
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid tool call or parameters'
   })
-  @ApiResponse({ 
-    status: 403, 
-    description: 'Insufficient permissions for apply mode' 
+  @ApiResponse({
+    status: 403,
+    description: 'Insufficient permissions for apply mode'
   })
   async executeTool(
     @Body() toolExecution: ToolExecutionDto,

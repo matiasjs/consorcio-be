@@ -1,17 +1,17 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { 
-  ToolCallDto, 
-  ToolResultDto, 
-  ToolType, 
-  FindToolDto, 
-  CreateToolDto, 
-  UpdateToolDto, 
-  DeleteToolDto,
-  RunWorkflowToolDto 
-} from '../dto/tool-call.dto';
+import { DataSource, Repository } from 'typeorm';
 import { AssistantConfig } from '../../../config/assistant.config';
+import {
+  CreateToolDto,
+  DeleteToolDto,
+  FindToolDto,
+  RunWorkflowToolDto,
+  ToolCallDto,
+  ToolResultDto,
+  ToolType,
+  UpdateToolDto
+} from '../dto/tool-call.dto';
 
 @Injectable()
 export class ToolExecutionService {
@@ -20,7 +20,7 @@ export class ToolExecutionService {
   constructor(
     private dataSource: DataSource,
     private configService: ConfigService,
-  ) {}
+  ) { }
 
   async executeToolCall(
     toolCall: ToolCallDto,
@@ -34,7 +34,7 @@ export class ToolExecutionService {
     }
 
     const assistantConfig = this.configService.get<AssistantConfig>('assistant');
-    const effectiveMode = mode === 'apply' && assistantConfig?.defaultMode === 'dry-run' ? 'dry-run' : mode;
+    const effectiveMode = mode || assistantConfig?.defaultMode || 'dry-run';
 
     let result: ToolResultDto;
 
@@ -87,66 +87,103 @@ export class ToolExecutionService {
   }
 
   private async executeFindTool(params: FindToolDto, mode: string, userContext?: any): Promise<ToolResultDto> {
-    const repository = this.getRepository(params.entity);
-    
-    const queryBuilder = repository.createQueryBuilder(params.entity.toLowerCase());
-    
-    // Apply where conditions
-    if (params.where) {
-      Object.entries(params.where).forEach(([key, value], index) => {
-        const paramName = `param${index}`;
-        queryBuilder.andWhere(`${params.entity.toLowerCase()}.${key} = :${paramName}`, { [paramName]: value });
-      });
-    }
+    console.log('executeFindTool called with params:', JSON.stringify(params, null, 2));
 
-    // Apply select fields
-    if (params.select && params.select.length > 0) {
-      const selectFields = params.select.map(field => `${params.entity.toLowerCase()}.${field}`);
-      queryBuilder.select(selectFields);
-    }
+    try {
+      const repository = this.getRepository(params.entity);
 
-    // Apply ordering
-    if (params.orderBy) {
-      Object.entries(params.orderBy).forEach(([field, direction]) => {
-        queryBuilder.addOrderBy(`${params.entity.toLowerCase()}.${field}`, direction);
-      });
-    }
+      const queryBuilder = repository.createQueryBuilder(params.entity.toLowerCase());
 
-    // Apply pagination
-    if (params.limit) {
-      queryBuilder.limit(params.limit);
-    }
-    if (params.page && params.limit) {
-      queryBuilder.offset((params.page - 1) * params.limit);
-    }
+      // Apply where conditions
+      if (params.where) {
+        Object.entries(params.where).forEach(([key, value], index) => {
+          const paramName = `param${index}`;
+          queryBuilder.andWhere(`${params.entity.toLowerCase()}.${key} = :${paramName}`, { [paramName]: value });
+        });
+      }
 
-    const [data, total] = await queryBuilder.getManyAndCount();
+      // Apply select fields
+      if (params.select && params.select.length > 0) {
+        // Handle aggregation functions like count(*)
+        const selectFields = params.select.map(field => {
+          if (field.includes('count(') || field.includes('sum(') || field.includes('avg(') || field.includes('max(') || field.includes('min(')) {
+            return field; // Use as-is for aggregation functions
+          }
+          return `${params.entity.toLowerCase()}.${field}`;
+        });
+        queryBuilder.select(selectFields);
+      }
 
-    return {
-      success: true,
-      data: {
-        items: data,
-        total,
-        page: params.page || 1,
-        limit: params.limit || total,
-      },
-      explain: {
-        operation: 'find',
-        entity: params.entity,
-        affectedRecords: data.length,
-      },
-      mode: mode as any,
-      executedAt: new Date().toISOString(),
-    };
+      // Apply ordering
+      if (params.orderBy) {
+        // Handle both formats: {"field": "ASC"} and {"field": "id", "ASC": true}
+        if (params.orderBy.field && (params.orderBy.ASC !== undefined || params.orderBy.DESC !== undefined)) {
+          // Format: {"field": "id", "ASC": true}
+          const direction = params.orderBy.ASC ? 'ASC' : 'DESC';
+          queryBuilder.addOrderBy(`${params.entity.toLowerCase()}.${params.orderBy.field}`, direction);
+        } else {
+          // Format: {"id": "ASC", "name": "DESC"}
+          Object.entries(params.orderBy).forEach(([field, direction]) => {
+            queryBuilder.addOrderBy(`${params.entity.toLowerCase()}.${field}`, direction);
+          });
+        }
+      }
+
+      // Apply pagination
+      if (params.limit) {
+        queryBuilder.limit(params.limit);
+      }
+      if (params.page && params.limit) {
+        queryBuilder.offset((params.page - 1) * params.limit);
+      }
+
+      const [data, total] = await queryBuilder.getManyAndCount();
+
+      const result = {
+        success: true,
+        data: {
+          items: data,
+          total,
+          page: params.page || 1,
+          limit: params.limit || total,
+        },
+        explain: {
+          operation: 'find',
+          entity: params.entity,
+          affectedRecords: data.length,
+        },
+        mode: mode as any,
+        executedAt: new Date().toISOString(),
+      };
+
+      console.log('executeFindTool result:', JSON.stringify(result, null, 2));
+      return result;
+    } catch (error) {
+      console.log('executeFindTool error:', error.message);
+      const errorResult = {
+        success: false,
+        data: null,
+        error: error.message,
+        explain: {
+          operation: 'find',
+          entity: params.entity,
+          affectedRecords: 0,
+        },
+        mode: mode as any,
+        executedAt: new Date().toISOString(),
+      };
+      console.log('executeFindTool error result:', JSON.stringify(errorResult, null, 2));
+      return errorResult;
+    }
   }
 
   private async executeCreateTool(params: CreateToolDto, mode: string, userContext?: any): Promise<ToolResultDto> {
     const repository = this.getRepository(params.entity);
-    
+
     if (mode === 'dry-run') {
       // Validate data without creating
       const entity = repository.create(params.data);
-      
+
       return {
         success: true,
         data: { preview: entity },
@@ -186,10 +223,10 @@ export class ToolExecutionService {
 
   private async executeUpdateTool(params: UpdateToolDto, mode: string, userContext?: any): Promise<ToolResultDto> {
     const repository = this.getRepository(params.entity);
-    
+
     // Find records to update
     const recordsToUpdate = await repository.find({ where: params.where });
-    
+
     if (recordsToUpdate.length === 0) {
       throw new NotFoundException(`No records found matching the criteria`);
     }
@@ -197,9 +234,9 @@ export class ToolExecutionService {
     if (mode === 'dry-run') {
       return {
         success: true,
-        data: { 
+        data: {
           preview: recordsToUpdate.map(record => ({ ...record, ...params.data })),
-          recordsFound: recordsToUpdate.length 
+          recordsFound: recordsToUpdate.length
         },
         explain: {
           operation: 'update (dry-run)',
@@ -230,10 +267,10 @@ export class ToolExecutionService {
 
   private async executeDeleteTool(params: DeleteToolDto, mode: string, userContext?: any): Promise<ToolResultDto> {
     const repository = this.getRepository(params.entity);
-    
+
     // Find records to delete
     const recordsToDelete = await repository.find({ where: params.where });
-    
+
     if (recordsToDelete.length === 0) {
       throw new NotFoundException(`No records found matching the criteria`);
     }
@@ -241,7 +278,7 @@ export class ToolExecutionService {
     if (mode === 'dry-run') {
       return {
         success: true,
-        data: { 
+        data: {
           preview: recordsToDelete,
           recordsFound: recordsToDelete.length,
           deleteType: params.hardDelete ? 'hard' : 'soft'
@@ -279,7 +316,7 @@ export class ToolExecutionService {
   private async executeWorkflowTool(params: RunWorkflowToolDto, mode: string, userContext?: any): Promise<ToolResultDto> {
     // This is a placeholder for workflow execution
     // In a real implementation, you would have a workflow engine
-    
+
     throw new BadRequestException(`Workflow execution not implemented yet. Workflow: ${params.name}`);
   }
 
@@ -288,7 +325,7 @@ export class ToolExecutionService {
       const metadata = this.dataSource.entityMetadatas.find(
         meta => meta.name.toLowerCase() === entityName.toLowerCase()
       );
-      
+
       if (!metadata) {
         throw new BadRequestException(`Entity '${entityName}' not found`);
       }
@@ -301,7 +338,7 @@ export class ToolExecutionService {
 
   private getFieldsMapping(data: Record<string, any>): Record<string, string> {
     const mapping: Record<string, string> = {};
-    
+
     Object.keys(data).forEach(key => {
       const value = data[key];
       const type = typeof value;

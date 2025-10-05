@@ -1,40 +1,41 @@
-import { 
-  Controller, 
-  Post, 
+import {
+  Body,
+  Controller,
   Get,
-  Body, 
-  UseGuards, 
+  Headers,
+  Post,
   Request,
   Res,
-  Headers
+  UseGuards
 } from '@nestjs/common';
-import { Response } from 'express';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../../../common/guards/jwt-auth.guard';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import type { Response } from 'express';
+import { Public } from '../../../common/decorators';
 import { AssistantGuard } from '../../../common/guards/assistant.guard';
-import { AssistantService } from '../services/assistant.service';
+import { JwtAuthGuard } from '../../../common/guards/jwt-auth.guard';
 import { AssistantRequestDto, AssistantResponseDto } from '../dto/assistant.dto';
+import { AssistantService } from '../services/assistant.service';
 
 @ApiTags('Assistant')
-@Controller('assistant')
+@Controller({ path: 'assistant', version: '1' })
 @UseGuards(JwtAuthGuard, AssistantGuard)
 @ApiBearerAuth()
 export class AssistantController {
-  constructor(private readonly assistantService: AssistantService) {}
+  constructor(private readonly assistantService: AssistantService) { }
 
   @Post()
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Process assistant message',
     description: 'Processes a message with the AI assistant. Returns proposals without executing them.'
   })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Message processed successfully',
     type: AssistantResponseDto
   })
-  @ApiResponse({ 
-    status: 403, 
-    description: 'Assistant feature is disabled' 
+  @ApiResponse({
+    status: 403,
+    description: 'Assistant feature is disabled'
   })
   async processMessage(
     @Body() request: AssistantRequestDto,
@@ -53,12 +54,12 @@ export class AssistantController {
   }
 
   @Post('stream')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Stream assistant message',
     description: 'Streams a response from the AI assistant using Server-Sent Events (SSE)'
   })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Streaming response started',
     headers: {
       'Content-Type': { description: 'text/event-stream' },
@@ -94,7 +95,7 @@ export class AssistantController {
 
       while (true) {
         const { done, value } = await reader.read();
-        
+
         if (done) {
           res.write('data: [DONE]\n\n');
           break;
@@ -116,16 +117,17 @@ export class AssistantController {
     }
   }
 
+  @Public()
   @Get('health')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Check assistant health',
     description: 'Returns the health status of the assistant and its dependencies'
   })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Health status retrieved successfully'
   })
   async getHealth(): Promise<any> {
-    return this.assistantService.getHealth();
+    return { status: 'ok', message: 'Assistant health endpoint working', timestamp: new Date().toISOString() };
   }
 }

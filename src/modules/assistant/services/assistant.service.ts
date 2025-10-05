@@ -1,13 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { LlmService } from './llm.service';
-import { EntityCatalogService } from './entity-catalog.service';
-import { AuditService } from './audit.service';
-import { 
-  AssistantRequestDto, 
-  AssistantResponseDto, 
-  ChatMessage, 
-  AssistantContext 
+import {
+  AssistantRequestDto,
+  AssistantResponseDto,
+  ChatMessage
 } from '../dto/assistant.dto';
+import { AuditService } from './audit.service';
+import { EntityCatalogService } from './entity-catalog.service';
+import { LlmService } from './llm.service';
 
 @Injectable()
 export class AssistantService {
@@ -17,7 +16,7 @@ export class AssistantService {
     private llmService: LlmService,
     private entityCatalogService: EntityCatalogService,
     private auditService: AuditService,
-  ) {}
+  ) { }
 
   async processMessage(
     request: AssistantRequestDto,
@@ -43,10 +42,10 @@ export class AssistantService {
       return response;
     } catch (error) {
       this.logger.error('Error processing assistant message:', error);
-      
+
       // Audit the error
       await this.auditService.logAssistantError(error, request, userContext);
-      
+
       throw error;
     }
   }
@@ -91,7 +90,7 @@ export class AssistantService {
     // Add system context if this is the first message or if catalog is requested
     if (messages.length === 1 || request.includeCatalog) {
       const systemContext = await this.buildSystemContext(userContext);
-      
+
       messages.unshift({
         role: 'system',
         content: systemContext,
@@ -103,57 +102,61 @@ export class AssistantService {
   }
 
   private async buildSystemContext(userContext: any): Promise<string> {
-    const catalog = await this.entityCatalogService.generateCatalog();
-    
-    const systemPrompt = `
-Eres un asistente inteligente para un sistema de gestión de consorcios. Tu objetivo es ayudar a los usuarios a gestionar edificios, unidades, tickets, usuarios, proveedores y otros aspectos del consorcio.
+    const systemPrompt = `You are an intelligent assistant for a consortium management system. Your goal is to help users manage buildings, units, tickets, users, vendors and other aspects of the consortium.
 
-CONTEXTO DEL USUARIO:
-- ID de Usuario: ${userContext.userId}
-- Administración: ${userContext.adminId}
-- Roles: ${userContext.roles?.map((r: any) => r.name).join(', ') || 'No especificado'}
+USER CONTEXT:
+- User ID: ${userContext.userId}
+- Administration: ${userContext.adminId}
+- Roles: ${userContext.roles?.map((r: any) => r.name).join(', ') || 'Not specified'}
 
-CAPACIDADES:
-Puedes realizar las siguientes operaciones usando las herramientas disponibles:
-1. FIND: Buscar y consultar registros en la base de datos
-2. CREATE: Crear nuevos registros
-3. UPDATE: Actualizar registros existentes
-4. DELETE: Eliminar registros (soft delete por defecto)
+CAPABILITIES:
+You can perform the following operations using the available tools:
+1. FIND: Search and query database records
+2. CREATE: Create new records
+3. UPDATE: Update existing records
+4. DELETE: Delete records (soft delete by default)
 
-ENTIDADES DISPONIBLES:
-${catalog.entities.map(entity => `
-- ${entity.name}: ${entity.description}
-  Campos principales: ${entity.fields.slice(0, 5).map(f => `${f.name} (${f.type})`).join(', ')}
-`).join('')}
+MAIN ENTITIES:
+- User: System users with roles and permissions
+- Building: Buildings managed by the consortium
+- Unit: Functional units within buildings
+- Ticket: Support and maintenance tickets
+- Vendor: Service providers
+- WorkOrder: Work orders for maintenance
+- Payment: Payments made
+- Expense: System expenses
+- Meeting: Consortium meetings
+- Document: Consortium documents
 
-RELACIONES IMPORTANTES:
-${catalog.relationships.slice(0, 10).map(rel => `
-- ${rel.from} → ${rel.to} (${rel.type} via ${rel.field})
-`).join('')}
+CRITICAL RULES FOR RESPONSES:
+1. When you use the "find" tool, the response includes:
+   - "items": array of actual records
+   - "total": the TOTAL COUNT of all matching records (this is the answer for "how many" questions)
+   - "page": current page number
+   - "limit": records per page
+2. For counting questions like "How many users are there?", use the "total" field from the response
+3. Don't try to select a field called "total" - it's automatically provided in all find responses
+4. **ALWAYS provide a clear final answer immediately after getting tool results**
+5. **NEVER repeat the same query multiple times**
+6. **After using a tool successfully, ALWAYS respond with text content, not more tool calls**
 
-REGLAS IMPORTANTES:
-1. SIEMPRE propón acciones antes de ejecutarlas
-2. Usa dry-run por defecto para operaciones de modificación
-3. Respeta los permisos del usuario y el contexto de la administración
-4. Proporciona explicaciones claras de lo que vas a hacer
-5. Si no estás seguro, pregunta por clarificación
-6. Filtra siempre por adminId cuando sea relevante para mantener el aislamiento de datos
+EXAMPLE:
+User: "How many users are in the system?"
+You should:
+1. Use find tool with entity "User"
+2. Read the "total" field from the response (e.g., "total": 7)
+3. IMMEDIATELY respond with: "There are 7 users in the system."
 
-FORMATO DE RESPUESTA:
-- Sé claro y conciso
-- Explica qué operaciones vas a realizar
-- Muestra los datos relevantes de forma estructurada
-- Sugiere próximos pasos cuando sea apropiado
+REMEMBER: After getting tool results, you MUST provide a final text response to the user.
 
-¿En qué puedo ayudarte hoy?
-`;
+How can I help you today?`;
 
     return systemPrompt.trim();
   }
 
   async getHealth(): Promise<{ status: string; llm: boolean; catalog: boolean }> {
     const llmHealth = await this.llmService.checkHealth();
-    
+
     let catalogHealth = false;
     try {
       await this.entityCatalogService.generateCatalog();

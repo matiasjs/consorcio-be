@@ -64,7 +64,7 @@ services:
       API_PREFIX: api
       # Assistant/LLM Configuration
       ASSISTANT_ENABLED: false
-      ASSISTANT_DEFAULT_MODE: dry-run
+      ASSISTANT_DEFAULT_MODE: apply
       LLM_API_BASE: http://llm-gateway:8000/v1
       LLM_API_KEY: internal-llm-key-change-in-production
       LLM_MODEL: qwen2.5-instruct
@@ -106,7 +106,7 @@ services:
       API_PREFIX: api
       # Assistant/LLM Configuration
       ASSISTANT_ENABLED: false
-      ASSISTANT_DEFAULT_MODE: dry-run
+      ASSISTANT_DEFAULT_MODE: apply
       LLM_API_BASE: http://llm-gateway:8000/v1
       LLM_API_KEY: internal-llm-key-change-in-production
       LLM_MODEL: qwen2.5-instruct
@@ -156,7 +156,11 @@ services:
       - OLLAMA_HOST=0.0.0.0
       - OLLAMA_ORIGINS=*
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:11434/api/tags || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "wget --quiet --tries=1 --spider http://localhost:11434/api/tags || exit 1",
+        ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -191,7 +195,11 @@ services:
       ollama:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:4000/health || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "wget --quiet --tries=1 --output-document=/dev/null http://localhost:4000/health || exit 1",
+        ]
       interval: 30s
       timeout: 10s
       retries: 5
