@@ -152,11 +152,11 @@ services:
       - ollama_data:/root/.ollama
     networks:
       - consorcios-network
-      - llm-network
     environment:
       - OLLAMA_HOST=0.0.0.0
+      - OLLAMA_ORIGINS=*
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      test: ["CMD-SHELL", "curl -f http://localhost:11434/api/tags || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -181,27 +181,24 @@ services:
       - "8000:4000"
     environment:
       - LITELLM_MASTER_KEY=internal-llm-key-change-in-production
-      - DATABASE_URL=postgresql://postgres:postgres123@postgres:5432/consorcios_db
       - LITELLM_LOG=INFO
+      - PORT=4000
     volumes:
       - ./llm-config.yaml:/app/config.yaml
     networks:
       - consorcios-network
-      - llm-network
     depends_on:
       ollama:
         condition: service_healthy
-      postgres:
-        condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:4000/v1/models"]
+      test: ["CMD-SHELL", "curl -f http://localhost:4000/health || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 5
+      start_period: 30s
     profiles:
       - llm
-    command:
-      ["--config", "/app/config.yaml", "--port", "4000", "--num_workers", "1"]
+    command: ["--config", "/app/config.yaml", "--port", "4000"]
 
 volumes:
   postgres_data:
@@ -216,6 +213,3 @@ volumes:
 networks:
   consorcios-network:
     driver: bridge
-  llm-network:
-    driver: bridge
-    internal: true

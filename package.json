@@ -39,7 +39,12 @@
     "assistant:test:regression": "./scripts/test-assistant-regression.sh",
     "assistant:test:apply": "./scripts/test-assistant-apply.sh",
     "assistant:test:all": "./scripts/test-assistant-all.sh",
-    "assistant:init-llm": "./scripts/init-llm.sh"
+    "assistant:init-llm": "powershell -ExecutionPolicy Bypass -File ./scripts/init-llm.ps1",
+    "assistant:start": "powershell -ExecutionPolicy Bypass -File ./scripts/start-simple.ps1",
+    "llm:up": "docker-compose --profile llm up -d",
+    "llm:down": "docker-compose --profile llm down",
+    "llm:logs": "docker-compose logs -f ollama llm-gateway",
+    "dev:full": "docker-compose --profile dev --profile llm up -d"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
