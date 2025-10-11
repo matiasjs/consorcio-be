@@ -1,16 +1,19 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 // Entities
 import { AuditLog } from '../../entities/audit-log.entity';
 
 // Services
 import { AssistantService } from './services/assistant.service';
-import { LlmService } from './services/llm.service';
-import { EntityCatalogService } from './services/entity-catalog.service';
-import { ToolExecutionService } from './services/tool-execution.service';
 import { AuditService } from './services/audit.service';
+import { EntityCatalogService } from './services/entity-catalog.service';
+import { LlmService } from './services/llm.service';
+import { ToolExecutionService } from './services/tool-execution.service';
+
+// Adapters
+import { LlmProviderAdapter } from './adapters/llm-provider.adapter';
 
 // Controllers
 import { AssistantController } from './controllers/assistant.controller';
@@ -36,6 +39,7 @@ import assistantConfig from '../../config/assistant.config';
     EntityCatalogService,
     ToolExecutionService,
     AuditService,
+    LlmProviderAdapter,
   ],
   exports: [
     AssistantService,
@@ -45,4 +49,4 @@ import assistantConfig from '../../config/assistant.config';
     AuditService,
   ],
 })
-export class AssistantModule {}
+export class AssistantModule { }

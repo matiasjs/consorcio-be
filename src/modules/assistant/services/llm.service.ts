@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AssistantConfig } from '../../../config/assistant.config';
+import { ChatCompletionRequest, LlmProviderAdapter } from '../adapters/llm-provider.adapter';
 import { AssistantResponseDto, ChatMessage } from '../dto/assistant.dto';
 import { ToolType } from '../dto/tool-call.dto';
 import { ToolExecutionService } from './tool-execution.service';
@@ -11,7 +12,8 @@ export class LlmService {
 
   constructor(
     private configService: ConfigService,
-    private toolExecutionService: ToolExecutionService
+    private toolExecutionService: ToolExecutionService,
+    private llmProviderAdapter: LlmProviderAdapter,
   ) { }
 
   async chatCompletion(
@@ -37,7 +39,7 @@ export class LlmService {
       while (iteration < maxIterations) {
         iteration++;
 
-        const requestBody = {
+        const request: ChatCompletionRequest = {
           model: assistantConfig.llm.model,
           messages: this.formatMessages(conversationMessages),
           tools: tools || this.getDefaultTools(),
@@ -47,27 +49,7 @@ export class LlmService {
           stream: false,
         };
 
-        this.logger.debug('Sending request to LLM API:', {
-          url: `${assistantConfig.llm.apiBase}/chat/completions`,
-          body: JSON.stringify(requestBody, null, 2)
-        });
-
-        const response = await fetch(`${assistantConfig.llm.apiBase}/chat/completions`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${assistantConfig.llm.apiKey}`,
-          },
-          body: JSON.stringify(requestBody),
-        });
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          this.logger.error(`LLM API error: ${response.status} - ${errorText}`);
-          throw new BadRequestException(`LLM API error: ${response.status}`);
-        }
-
-        const data = await response.json();
+        const data = await this.llmProviderAdapter.chatCompletion(request);
         const choice = data.choices?.[0];
         const message = choice?.message;
 
@@ -85,7 +67,7 @@ export class LlmService {
         // If we're on iteration 3 or higher and have successful tool results, force a final response
         if (iteration >= 3) {
           this.logger.debug('Forcing final response after iteration 3 to prevent infinite loops');
-          const finalRequestBody = {
+          const finalRequest: ChatCompletionRequest = {
             model: assistantConfig.llm.model,
             messages: [...this.formatMessages(conversationMessages), {
               role: 'system',
@@ -96,18 +78,11 @@ export class LlmService {
             stream: false,
           };
 
-          const finalResponse = await fetch(`${assistantConfig.llm.apiBase}/chat/completions`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${assistantConfig.llm.apiKey}`,
-            },
-            body: JSON.stringify(finalRequestBody),
-          });
-
-          if (finalResponse.ok) {
-            const finalData = await finalResponse.json();
+          try {
+            const finalData = await this.llmProviderAdapter.chatCompletion(finalRequest);
             return this.formatResponse(finalData);
+          } catch (error) {
+            this.logger.error('Error in forced final response:', error);
           }
         }
 
@@ -175,35 +150,18 @@ export class LlmService {
     tools?: any[],
     context?: any
   ): Promise<ReadableStream> {
-    const assistantConfig = this.configService.get<AssistantConfig>('assistant');
-
-    if (!assistantConfig?.enabled) {
-      throw new BadRequestException('Assistant feature is disabled');
-    }
-
     try {
-      const response = await fetch(`${assistantConfig.llm.apiBase}/chat/completions`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${assistantConfig.llm.apiKey}`,
-        },
-        body: JSON.stringify({
-          model: assistantConfig.llm.model,
-          messages: this.formatMessages(messages),
-          tools: tools || this.getDefaultTools(),
-          tool_choice: 'auto',
-          temperature: 0.1,
-          max_tokens: 4000,
-          stream: true,
-        }),
-      });
+      const request: ChatCompletionRequest = {
+        model: '', // Will be set by the adapter based on provider
+        messages: this.formatMessages(messages),
+        tools: tools || this.getDefaultTools(),
+        tool_choice: 'auto',
+        temperature: 0.1,
+        max_tokens: 4000,
+        stream: true,
+      };
 
-      if (!response.ok) {
-        throw new BadRequestException(`LLM API error: ${response.status}`);
-      }
-
-      return response.body!;
+      return await this.llmProviderAdapter.streamChatCompletion(request);
     } catch (error) {
       this.logger.error('Error streaming from LLM API:', error);
       throw new BadRequestException(`Failed to stream LLM response: ${error.message}`);
