@@ -50,7 +50,19 @@ export class AssistantController {
       userAgent: headers['user-agent'],
     };
 
-    return this.assistantService.processMessage(request, userContext);
+    try {
+      return await this.assistantService.processMessage(request, userContext);
+    } catch (error) {
+      // Return a user-friendly error response instead of throwing
+      return {
+        message: `Lo siento, ocurrió un error al procesar tu mensaje: ${error.message}. Por favor verifica tu consulta e intenta nuevamente.`,
+        toolCalls: [],
+        timestamp: new Date().toISOString(),
+        finished: true,
+        usage: undefined,
+        error: true
+      } as any;
+    }
   }
 
   @Post('stream')
@@ -111,7 +123,12 @@ export class AssistantController {
         }
       }
     } catch (error) {
-      res.write(`data: ${JSON.stringify({ error: error.message })}\n\n`);
+      const errorResponse = {
+        error: true,
+        message: `Lo siento, ocurrió un error al procesar tu mensaje: ${error.message}. Por favor intenta nuevamente.`,
+        timestamp: new Date().toISOString()
+      };
+      res.write(`data: ${JSON.stringify(errorResponse)}\n\n`);
     } finally {
       res.end();
     }

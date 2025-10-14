@@ -55,7 +55,12 @@ async function bootstrap() {
     origin:
       process.env.NODE_ENV === 'local'
         ? true
-        : process.env.CORS_ORIGIN?.split(','),
+        : process.env.CORS_ORIGIN?.split(',') || [
+            'http://localhost:3000',
+            'http://localhost:3001',
+            'http://localhost:4174',
+            'http://localhost:5173',
+          ],
     methods: 'GET,HEAD,POST,PUT,PATCH,DELETE,OPTIONS',
     allowedHeaders: 'Authorization,Content-Type,Accept',
     credentials: true,

@@ -1,4 +1,4 @@
-import { IsString, IsObject, IsOptional, IsEnum, IsNumber, IsUUID, ValidateNested } from 'class-validator';
+import { IsString, IsObject, IsOptional, IsEnum, IsNumber, IsUUID, ValidateNested, IsArray } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -38,6 +38,12 @@ export class FindToolDto {
   @IsOptional()
   @IsNumber()
   page?: number;
+
+  @ApiProperty({ description: 'Relations to include', required: false })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  relations?: string[];
 }
 
 export class CreateToolDto {

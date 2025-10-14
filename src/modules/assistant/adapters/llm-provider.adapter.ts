@@ -44,10 +44,13 @@ export interface ChatCompletionResponse {
 export class LlmProviderAdapter {
   private readonly logger = new Logger(LlmProviderAdapter.name);
 
-  constructor(private readonly configService: ConfigService) { }
+  constructor(private readonly configService: ConfigService) {}
 
-  async chatCompletion(request: ChatCompletionRequest): Promise<ChatCompletionResponse> {
-    const assistantConfig = this.configService.get<AssistantConfig>('assistant');
+  async chatCompletion(
+    request: ChatCompletionRequest,
+  ): Promise<ChatCompletionResponse> {
+    const assistantConfig =
+      this.configService.get<AssistantConfig>('assistant');
 
     if (!assistantConfig?.enabled) {
       throw new Error('Assistant feature is disabled');
@@ -73,7 +76,7 @@ export class LlmProviderAdapter {
 
   private async callOllamaAPI(
     request: ChatCompletionRequest,
-    config: AssistantConfig
+    config: AssistantConfig,
   ): Promise<ChatCompletionResponse> {
     // Ollama uses OpenAI-compatible API through LiteLLM
     const requestBody = {
@@ -97,15 +100,24 @@ export class LlmProviderAdapter {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${config.llm.apiKey}`,
+        Authorization: `Bearer ${config.llm.apiKey}`,
       },
       body: JSON.stringify(requestBody),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      this.logger.error(`Ollama API error: ${response.status} - ${errorText}`);
-      throw new Error(`Ollama API error: ${response.status}`);
+      this.logger.error('Ollama API error:', {
+        status: response.status,
+        statusText: response.statusText,
+        errorText: errorText,
+        url: `${config.llm.apiBase}/chat/completions`,
+        model: requestBody.model,
+        messagesCount: requestBody.messages.length,
+        toolsCount: requestBody.tools?.length || 0,
+        timestamp: new Date().toISOString(),
+      });
+      throw new Error(`Ollama API error: ${response.status} - ${errorText}`);
     }
 
     return await response.json();
@@ -113,7 +125,7 @@ export class LlmProviderAdapter {
 
   private async callOpenAIAPI(
     request: ChatCompletionRequest,
-    config: AssistantConfig
+    config: AssistantConfig,
   ): Promise<ChatCompletionResponse> {
     const requestBody = {
       model: config.llm.model,
@@ -136,15 +148,24 @@ export class LlmProviderAdapter {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${config.llm.apiKey}`,
+        Authorization: `Bearer ${config.llm.apiKey}`,
       },
       body: JSON.stringify(requestBody),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      this.logger.error(`OpenAI API error: ${response.status} - ${errorText}`);
-      throw new Error(`OpenAI API error: ${response.status}`);
+      this.logger.error('OpenAI API error:', {
+        status: response.status,
+        statusText: response.statusText,
+        errorText: errorText,
+        url: `${config.llm.apiBase}/chat/completions`,
+        model: requestBody.model,
+        messagesCount: requestBody.messages.length,
+        toolsCount: requestBody.tools?.length || 0,
+        timestamp: new Date().toISOString(),
+      });
+      throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
     }
 
     return await response.json();
@@ -156,7 +177,7 @@ export class LlmProviderAdapter {
   }
 
   private formatMessagesForOpenAI(messages: ChatMessage[]): any[] {
-    return messages.map(msg => ({
+    return messages.map((msg) => ({
       role: msg.role,
       content: msg.content,
       ...(msg.tool_calls && { tool_calls: msg.tool_calls }),
@@ -164,8 +185,11 @@ export class LlmProviderAdapter {
     }));
   }
 
-  async streamChatCompletion(request: ChatCompletionRequest): Promise<ReadableStream> {
-    const assistantConfig = this.configService.get<AssistantConfig>('assistant');
+  async streamChatCompletion(
+    request: ChatCompletionRequest,
+  ): Promise<ReadableStream> {
+    const assistantConfig =
+      this.configService.get<AssistantConfig>('assistant');
 
     if (!assistantConfig?.enabled) {
       throw new Error('Assistant feature is disabled');
@@ -181,9 +205,10 @@ export class LlmProviderAdapter {
 
     const requestBody = {
       model: assistantConfig.llm.model,
-      messages: provider === 'openai'
-        ? this.formatMessagesForOpenAI(request.messages)
-        : this.formatMessagesForOllama(request.messages),
+      messages:
+        provider === 'openai'
+          ? this.formatMessagesForOpenAI(request.messages)
+          : this.formatMessagesForOllama(request.messages),
       tools: request.tools,
       tool_choice: request.tool_choice,
       temperature: request.temperature || 0.1,
@@ -191,19 +216,32 @@ export class LlmProviderAdapter {
       stream: true,
     };
 
-    const response = await fetch(`${assistantConfig.llm.apiBase}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${assistantConfig.llm.apiKey}`,
+    const response = await fetch(
+      `${assistantConfig.llm.apiBase}/chat/completions`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${assistantConfig.llm.apiKey}`,
+        },
+        body: JSON.stringify(requestBody),
       },
-      body: JSON.stringify(requestBody),
-    });
+    );
 
     if (!response.ok) {
       const errorText = await response.text();
-      this.logger.error(`${provider} API streaming error: ${response.status} - ${errorText}`);
-      throw new Error(`${provider} API streaming error: ${response.status}`);
+      this.logger.error(`${provider} API streaming error:`, {
+        provider: provider,
+        status: response.status,
+        statusText: response.statusText,
+        errorText: errorText,
+        url: `${assistantConfig.llm.apiBase}/chat/completions`,
+        model: requestBody.model,
+        messagesCount: requestBody.messages.length,
+        toolsCount: requestBody.tools?.length || 0,
+        timestamp: new Date().toISOString(),
+      });
+      throw new Error(`${provider} API streaming error: ${response.status} - ${errorText}`);
     }
 
     return response.body!;

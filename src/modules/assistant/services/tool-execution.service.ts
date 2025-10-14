@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { DataSource, Repository } from 'typeorm';
 import { AssistantConfig } from '../../../config/assistant.config';
@@ -15,6 +15,7 @@ import {
 
 @Injectable()
 export class ToolExecutionService {
+  private readonly logger = new Logger(ToolExecutionService.name);
   private idempotencyCache = new Map<string, ToolResultDto>();
 
   constructor(
@@ -70,9 +71,25 @@ export class ToolExecutionService {
 
       return result;
     } catch (error) {
+      this.logger.error('Error executing tool call:', {
+        error: error.message,
+        stack: error.stack,
+        toolCall: {
+          type: toolCall.type,
+          parameters: toolCall.parameters,
+        },
+        context: {
+          userId: userContext?.userId,
+          adminId: userContext?.adminId,
+          mode: effectiveMode,
+          idempotencyKey: idempotencyKey,
+        },
+        timestamp: new Date().toISOString(),
+      });
+
       const errorResult: ToolResultDto = {
         success: false,
-        error: error.message,
+        error: this.formatErrorForAI(error, toolCall),
         mode: effectiveMode,
         executedAt: new Date().toISOString(),
         idempotencyKey,
@@ -129,6 +146,13 @@ export class ToolExecutionService {
         }
       }
 
+      // Apply relations
+      if (params.relations && params.relations.length > 0) {
+        params.relations.forEach(relation => {
+          queryBuilder.leftJoinAndSelect(`${params.entity.toLowerCase()}.${relation}`, relation);
+        });
+      }
+
       // Apply pagination
       if (params.limit) {
         queryBuilder.limit(params.limit);
@@ -163,7 +187,7 @@ export class ToolExecutionService {
       const errorResult = {
         success: false,
         data: null,
-        error: error.message,
+        error: this.formatErrorForAI(error, { type: ToolType.FIND, parameters: params } as ToolCallDto),
         explain: {
           operation: 'find',
           entity: params.entity,
@@ -178,17 +202,67 @@ export class ToolExecutionService {
   }
 
   private async executeCreateTool(params: CreateToolDto, mode: string, userContext?: any): Promise<ToolResultDto> {
-    const repository = this.getRepository(params.entity);
+    try {
+      this.logger.debug('executeCreateTool called with:', {
+        entity: params.entity,
+        data: params.data,
+        userContext: userContext,
+        adminId: userContext?.adminId,
+      });
 
-    if (mode === 'dry-run') {
-      // Validate data without creating
-      const entity = repository.create(params.data);
+      const repository = this.getRepository(params.entity);
+
+      if (mode === 'dry-run') {
+        // Validate data without creating
+        const entity = repository.create(params.data);
+
+        return {
+          success: true,
+          data: { preview: entity },
+          explain: {
+            operation: 'create (dry-run)',
+            entity: params.entity,
+            fieldsMapping: this.getFieldsMapping(params.data),
+            affectedRecords: 1,
+          },
+          mode: mode as any,
+          executedAt: new Date().toISOString(),
+        };
+      }
+
+      // Add user context if available
+      let dataWithContext = {
+        ...params.data,
+        ...(userContext?.adminId && { adminId: userContext.adminId }),
+        ...(userContext?.userId && { createdByUserId: userContext.userId }),
+      };
+
+      // Handle special case for tickets with FIRST_AVAILABLE_BUILDING
+      if (params.entity === 'Ticket' && dataWithContext.buildingId === 'FIRST_AVAILABLE_BUILDING') {
+        // Get the first available building for this admin
+        const buildingRepository = this.dataSource.getRepository('Building');
+        const firstBuilding = await buildingRepository.findOne({
+          where: { adminId: userContext?.adminId },
+          order: { createdAt: 'ASC' }
+        });
+
+        if (firstBuilding) {
+          dataWithContext.buildingId = firstBuilding.id;
+        } else {
+          throw new Error('No buildings available for this administration. Please create a building first.');
+        }
+      }
+
+      this.logger.debug('dataWithContext:', dataWithContext);
+
+      const entity = repository.create(dataWithContext);
+      const savedEntity = await repository.save(entity);
 
       return {
         success: true,
-        data: { preview: entity },
+        data: savedEntity,
         explain: {
-          operation: 'create (dry-run)',
+          operation: 'create',
           entity: params.entity,
           fieldsMapping: this.getFieldsMapping(params.data),
           affectedRecords: 1,
@@ -196,121 +270,188 @@ export class ToolExecutionService {
         mode: mode as any,
         executedAt: new Date().toISOString(),
       };
-    }
-
-    // Add user context if available
-    const dataWithContext = {
-      ...params.data,
-      ...(userContext?.adminId && { adminId: userContext.adminId }),
-    };
-
-    const entity = repository.create(dataWithContext);
-    const savedEntity = await repository.save(entity);
-
-    return {
-      success: true,
-      data: savedEntity,
-      explain: {
-        operation: 'create',
+    } catch (error) {
+      this.logger.error('Error in executeCreateTool:', {
+        error: error.message,
+        stack: error.stack,
         entity: params.entity,
-        fieldsMapping: this.getFieldsMapping(params.data),
-        affectedRecords: 1,
-      },
-      mode: mode as any,
-      executedAt: new Date().toISOString(),
-    };
+        data: params.data,
+        mode: mode,
+        userContext: userContext?.userId,
+      });
+
+      return {
+        success: false,
+        error: this.formatErrorForAI(error, { type: ToolType.CREATE, parameters: params } as ToolCallDto),
+        explain: {
+          operation: 'create',
+          entity: params.entity,
+          affectedRecords: 0,
+        },
+        mode: mode as any,
+        executedAt: new Date().toISOString(),
+      };
+    }
   }
 
   private async executeUpdateTool(params: UpdateToolDto, mode: string, userContext?: any): Promise<ToolResultDto> {
-    const repository = this.getRepository(params.entity);
+    try {
+      const repository = this.getRepository(params.entity);
 
-    // Find records to update
-    const recordsToUpdate = await repository.find({ where: params.where });
+      // Find records to update
+      const recordsToUpdate = await repository.find({ where: params.where });
 
-    if (recordsToUpdate.length === 0) {
-      throw new NotFoundException(`No records found matching the criteria`);
-    }
+      if (recordsToUpdate.length === 0) {
+        return {
+          success: false,
+          error: `No se encontraron registros de ${params.entity} que coincidan con los criterios especificados.`,
+          explain: {
+            operation: 'update',
+            entity: params.entity,
+            affectedRecords: 0,
+          },
+          mode: mode as any,
+          executedAt: new Date().toISOString(),
+        };
+      }
 
-    if (mode === 'dry-run') {
+      if (mode === 'dry-run') {
+        return {
+          success: true,
+          data: {
+            preview: recordsToUpdate.map(record => ({ ...record, ...params.data })),
+            recordsFound: recordsToUpdate.length
+          },
+          explain: {
+            operation: 'update (dry-run)',
+            entity: params.entity,
+            fieldsMapping: this.getFieldsMapping(params.data),
+            affectedRecords: recordsToUpdate.length,
+          },
+          mode: mode as any,
+          executedAt: new Date().toISOString(),
+        };
+      }
+
+      const result = await repository.update(params.where, params.data);
+
       return {
         success: true,
-        data: {
-          preview: recordsToUpdate.map(record => ({ ...record, ...params.data })),
-          recordsFound: recordsToUpdate.length
-        },
+        data: { affected: result.affected },
         explain: {
-          operation: 'update (dry-run)',
+          operation: 'update',
           entity: params.entity,
           fieldsMapping: this.getFieldsMapping(params.data),
-          affectedRecords: recordsToUpdate.length,
+          affectedRecords: result.affected || 0,
+        },
+        mode: mode as any,
+        executedAt: new Date().toISOString(),
+      };
+    } catch (error) {
+      this.logger.error('Error in executeUpdateTool:', {
+        error: error.message,
+        stack: error.stack,
+        entity: params.entity,
+        where: params.where,
+        data: params.data,
+        mode: mode,
+        userContext: userContext?.userId,
+      });
+
+      return {
+        success: false,
+        error: this.formatErrorForAI(error, { type: ToolType.UPDATE, parameters: params } as ToolCallDto),
+        explain: {
+          operation: 'update',
+          entity: params.entity,
+          affectedRecords: 0,
         },
         mode: mode as any,
         executedAt: new Date().toISOString(),
       };
     }
-
-    const result = await repository.update(params.where, params.data);
-
-    return {
-      success: true,
-      data: { affected: result.affected },
-      explain: {
-        operation: 'update',
-        entity: params.entity,
-        fieldsMapping: this.getFieldsMapping(params.data),
-        affectedRecords: result.affected || 0,
-      },
-      mode: mode as any,
-      executedAt: new Date().toISOString(),
-    };
   }
 
   private async executeDeleteTool(params: DeleteToolDto, mode: string, userContext?: any): Promise<ToolResultDto> {
-    const repository = this.getRepository(params.entity);
+    try {
+      const repository = this.getRepository(params.entity);
 
-    // Find records to delete
-    const recordsToDelete = await repository.find({ where: params.where });
+      // Find records to delete
+      const recordsToDelete = await repository.find({ where: params.where });
 
-    if (recordsToDelete.length === 0) {
-      throw new NotFoundException(`No records found matching the criteria`);
-    }
+      if (recordsToDelete.length === 0) {
+        return {
+          success: false,
+          error: `No se encontraron registros de ${params.entity} que coincidan con los criterios especificados para eliminar.`,
+          explain: {
+            operation: 'delete',
+            entity: params.entity,
+            affectedRecords: 0,
+          },
+          mode: mode as any,
+          executedAt: new Date().toISOString(),
+        };
+      }
 
-    if (mode === 'dry-run') {
+      if (mode === 'dry-run') {
+        return {
+          success: true,
+          data: {
+            preview: recordsToDelete,
+            recordsFound: recordsToDelete.length,
+            deleteType: params.hardDelete ? 'hard' : 'soft'
+          },
+          explain: {
+            operation: 'delete (dry-run)',
+            entity: params.entity,
+            affectedRecords: recordsToDelete.length,
+          },
+          mode: mode as any,
+          executedAt: new Date().toISOString(),
+        };
+      }
+
+      let result;
+      if (params.hardDelete) {
+        result = await repository.delete(params.where);
+      } else {
+        result = await repository.softDelete(params.where);
+      }
+
       return {
         success: true,
-        data: {
-          preview: recordsToDelete,
-          recordsFound: recordsToDelete.length,
-          deleteType: params.hardDelete ? 'hard' : 'soft'
-        },
+        data: { affected: result.affected },
         explain: {
-          operation: 'delete (dry-run)',
+          operation: params.hardDelete ? 'hard delete' : 'soft delete',
           entity: params.entity,
-          affectedRecords: recordsToDelete.length,
+          affectedRecords: result.affected || 0,
+        },
+        mode: mode as any,
+        executedAt: new Date().toISOString(),
+      };
+    } catch (error) {
+      this.logger.error('Error in executeDeleteTool:', {
+        error: error.message,
+        stack: error.stack,
+        entity: params.entity,
+        where: params.where,
+        hardDelete: params.hardDelete,
+        mode: mode,
+        userContext: userContext?.userId,
+      });
+
+      return {
+        success: false,
+        error: this.formatErrorForAI(error, { type: ToolType.DELETE, parameters: params } as ToolCallDto),
+        explain: {
+          operation: 'delete',
+          entity: params.entity,
+          affectedRecords: 0,
         },
         mode: mode as any,
         executedAt: new Date().toISOString(),
       };
     }
-
-    let result;
-    if (params.hardDelete) {
-      result = await repository.delete(params.where);
-    } else {
-      result = await repository.softDelete(params.where);
-    }
-
-    return {
-      success: true,
-      data: { affected: result.affected },
-      explain: {
-        operation: params.hardDelete ? 'hard delete' : 'soft delete',
-        entity: params.entity,
-        affectedRecords: result.affected || 0,
-      },
-      mode: mode as any,
-      executedAt: new Date().toISOString(),
-    };
   }
 
   private async executeWorkflowTool(params: RunWorkflowToolDto, mode: string, userContext?: any): Promise<ToolResultDto> {
@@ -346,5 +487,110 @@ export class ToolExecutionService {
     });
 
     return mapping;
+  }
+
+  private formatErrorForAI(error: any, toolCall: ToolCallDto): string {
+    const errorMessage = error.message || 'Unknown error occurred';
+
+    // Common database errors with user-friendly explanations
+    if (errorMessage.includes('cannot be null') || errorMessage.includes('NOT NULL')) {
+      const field = this.extractFieldFromError(errorMessage);
+      const entity = this.getEntityFromParameters(toolCall.parameters);
+      const requiredFields = this.getRequiredFieldsForEntity(entity);
+
+      if (requiredFields.length > 0) {
+        return `No puedo crear el ${entity || 'registro'} porque faltan campos requeridos. Necesito: ${requiredFields.join(', ')}. Por favor proporciona estos valores e intenta nuevamente.`;
+      } else {
+        return `Campo requerido faltante: ${field}. Por favor proporciona este valor e intenta nuevamente.`;
+      }
+    }
+
+    if (errorMessage.includes('Duplicate entry') || errorMessage.includes('UNIQUE constraint')) {
+      return `Ya existe un registro con estos datos. Por favor verifica que no esté duplicado.`;
+    }
+
+    if (errorMessage.includes('Foreign key constraint')) {
+      return `Referencia inválida. Verifica que los IDs relacionados existan en el sistema.`;
+    }
+
+    if (errorMessage.includes('Entity') && errorMessage.includes('not found')) {
+      const entity = this.extractEntityFromError(errorMessage);
+      return `La entidad '${entity}' no existe en el sistema. Verifica el nombre de la entidad.`;
+    }
+
+    if (errorMessage.includes('No records found matching the criteria')) {
+      return `No se encontraron registros que coincidan con los criterios de búsqueda.`;
+    }
+
+    if (errorMessage.includes('Failed to get repository')) {
+      return `Error de configuración del sistema. La entidad especificada no está disponible.`;
+    }
+
+    // For create operations, provide specific guidance
+    if (toolCall.type === ToolType.CREATE) {
+      const entity = this.getEntityFromParameters(toolCall.parameters);
+      const requiredFields = this.getRequiredFieldsForEntity(entity);
+
+      if (requiredFields.length > 0) {
+        return `No puedo crear el ${entity || 'registro'} porque faltan campos requeridos. Necesito: ${requiredFields.join(', ')}. Error específico: ${errorMessage}`;
+      } else {
+        return `Error al crear el registro: ${errorMessage}. Verifica que todos los campos requeridos estén presentes y tengan valores válidos.`;
+      }
+    }
+
+    // For find operations
+    if (toolCall.type === ToolType.FIND) {
+      return `Error en la búsqueda: ${errorMessage}. Verifica los criterios de búsqueda y el nombre de la entidad.`;
+    }
+
+    // For update operations
+    if (toolCall.type === ToolType.UPDATE) {
+      return `Error al actualizar: ${errorMessage}. Verifica que el registro exista y los datos sean válidos.`;
+    }
+
+    // For delete operations
+    if (toolCall.type === ToolType.DELETE) {
+      return `Error al eliminar: ${errorMessage}. Verifica que el registro exista y pueda ser eliminado.`;
+    }
+
+    // Generic fallback
+    return `Error en la operación: ${errorMessage}. Por favor revisa los parámetros e intenta nuevamente.`;
+  }
+
+  private extractFieldFromError(errorMessage: string): string {
+    // Extract field name from messages like "Column 'name' cannot be null"
+    const match = errorMessage.match(/Column '([^']+)'/i) || errorMessage.match(/"([^"]+)" cannot be null/i);
+    return match ? match[1] : 'campo desconocido';
+  }
+
+  private extractEntityFromError(errorMessage: string): string {
+    // Extract entity name from messages like "Entity 'Building' not found"
+    const match = errorMessage.match(/Entity '([^']+)'/i) || errorMessage.match(/"([^"]+)" not found/i);
+    return match ? match[1] : 'entidad desconocida';
+  }
+
+  private getEntityFromParameters(parameters: any): string {
+    // Type guard to check if parameters has entity property
+    if (parameters && typeof parameters === 'object' && 'entity' in parameters) {
+      return parameters.entity;
+    }
+    return '';
+  }
+
+  private getRequiredFieldsForEntity(entity: string): string[] {
+    const requiredFields: Record<string, string[]> = {
+      'Building': ['name (nombre)', 'address (dirección)', 'city (ciudad)'],
+      'User': ['email', 'fullName (nombre completo)', 'password (contraseña)'],
+      'Unit': ['buildingId (ID del edificio)', 'unitNumber (número de unidad)', 'type (tipo)'],
+      'Ticket': ['title (título)', 'description (descripción)', 'priority (prioridad)'],
+      'WorkOrder': ['title (título)', 'description (descripción)', 'priority (prioridad)'],
+      'Vendor': ['name (nombre)', 'email', 'phone (teléfono)'],
+      'Meeting': ['title (título)', 'scheduledAt (fecha programada)', 'buildingId (ID del edificio)'],
+      'Payment': ['amount (monto)', 'paymentDate (fecha de pago)', 'method (método)'],
+      'Expense': ['description (descripción)', 'amount (monto)', 'expenseDate (fecha)'],
+      'Document': ['title (título)', 'type (tipo)', 'filePath (ruta del archivo)'],
+    };
+
+    return requiredFields[entity] || [];
   }
 }

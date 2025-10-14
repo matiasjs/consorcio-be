@@ -53,15 +53,28 @@ export class LlmService {
         const choice = data.choices?.[0];
         const message = choice?.message;
 
-        // If no tool calls, return the final response
+        // If no tool calls, check if content contains JSON tool calls
         if (!message?.tool_calls || message.tool_calls.length === 0) {
-          return this.formatResponse(data);
+          // Try to parse JSON tool calls from content
+          if (message?.content) {
+            const parsedToolCalls = this.parseToolCallsFromContent(message.content);
+            if (parsedToolCalls.length > 0) {
+              this.logger.debug('Detected JSON tool calls in content, converting to proper tool_calls format');
+              // Convert parsed tool calls to proper format
+              data.choices[0].message.tool_calls = parsedToolCalls;
+              data.choices[0].message.content = ''; // Clear content since we have tool calls
+            } else {
+              return this.formatResponse(data);
+            }
+          } else {
+            return this.formatResponse(data);
+          }
         }
 
-        // If the assistant provides content along with tool calls, it might be trying to give a final answer
+        // If the assistant provides content along with tool calls, log it but continue with tool execution
+        // The content might be malformed JSON or incomplete, so we should execute tools first
         if (message.content && message.content.trim().length > 0) {
-          this.logger.debug('Assistant provided content with tool calls, might be final answer:', message.content);
-          return this.formatResponse(data);
+          this.logger.debug('Assistant provided content with tool calls, will execute tools first:', message.content);
         }
 
         // If we're on iteration 3 or higher and have successful tool results, force a final response
@@ -94,7 +107,7 @@ export class LlmService {
         });
 
         // Execute tool calls and add results to conversation
-        for (const toolCall of message.tool_calls) {
+        for (const toolCall of message.tool_calls || []) {
           try {
             const toolCallDto = {
               id: toolCall.id,
@@ -118,8 +131,30 @@ export class LlmService {
               tool_call_id: toolCall.id
             });
           } catch (error) {
-            this.logger.error(`Error executing tool call ${toolCall.id}:`, error);
-            const errorContent = JSON.stringify({ error: error.message });
+            this.logger.error(`Error executing tool call ${toolCall.id}:`, {
+              error: error.message,
+              stack: error.stack,
+              toolCall: {
+                id: toolCall.id,
+                function: toolCall.function.name,
+                arguments: toolCall.function.arguments,
+              },
+              context: {
+                userId: context?.userId,
+                adminId: context?.adminId,
+                iteration: iteration,
+              },
+              timestamp: new Date().toISOString(),
+            });
+
+            // Create a more descriptive error message for the AI
+            const errorContent = JSON.stringify({
+              error: error.message,
+              tool_call_id: toolCall.id,
+              function_name: toolCall.function.name,
+              timestamp: new Date().toISOString(),
+              instruction: "Explain this error to the user in natural language. Do not show raw JSON or technical details. Be helpful and suggest what the user can do to fix the issue."
+            });
             console.log(`Adding error result for ${toolCall.id}:`, errorContent);
 
             conversationMessages.push({
@@ -128,6 +163,48 @@ export class LlmService {
               tool_call_id: toolCall.id
             });
           }
+        }
+
+        // After executing all tool calls, force a natural language response
+        this.logger.debug('Tool calls executed, forcing natural language response');
+        const finalRequest: ChatCompletionRequest = {
+          model: assistantConfig.llm.model,
+          messages: [...this.formatMessages(conversationMessages), {
+            role: 'user',
+            content: `IMPORTANTE: Basándote ÚNICAMENTE en los resultados que acabas de recibir, responde al usuario en español confirmando qué se guardó/creó exitosamente.
+
+REGLAS IMPORTANTES:
+- NO menciones "herramientas" ni procesos técnicos
+- NO digas que "hubo un error" si algo se creó correctamente
+- Sé directo y conciso
+- Confirma solo lo que realmente se guardó en el sistema
+- Usa un tono natural y profesional
+
+Ejemplo: "Se guardó el edificio MDQ house 5.0 con 20 pisos en Mar del Plata, Córdoba 3731. También se creó el ticket de humedad en áreas comunes con prioridad alta."
+
+Responde de manera simple y directa sobre lo que se guardó exitosamente.`
+          }],
+          temperature: 0.1,
+          max_tokens: 200,
+          stream: false,
+        };
+
+        try {
+          const finalData = await this.llmProviderAdapter.chatCompletion(finalRequest);
+          this.logger.debug('Final response from LLM:', JSON.stringify(finalData, null, 2));
+          const finalResponse = this.formatResponse(finalData);
+          this.logger.debug('Final natural language response generated successfully:', finalResponse.message);
+          return finalResponse;
+        } catch (error) {
+          this.logger.error('Error in final natural language response:', error);
+          // Return a fallback response if final response fails
+          return {
+            message: 'Las operaciones se completaron exitosamente, pero hubo un problema al generar la respuesta final.',
+            toolCalls: [],
+            timestamp: new Date().toISOString(),
+            finished: true,
+            usage: undefined
+          };
         }
       }
 
@@ -140,7 +217,22 @@ export class LlmService {
         usage: undefined
       };
     } catch (error) {
-      this.logger.error('Error calling LLM API:', error);
+      this.logger.error('Error calling LLM API:', {
+        error: error.message,
+        stack: error.stack,
+        context: {
+          userId: context?.userId,
+          adminId: context?.adminId,
+          messagesCount: messages?.length || 0,
+          toolsCount: tools?.length || 0,
+        },
+        config: {
+          model: assistantConfig?.llm?.model,
+          provider: assistantConfig?.llm?.provider,
+          apiBase: assistantConfig?.llm?.apiBase,
+        },
+        timestamp: new Date().toISOString(),
+      });
       throw new BadRequestException(`Failed to get LLM response: ${error.message}`);
     }
   }
@@ -163,7 +255,17 @@ export class LlmService {
 
       return await this.llmProviderAdapter.streamChatCompletion(request);
     } catch (error) {
-      this.logger.error('Error streaming from LLM API:', error);
+      this.logger.error('Error streaming from LLM API:', {
+        error: error.message,
+        stack: error.stack,
+        context: {
+          userId: context?.userId,
+          adminId: context?.adminId,
+          messagesCount: messages?.length || 0,
+          toolsCount: tools?.length || 0,
+        },
+        timestamp: new Date().toISOString(),
+      });
       throw new BadRequestException(`Failed to stream LLM response: ${error.message}`);
     }
   }
@@ -322,6 +424,121 @@ export class LlmService {
         return ToolType.RUN_WORKFLOW;
       default:
         throw new BadRequestException(`Unknown function name: ${functionName}`);
+    }
+  }
+
+  private parseToolCallsFromContent(content: string): any[] {
+    const toolCalls: any[] = [];
+
+    try {
+      // First try to parse multiple JSON objects separated by semicolons
+      const parts = content.split(';').map(part => part.trim()).filter(part => part.length > 0);
+      for (const part of parts) {
+        try {
+          // Try to fix common JSON formatting issues
+          let fixedPart = part;
+
+          // Add missing closing braces if needed
+          const openBraces = (fixedPart.match(/\{/g) || []).length;
+          const closeBraces = (fixedPart.match(/\}/g) || []).length;
+          if (openBraces > closeBraces) {
+            fixedPart += '}'.repeat(openBraces - closeBraces);
+          }
+
+          const parsed = JSON.parse(fixedPart);
+          if (parsed.name && parsed.parameters) {
+            // Fix priority mapping for tickets
+            if (parsed.parameters.entity === 'Ticket' && parsed.parameters.data?.priority) {
+              const priorityMap = {
+                'High': 'alta',
+                'Medium': 'media',
+                'Low': 'baja',
+                'alta': 'alta',
+                'media': 'media',
+                'baja': 'baja'
+              };
+              parsed.parameters.data.priority = priorityMap[parsed.parameters.data.priority] || 'media';
+            }
+
+            // Fix title field for tickets (map subject to title)
+            if (parsed.parameters.entity === 'Ticket' && parsed.parameters.data?.subject && !parsed.parameters.data?.title) {
+              parsed.parameters.data.title = parsed.parameters.data.subject;
+              delete parsed.parameters.data.subject;
+            }
+
+            toolCalls.push({
+              id: `call_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+              type: 'function',
+              function: {
+                name: parsed.name,
+                arguments: JSON.stringify(parsed.parameters)
+              }
+            });
+          }
+        } catch (parseError) {
+          this.logger.warn('Failed to parse JSON part:', part);
+        }
+      }
+
+      // If no semicolon-separated parts worked, try regex pattern matching
+      if (toolCalls.length === 0) {
+        const jsonPattern = /\{"name":\s*"([^"]+)"\s*,\s*"parameters":\s*(\{[^}]*\}+)\s*\}/g;
+        let match;
+
+        while ((match = jsonPattern.exec(content)) !== null) {
+          const [, name, parametersStr] = match;
+          try {
+            const parameters = JSON.parse(parametersStr);
+            toolCalls.push({
+              id: `call_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+              type: 'function',
+              function: {
+                name: name,
+                arguments: JSON.stringify(parameters)
+              }
+            });
+          } catch (parseError) {
+            this.logger.warn('Failed to parse parameters for tool call:', parametersStr);
+          }
+        }
+      }
+
+    } catch (error) {
+      this.logger.warn('Error parsing tool calls from content:', error);
+    }
+
+    return toolCalls;
+  }
+
+  async executeToolCall(toolCall: any, userContext: any): Promise<any> {
+    try {
+      this.logger.debug('Executing forced tool call:', {
+        toolCall,
+        userContext: {
+          userId: userContext.userId,
+          adminId: userContext.adminId,
+        },
+      });
+
+      const result = await this.toolExecutionService.executeToolCall(
+        { type: toolCall.name as any, parameters: toolCall.parameters },
+        'apply',
+        undefined, // idempotencyKey
+        userContext,
+      );
+
+      this.logger.debug('Tool execution result:', { result });
+      return result;
+    } catch (error) {
+      this.logger.error('Error executing forced tool call:', {
+        error: error.message,
+        toolCall,
+        userContext: {
+          userId: userContext.userId,
+          adminId: userContext.adminId,
+        },
+      });
+      throw error;
     }
   }
 
